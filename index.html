@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Express Emlak - Ana Sayfa</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="nav-wrapper">
+                <div class="logo">
+                    <img src="images/logo.png" alt="Express Emlak" class="logo-img">
+                </div>
+                <nav class="nav">
+                    <a href="index.html" class="nav-link active">Ana Sayfa</a>
+                    <a href="ilanlar.html" class="nav-link">İlanlar</a>
+                    <a href="express-konut.html" class="nav-link">Express Konut</a>
+                    <a href="satilik.html" class="nav-link">Satılık</a>
+                    <a href="kiralik.html" class="nav-link">Kiralık</a>
+                    <a href="iletisim.html" class="nav-link">İletişim</a>
+                </nav>
+                <div class="mobile-menu-btn">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">Konya'nın En <span class="highlight">Güvenilir</span> Emlak Ofisi</h1>
+            <p class="hero-subtitle">Konya'da köklü tecrübemizle, gayrimenkulde güvenin adresi olmanın gururunu yaşıyoruz. Ev alım-satım, kiralama ve yatırım konusunda profesyonel kadromuzla size özel çözümler sunuyoruz.</p>
+            
+            <!-- Search Form -->
+            <div class="search-form">
+                <div class="search-tabs">
+                    <button class="tab-btn active" data-tab="satilik">Satılık</button>
+                    <button class="tab-btn" data-tab="kiralik">Kiralık</button>
+                </div>
+                <div class="search-inputs">
+                    <select class="input-field" id="district-select">
+                        <option value="">İlçe Seçiniz</option>
+                        <option value="meram">Meram</option>
+                        <option value="selcuklu">Selçuklu</option>
+                        <option value="karatay">Karatay</option>
+                        <option value="eregli">Ereğli</option>
+                        <option value="akoren">Akören</option>
+                        <option value="altinekin">Altınekİn</option>
+                        <option value="beyşehir">Beyşehir</option>
+                        <option value="bozkır">Bozkır</option>
+                        <option value="çeltik">Çeltik</option>
+                        <option value="çumra">Çumra</option>
+                        <option value="derbent">Derbent</option>
+                        <option value="derebucak">Derebucak</option>
+                        <option value="doğanhisar">Doğanhisar</option>
+                        <option value="emirgazi">Emirgazi</option>
+                        <option value="güneysinir">Güneysinir</option>
+                        <option value="hüyük">Hüyük</option>
+                        <option value="ilgın">Ilgın</option>
+                        <option value="kadınhanı">Kadınhanı</option>
+                        <option value="kulu">Kulu</option>
+                        <option value="sarayönü">Sarayönü</option>
+                        <option value="seydişehir">Seydişehir</option>
+                        <option value="taşkent">Taşkent</option>
+                        <option value="tuzlukçu">Tuzlukçu</option>
+                        <option value="yalıhüyük">Yalıhüyük</option>
+                        <option value="yunak">Yunak</option>
+                    </select>
+                    <select class="input-field" id="property-type-select">
+                        <option value="">Emlak Tipi</option>
+                        <option value="daire">Daire</option>
+                        <option value="villa">Villa</option>
+                        <option value="residence">Residence</option>
+                        <option value="is-yeri">İş Yeri</option>
+                        <option value="arsa">Arsa</option>
+                        <option value="bahçeli-ev">Bahçeli Ev</option>
+                        <option value="müstakil-ev">Müstakil Ev</option>
+                        <option value="yazlık">Yazlık</option>
+                    </select>
+                    <select class="input-field" id="price-range-select">
+                        <option value="">Fiyat Aralığı</option>
+                        <option value="0-500000">500.000 ₺'ye kadar</option>
+                        <option value="500000-1000000">500.000 - 1.000.000 ₺</option>
+                        <option value="1000000-2000000">1.000.000 - 2.000.000 ₺</option>
+                        <option value="2000000-3000000">2.000.000 - 3.000.000 ₺</option>
+                        <option value="3000000-5000000">3.000.000 - 5.000.000 ₺</option>
+                        <option value="5000000+">5.000.000 ₺ üzeri</option>
+                    </select>
+                    <button class="search-btn" id="search-properties">
+                        <i class="fas fa-search"></i>
+                        Ara
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="hero-bg"></div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="services">
+        <div class="container">
+            <div class="section-header">
+                <h2>Hizmetlerimiz</h2>
+                <p>Konya'da emlak alanında köklü tecrübemizle tüm ihtiyaçlarınız için yanınızdayız</p>
+            </div>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-home"></i>
+                    </div>
+                    <h3>Konut Satış</h3>
+                    <p>Konya'nın en prestijli semtlerinde hayalinizdeki evi bulmanız için geniş portföyümüz ile hizmetinizdeyiz.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-key"></i>
+                    </div>
+                    <h3>Konut Kiralama</h3>
+                    <p>Meram, Selçuklu ve Karatay'da ihtiyacınıza uygun kiralık konutları en uygun fiyatlarla sunuyoruz.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <h3>Ticari Emlak</h3>
+                    <p>İş yeriniz için Konya'nın merkezi lokasyonlarında ideal noktaları profesyonel danışmanlık ile sunuyoruz.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Yatırım Danışmanlığı</h3>
+                    <p>Konya emlak piyasasındaki uzun yıllara dayanan tecrübemizle yatırımlarınızda doğru kararlar almanız için uzman desteği.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Properties -->
+    <section class="featured-properties">
+        <div class="container">
+            <div class="section-header">
+                <h2>Öne Çıkan İlanlar</h2>
+                <p>Konya'nın en prestijli semtlerinden seçilmiş özel emlak ilanlarımız</p>
+            </div>
+            <div class="properties-grid">
+                <div class="property-card">
+                    <div class="property-image">
+                        <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400&h=300&fit=crop" alt="Modern Villa">
+                        <div class="property-badge">Satılık</div>
+                        <div class="property-favorite">
+                            <i class="far fa-heart"></i>
+                        </div>
+                    </div>
+                    <div class="property-content">
+                        <div class="property-price">₺1.950.000</div>
+                        <h3 class="property-title">Lüks Villa - Yazır Mahallesi</h3>
+                        <p class="property-location"><i class="fas fa-map-marker-alt"></i> Meram, Konya</p>
+                        <div class="property-features">
+                            <span><i class="fas fa-bed"></i> 4+1</span>
+                            <span><i class="fas fa-bath"></i> 3</span>
+                            <span><i class="fas fa-expand-arrows-alt"></i> 250 m²</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="property-card">
+                    <div class="property-image">
+                        <img src="https://images.unsplash.com/photo-1560184897-ae75f418493e?w=400&h=300&fit=crop" alt="Şık Daire">
+                        <div class="property-badge">Kiralık</div>
+                        <div class="property-favorite">
+                            <i class="far fa-heart"></i>
+                        </div>
+                    </div>
+                    <div class="property-content">
+                        <div class="property-price">₺8.500 / ay</div>
+                        <h3 class="property-title">Modern Daire - Akyokuş</h3>
+                        <p class="property-location"><i class="fas fa-map-marker-alt"></i> Selçuklu, Konya</p>
+                        <div class="property-features">
+                            <span><i class="fas fa-bed"></i> 2+1</span>
+                            <span><i class="fas fa-bath"></i> 2</span>
+                            <span><i class="fas fa-expand-arrows-alt"></i> 120 m²</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="property-card">
+                    <div class="property-image">
+                        <div class="property-badge">Satılık</div>
+                        <div class="property-favorite">
+                            <i class="far fa-heart"></i>
+                        </div>
+                    </div>
+                    <div class="property-content">
+                        <div class="property-price">₺2.750.000</div>
+                        <h3 class="property-title">Bahçeli Villa - Sancak</h3>
+                        <p class="property-location"><i class="fas fa-map-marker-alt"></i> Meram, Konya</p>
+                        <div class="property-features">
+                            <span><i class="fas fa-bed"></i> 5+2</span>
+                            <span><i class="fas fa-bath"></i> 4</span>
+                            <span><i class="fas fa-expand-arrows-alt"></i> 350 m²</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="property-card">
+                    <div class="property-image">
+                        <div class="property-badge">Kiralık</div>
+                        <div class="property-favorite">
+                            <i class="far fa-heart"></i>
+                        </div>
+                    </div>
+                    <div class="property-content">
+                        <div class="property-price">₺12.000 / ay</div>
+                        <h3 class="property-title">Residence Daire - Bosna Hersek</h3>
+                        <p class="property-location"><i class="fas fa-map-marker-alt"></i> Selçuklu, Konya</p>
+                        <div class="property-features">
+                            <span><i class="fas fa-bed"></i> 3+1</span>
+                            <span><i class="fas fa-bath"></i> 3</span>
+                            <span><i class="fas fa-expand-arrows-alt"></i> 180 m²</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="view-all-btn">
+                <a href="ilanlar.html" class="btn-primary">Tüm İlanları Görüntüle</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Express Konut Section -->
+    <section style="padding: 6rem 0; background: linear-gradient(135deg, var(--dark-color) 0%, #2d2d2d 100%); color: var(--white);">
+        <div class="container">
+            <div class="section-header">
+                <h2 style="color: var(--white);">Express Konut Projesi</h2>
+                <p style="color: var(--light-color);">Konya'da Ev Sahibi Olmanın En Kolay ve Güvenli Yolu!</p>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; margin-top: 3rem;">
+                <div>
+                    <h3 style="color: var(--primary-color); font-size: 2rem; margin-bottom: 2rem;">Neden Express Konut?</h3>
+                    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            <div style="width: 60px; height: 60px; background: var(--primary-color); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-percent" style="font-size: 1.5rem; color: var(--white);"></i>
+                            </div>
+                            <div>
+                                <h4 style="color: var(--primary-color); margin-bottom: 0.5rem;">Faiz Yok, Kredi Yok</h4>
+                                <p>Kira öder gibi ev sahibi olun</p>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            <div style="width: 60px; height: 60px; background: var(--primary-color); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-coins" style="font-size: 1.5rem; color: var(--white);"></i>
+                            </div>
+                            <div>
+                                <h4 style="color: var(--primary-color); margin-bottom: 0.5rem;">Düşük Peşinat</h4>
+                                <p>1.000.000 - 1.500.000 ₺ arası</p>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            <div style="width: 60px; height: 60px; background: var(--primary-color); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-calendar-alt" style="font-size: 1.5rem; color: var(--white);"></i>
+                            </div>
+                            <div>
+                                <h4 style="color: var(--primary-color); margin-bottom: 0.5rem;">Sabit Taksitler</h4>
+                                <p>Her ay aynı miktar ödeme</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div style="background: rgba(255,255,255,0.1); padding: 2rem; border-radius: 20px; backdrop-filter: blur(10px); text-align: center;">
+                    <h3 style="color: var(--primary-color); margin-bottom: 2rem;">6 Farklı Ödeme Planı</h3>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem;">
+                        <div style="background: var(--primary-color); padding: 1rem; border-radius: 10px; color: var(--white);">
+                            <div style="font-size: 1.5rem; font-weight: 700;">Plan 1</div>
+                            <div style="font-size: 0.9rem;">44.000₺/ay</div>
+                        </div>
+                        <div style="background: var(--primary-color); padding: 1rem; border-radius: 10px; color: var(--white);">
+                            <div style="font-size: 1.5rem; font-weight: 700;">Plan 2</div>
+                            <div style="font-size: 0.9rem;">66.000₺/ay</div>
+                        </div>
+                        <div style="background: var(--primary-color); padding: 1rem; border-radius: 10px; color: var(--white);">
+                            <div style="font-size: 1.5rem; font-weight: 700;">Plan 3</div>
+                            <div style="font-size: 0.9rem;">33.000₺/ay</div>
+                        </div>
+                        <div style="background: var(--primary-color); padding: 1rem; border-radius: 10px; color: var(--white);">
+                            <div style="font-size: 1.5rem; font-weight: 700;">Plan 4</div>
+                            <div style="font-size: 0.9rem;">88.000₺/ay</div>
+                        </div>
+                        <div style="background: var(--primary-color); padding: 1rem; border-radius: 10px; color: var(--white);">
+                            <div style="font-size: 1.5rem; font-weight: 700;">Plan 5</div>
+                            <div style="font-size: 0.9rem;">33.000₺/ay</div>
+                        </div>
+                        <div style="background: var(--primary-color); padding: 1rem; border-radius: 10px; color: var(--white);">
+                            <div style="font-size: 1.5rem; font-weight: 700;">Plan 6</div>
+                            <div style="font-size: 0.9rem;">22.000₺/ay</div>
+                        </div>
+                    </div>
+                    <a href="express-konut.html" style="background: var(--primary-color); color: var(--white); padding: 1rem 2rem; border-radius: 50px; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 0.5rem; transition: var(--transition);">
+                        <i class="fas fa-arrow-right"></i>
+                        Detaylı Bilgi Al
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number">250+</div>
+                    <div class="stat-label">Aktif İlan</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">500+</div>
+                    <div class="stat-label">Mutlu Müşteri</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">15+</div>
+                    <div class="stat-label">Yıllık Tecrübe</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">98%</div>
+                    <div class="stat-label">Müşteri Memnuniyeti</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <img src="images/logo.png" alt="Express Emlak" class="footer-logo-img">
+                    </div>
+                    <p>Konya'da köklü tecrübemizle güvenilir emlak hizmetleri sunuyoruz. Hayalinizdeki evi bulmanızda yanınızdayız.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h3>Hızlı Bağlantılar</h3>
+                    <ul>
+                        <li><a href="index.html">Ana Sayfa</a></li>
+                        <li><a href="ilanlar.html">İlanlar</a></li>
+                        <li><a href="#">Satılık</a></li>
+                        <li><a href="#">Kiralık</a></li>
+                        <li><a href="#">Hakkımızda</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Emlak Türleri</h3>
+                    <ul>
+                        <li><a href="#">Daire</a></li>
+                        <li><a href="#">Villa</a></li>
+                        <li><a href="#">Residence</a></li>
+                        <li><a href="#">İş Yeri</a></li>
+                        <li><a href="#">Arsa</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>İletişim</h3>
+                    <div class="contact-info">
+                        <p><i class="fas fa-phone"></i> +90 212 123 45 67</p>
+                        <p><i class="fas fa-envelope"></i> info@expressemlak.com</p>
+                        <p><i class="fas fa-map-marker-alt"></i> Aymanas, Alparslan Türkeş Caddesi No:6/D, 42010 Meram/Konya</p>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Express Emlak. Tüm hakları saklıdır.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Express Konut Projesi - Express Emlak</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .project-header {
+            background: linear-gradient(135deg, var(--dark-color) 0%, #2d2d2d 100%);
+            padding: 120px 0 60px;
+            text-align: center;
+            color: var(--white);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1920&h=1080&fit=crop') center/cover;
+            opacity: 0.1;
+            z-index: 0;
+        }
+
+        .project-title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .project-subtitle {
+            font-size: 1.3rem;
+            color: var(--primary-color);
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-feature {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1.5rem;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .hero-feature i {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .benefits-section {
+            padding: 6rem 0;
+            background: var(--light-color);
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .benefit-card {
+            background: var(--white);
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .benefit-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(135deg, var(--primary-color), #f4c15d);
+        }
+
+        .benefit-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .benefit-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary-color), #f4c15d);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2rem;
+            color: var(--white);
+        }
+
+        .payment-plans {
+            padding: 6rem 0;
+            background: var(--white);
+        }
+
+        .plans-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .plan-card {
+            background: var(--white);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .plan-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+
+        .plan-header {
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .plan-header.featured {
+            background: linear-gradient(135deg, var(--primary-color), #f4c15d);
+            color: var(--white);
+        }
+
+        .plan-header:not(.featured) {
+            background: var(--dark-color);
+            color: var(--white);
+        }
+
+        .plan-number {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .plan-price {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .plan-body {
+            padding: 2rem;
+        }
+
+        .plan-feature {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .plan-feature:last-child {
+            border-bottom: none;
+        }
+
+        .plan-label {
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .plan-value {
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .how-it-works {
+            padding: 6rem 0;
+            background: var(--dark-color);
+            color: var(--white);
+        }
+
+        .steps-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+            margin-top: 3rem;
+        }
+
+        .step-card {
+            text-align: center;
+            position: relative;
+        }
+
+        .step-number {
+            width: 80px;
+            height: 80px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--white);
+            margin: 0 auto 1.5rem;
+        }
+
+        .step-card h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .calculator-section {
+            padding: 6rem 0;
+            background: var(--light-color);
+        }
+
+        .calculator-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--white);
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .calc-input-group {
+            margin-bottom: 2rem;
+        }
+
+        .calc-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .calc-input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 1.1rem;
+            transition: var(--transition);
+        }
+
+        .calc-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .calc-result {
+            background: linear-gradient(135deg, var(--primary-color), #f4c15d);
+            color: var(--white);
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .calc-result h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .calc-result .amount {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .testimonials {
+            padding: 6rem 0;
+            background: var(--white);
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .testimonial-card {
+            background: var(--light-color);
+            padding: 2rem;
+            border-radius: 15px;
+            position: relative;
+        }
+
+        .testimonial-card::before {
+            content: '"';
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            font-size: 4rem;
+            color: var(--primary-color);
+            font-weight: 800;
+        }
+
+        .testimonial-text {
+            font-style: italic;
+            margin-bottom: 1.5rem;
+            color: var(--gray);
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .author-avatar {
+            width: 50px;
+            height: 50px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-weight: 700;
+        }
+
+        .contact-cta {
+            padding: 6rem 0;
+            background: linear-gradient(135deg, var(--dark-color) 0%, #2d2d2d 100%);
+            color: var(--white);
+            text-align: center;
+        }
+
+        .cta-content {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-cta {
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-cta.primary {
+            background: var(--primary-color);
+            color: var(--white);
+        }
+
+        .btn-cta.secondary {
+            background: transparent;
+            color: var(--white);
+            border: 2px solid var(--white);
+        }
+
+        .btn-cta:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-cta.primary:hover {
+            background: #d4941f;
+        }
+
+        .btn-cta.secondary:hover {
+            background: var(--white);
+            color: var(--dark-color);
+        }
+
+        @media (max-width: 768px) {
+            .project-title {
+                font-size: 2.5rem;
+            }
+
+            .hero-features {
+                grid-template-columns: 1fr;
+            }
+
+            .plans-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .steps-container {
+                grid-template-columns: 1fr;
+            }
+
+            .calculator-container {
+                padding: 2rem;
+                margin: 0 1rem;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="nav-wrapper">
+                <div class="logo">
+                    <img src="images/logo.png" alt="Express Emlak" class="logo-img">
+                </div>
+                <nav class="nav">
+                    <a href="index.html" class="nav-link">Ana Sayfa</a>
+                    <a href="ilanlar.html" class="nav-link">İlanlar</a>
+                    <a href="express-konut.html" class="nav-link active">Express Konut</a>
+                    <a href="satilik.html" class="nav-link">Satılık</a>
+                    <a href="kiralik.html" class="nav-link">Kiralık</a>
+                    <a href="iletisim.html" class="nav-link">İletişim</a>
+                </nav>
+                <div class="mobile-menu-btn">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Project Header -->
+    <section class="project-header">
+        <div class="container">
+            <h1 class="project-title">Express Konut Projesi</h1>
+            <p class="project-subtitle">Ev Sahibi Olmanın En Kolay Yolu!</p>
+
+            
+            <div class="hero-features">
+                <div class="hero-feature">
+                    <i class="fas fa-hand-holding-usd"></i>
+                    <h3>Düşük Peşinat</h3>
+                    <p>1.000.000 - 1.500.000 ₺</p>
+                </div>
+                <div class="hero-feature">
+                    <i class="fas fa-calendar-alt"></i>
+                    <h3>Sabit Taksitler</h3>
+                    <p>Her ay sabit ödeme</p>
+                </div>
+                <div class="hero-feature">
+                    <i class="fas fa-key"></i>
+                    <h3>1 Yılda Teslim</h3>
+                    <p>Anahtar teslim garantisi</p>
+                </div>
+                <div class="hero-feature">
+                    <i class="fas fa-shield-alt"></i>
+                    <h3>Güvenli Sistem</h3>
+                    <p>Banka kredisi gerektirmez</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section class="benefits-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Neden Express Konut Sistemi?</h2>
+                <p>Geleneksel ev alma yöntemlerinden farklı, yenilikçi finansman modelimiz</p>
+            </div>
+            
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="fas fa-percent"></i>
+                    </div>
+                    <h3>Faiz Yok, Kredi Yok</h3>
+                    <p>Express Emlak'ın yeni sistemi ile kira öder gibi ev sahibi olabilirsiniz. Banka kredisi ile uğraşmadan!</p>
+                </div>
+                
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="fas fa-coins"></i>
+                    </div>
+                    <h3>Küçük Peşinat</h3>
+                    <p>Sadece küçük bir peşinat ve sabit ödemelerle hayalinizdeki eve kavuşun. Ara ödeme yok!</p>
+                </div>
+                
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="fas fa-home"></i>
+                    </div>
+                    <h3>Kolayca Ev Sahibi</h3>
+                    <p>Banka kredisiyle uğraşmadan, kolayca ev sahibi olun. Süreç basit ve hızlı!</p>
+                </div>
+                
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3>Hızlı Süreç</h3>
+                    <p>Geleneksel kredi süreçlerinin aksine, çok daha hızlı işlem süresi ve onay.</p>
+                </div>
+                
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="fas fa-calculator"></i>
+                    </div>
+                    <h3>Sabit Taksit</h3>
+                    <p>Her ay aynı miktarı ödeyerek evinizi planlayabilirsiniz. Sürpriz yok!</p>
+                </div>
+                
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="fas fa-award"></i>
+                    </div>
+                    <h3>1 Yıl Garantisi</h3>
+                    <p>Kira yerine kendi evinizin ödemesini yapın ve 1 yılda anahtar teslim.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Payment Plans -->
+    <section class="payment-plans">
+        <div class="container">
+            <div class="section-header">
+                <h2>Konut Ödeme Planları</h2>
+                <p>Size en uygun ödeme planını seçin ve ev sahibi olun</p>
+            </div>
+            
+            <div class="plans-grid">
+                <!-- Plan 1 -->
+                <div class="plan-card">
+                    <div class="plan-header">
+                        <div class="plan-number">1</div>
+                        <div class="plan-price">1.250.000₺</div>
+                        <p>peşinat</p>
+                    </div>
+                    <div class="plan-body">
+                        <div class="plan-feature">
+                            <span class="plan-label">Asgari Ücret</span>
+                            <span class="plan-value">2 asgari ücret</span>
+                        </div>
+                        <div class="plan-feature">
+                            <span class="plan-label">Aylık Ödeme</span>
+                            <span class="plan-value">44.000₺</span>
+                        </div>
+                        <div class="plan-feature">
+                            <span class="plan-label">Ödeme Süresi</span>
+                            <span class="plan-value">48 ay</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Plan 2 -->
+                <div class="plan-card">
+                    <div class="plan-header">
+                        <div class="plan-number">2</div>
+                        <div class="plan-price">1.250.000₺</div>
+                        <p>peşinat</p>
+                    </div>
+                    <div class="plan-body">
+                        <div class="plan-feature">
+                            <span class="plan-label">Asgari Ücret</span>
+                            <span class="plan-value">3 asgari ücret</span>
+                        </div>
+                        <div class="plan-feature">
+                            <span class="plan-label">Aylık Ödeme</span>
+                            <span class="plan-value">66.000₺</span>
+                        </div>
+                        <div class="plan-feature">
+                            <span class="plan-label">Ödeme Süresi</span>
+                            <span class="plan-value">30 ay</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Plan 3 - Featured -->
+                <div class="plan-card">
+                    <div class="plan-header featured">
+                        <div class="plan-number">3</div>
+                        <div class="plan-price">1.500.000₺</div>
+                        <p>peşinat</p>
+                    </div>
+                    <div class="plan-body">
+                        <div class="plan-feature">
+                            <span class="plan-label">Asgari Ücret</span>
+                            <span class="plan-value">1.5 asgari ücret</span>
+                        </div>
+                        <div class="plan-feature">
+                            <span class="plan-label">Aylık Ödeme</span>
+                            <span class="plan-value">33.000₺</span>
+                        </div>
+                        <div class="plan-feature">
+                            <span class="plan-label">Ödeme Süresi</span>
+                            <span class="plan-value">48 ay</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Plan 4 - Featured -->
+                <div class="plan-card">
+                    <div class="plan-header featured">
+                        <div class="plan-number">4</div>
+                        <div class="plan-price">1.000.000₺</div>
+                        <p>peşinat</p>
+                    </div>
+                    <div class="plan-body">
+                        <div class="plan-feature">
+                            <span class="plan-label">Asgari Ücret</span>
+                            <span class="plan-value">4 asgari ücret</span>
+                        </div>
+                        <div class="plan-feature">
+                            <span class="plan-label">Aylık Ödeme</span>
+                            <span class="plan-value">88.000₺</span>
+                        </div>
+                        <div class="plan-feature">
+                            <span class="plan-label">Ödeme Süresi</span>
+                            <span class="plan-value">24 ay</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Plan 5 -->
+                <div class="plan-card">
+                    <div class="plan-header">
+                        <div class="plan-number">5</div>
+                        <div class="plan-price">1.850.000₺</div>
+                        <p>peşinat</p>
+                    </div>
+                    <div class="plan-body">
+                        <div class="plan-feature">
+                            <span class="plan-label">Asgari Ücret</span>
+                            <span class="plan-value">1.5 asgari ücret</span>
+                        </div>
+                        <div class="plan-feature">
+                            <span class="plan-label">Aylık Ödeme</span>
+                            <span class="plan-value">33.000₺</span>
+                        </div>
+                        <div class="plan-feature">
+                            <span class="plan-label">Ödeme Süresi</span>
+                            <span class="plan-value">36 ay</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Plan 6 -->
+                <div class="plan-card">
+                    <div class="plan-header">
+                        <div class="plan-number">6</div>
+                        <div class="plan-price">2.000.000₺</div>
+                        <p>peşinat</p>
+                    </div>
+                    <div class="plan-body">
+                        <div class="plan-feature">
+                            <span class="plan-label">Asgari Ücret</span>
+                            <span class="plan-value">1 asgari ücret</span>
+                        </div>
+                        <div class="plan-feature">
+                            <span class="plan-label">Aylık Ödeme</span>
+                            <span class="plan-value">22.000₺</span>
+                        </div>
+                        <div class="plan-feature">
+                            <span class="plan-label">Ödeme Süresi</span>
+                            <span class="plan-value">48 ay</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-it-works">
+        <div class="container">
+            <div class="section-header">
+                <h2>Nasıl Çalışır?</h2>
+                <p>Express Konut sisteminin işleyişi 4 basit adımda</p>
+            </div>
+            
+            <div class="steps-container">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <h3>Plan Seçimi</h3>
+                    <p>Size uygun ödeme planını seçin ve başvurunuzu yapın. Gelir durumunuza göre en uygun planı belirleyin.</p>
+                </div>
+                
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <h3>Değerlendirme</h3>
+                    <p>Başvurunuz hızlı bir şekilde değerlendirilir. Belge kontrolü ve onay süreci 48 saat içinde tamamlanır.</p>
+                </div>
+                
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <h3>Sözleşme</h3>
+                    <p>Onay sonrası sözleşmenizi imzalayın ve peşinatınızı ödeyin. Süreç tamamen şeffaf ve güvenlidir.</p>
+                </div>
+                
+                <div class="step-card">
+                    <div class="step-number">4</div>
+                    <h3>Ev Sahibi Olun</h3>
+                    <p>Aylık ödemelerinizi yapın ve belirlenen sürede evinizin anahtarını teslim alın!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Payment Calculator -->
+    <section class="calculator-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Ödeme Hesaplayıcı</h2>
+                <p>Gelir durumunuza göre ödeme planınızı hesaplayın</p>
+            </div>
+            
+            <div class="calculator-container">
+                <div class="calc-input-group">
+                    <label class="calc-label">Aylık Geliriniz (₺)</label>
+                    <input type="number" class="calc-input" id="monthlyIncome" placeholder="Aylık gelirinizi girin">
+                </div>
+                
+                <div class="calc-input-group">
+                    <label class="calc-label">Peşinat Tutarı (₺)</label>
+                    <select class="calc-input" id="downPayment">
+                        <option value="1000000">1.000.000 ₺</option>
+                        <option value="1250000">1.250.000 ₺</option>
+                        <option value="1500000">1.500.000 ₺</option>
+                        <option value="1850000">1.850.000 ₺</option>
+                        <option value="2000000">2.000.000 ₺</option>
+                    </select>
+                </div>
+                
+                <button class="btn-primary" onclick="calculatePayment()">
+                    <i class="fas fa-calculator"></i>
+                    Hesapla
+                </button>
+                
+                <div class="calc-result" id="calcResult" style="display: none;">
+                    <h3>Önerilen Plan</h3>
+                    <div class="amount" id="resultAmount">0 ₺</div>
+                    <p id="resultDetails">Aylık ödeme tutarınız</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="testimonials">
+        <div class="container">
+            <div class="section-header">
+                <h2>Müşteri Yorumları</h2>
+                <p>Express Konut sistemi ile ev sahibi olan müşterilerimizin deneyimleri</p>
+            </div>
+            
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <p class="testimonial-text">
+                        Express Konut sistemi sayesinde banka kredisi çıkmayan ben bile ev sahibi olabildim. 
+                        Çok kolay ve hızlı bir süreçti. Kesinlikle tavsiye ederim!
+                    </p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">MK</div>
+                        <div>
+                            <strong>Mehmet Kaya</strong>
+                            <p>Meram</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card">
+                    <p class="testimonial-text">
+                        Kira öder gibi ödeme yapıyorum ama artık kendi evimde oturuyorum. 
+                        Bu sistem gerçekten devrim niteliğinde!
+                    </p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">AY</div>
+                        <div>
+                            <strong>Ayşe Yılmaz</strong>
+                            <p>Selçuklu</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card">
+                    <p class="testimonial-text">
+                        Düşük peşinatla ev sahibi olmak mümkünmüş! Express Emlak ekibine çok teşekkür ederim. 
+                        Süreç boyunca her adımda yanımda oldular.
+                    </p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">FT</div>
+                        <div>
+                            <strong>Fatma Tekin</strong>
+                            <p>Karatay</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact CTA -->
+    <section class="contact-cta">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Hayalinizdeki Eve Kavuşmaya Hazır mısınız?</h2>
+                <p>Express Konut sistemi hakkında detaylı bilgi almak ve başvurunuzu yapmak için bizimle iletişime geçin.</p>
+                
+                <div class="cta-buttons">
+                    <a href="iletisim.html" class="btn-cta primary">
+                        <i class="fas fa-phone"></i>
+                        Hemen Ara
+                    </a>
+                    <a href="iletisim.html" class="btn-cta secondary">
+                        <i class="fas fa-envelope"></i>
+                        Bilgi Al
+                    </a>
+                    <a href="#" class="btn-cta primary">
+                        <i class="fab fa-whatsapp"></i>
+                        WhatsApp
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <img src="images/logo.png" alt="Express Emlak" class="footer-logo-img">
+                    </div>
+                    <p>Güvenilir emlak hizmetleri ile hayalinizdeki evi bulmanızda yanınızdayız.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h3>Hızlı Bağlantılar</h3>
+                    <ul>
+                        <li><a href="index.html">Ana Sayfa</a></li>
+                        <li><a href="ilanlar.html">İlanlar</a></li>
+                        <li><a href="express-konut.html">Express Konut</a></li>
+                        <li><a href="#">Satılık</a></li>
+                        <li><a href="#">Kiralık</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Express Konut</h3>
+                    <ul>
+                        <li><a href="#payment-plans">Ödeme Planları</a></li>
+                        <li><a href="#calculator">Hesaplayıcı</a></li>
+                        <li><a href="#benefits">Avantajlar</a></li>
+                        <li><a href="#how-it-works">Nasıl Çalışır</a></li>
+                        <li><a href="iletisim.html">Başvuru</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>İletişim</h3>
+                    <div class="contact-info">
+                        <p><i class="fas fa-phone"></i> +90 535 060 82 83</p>
+                        <p><i class="fas fa-phone"></i> +90 544 471 22 73</p>
+                        <p><i class="fas fa-envelope"></i> info@expressemlak.com</p>
+                        <p><i class="fas fa-map-marker-alt"></i> Aymanas, Alparslan Türkeş Caddesi No:6/D, 42010 Meram/Konya</p>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Express Emlak. Tüm hakları saklıdır.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        // Payment Calculator
+        function calculatePayment() {
+            const income = document.getElementById('monthlyIncome').value;
+            const downPayment = document.getElementById('downPayment').value;
+            const resultDiv = document.getElementById('calcResult');
+            const amountDiv = document.getElementById('resultAmount');
+            const detailsDiv = document.getElementById('resultDetails');
+            
+            if (!income || income <= 0) {
+                alert('Lütfen geçerli bir gelir tutarı girin.');
+                return;
+            }
+            
+            // Payment calculation logic based on income and down payment
+            let monthlyPayment;
+            let period;
+            let plan;
+            
+            if (downPayment == 1000000) {
+                monthlyPayment = 88000;
+                period = 24;
+                plan = "Plan 4";
+            } else if (downPayment == 1250000) {
+                if (income >= 66000) {
+                    monthlyPayment = 66000;
+                    period = 30;
+                    plan = "Plan 2";
+                } else {
+                    monthlyPayment = 44000;
+                    period = 48;
+                    plan = "Plan 1";
+                }
+            } else if (downPayment == 1500000) {
+                monthlyPayment = 33000;
+                period = 48;
+                plan = "Plan 3";
+            } else if (downPayment == 1850000) {
+                monthlyPayment = 33000;
+                period = 36;
+                plan = "Plan 5";
+            } else if (downPayment == 2000000) {
+                monthlyPayment = 22000;
+                period = 48;
+                plan = "Plan 6";
+            }
+            
+            // Check if income is sufficient
+            if (income < monthlyPayment) {
+                amountDiv.textContent = "Yetersiz Gelir";
+                detailsDiv.textContent = `Bu plan için minimum ${monthlyPayment.toLocaleString()} ₺ gelir gereklidir.`;
+                resultDiv.style.background = "linear-gradient(135deg, #dc3545, #c82333)";
+            } else {
+                amountDiv.textContent = `${monthlyPayment.toLocaleString()} ₺`;
+                detailsDiv.textContent = `${plan} - ${period} ay ödeme`;
+                resultDiv.style.background = "linear-gradient(135deg, var(--primary-color), #f4c15d)";
+            }
+            
+            resultDiv.style.display = 'block';
+        }
+        
+        // Add smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
