@@ -373,10 +373,17 @@ document.addEventListener('DOMContentLoaded', () => {
     initLazyLoading();
     initSearchFilters();
     
-    // Show welcome message
-    setTimeout(() => {
-        showNotification('Express Emlak\'a hoş geldiniz! 🏠', 'success');
-    }, 1000);
+    // Sadece anasayfada ve ilk girişte göster
+    const path = window.location.pathname;
+    const isHome = path.endsWith('/') || /(^|\/)index\.html$/.test(path);
+    const welcomeShown = localStorage.getItem('welcome_shown') === '1';
+
+    if (isHome && !welcomeShown) {
+      setTimeout(() => {
+        showNotification("Express Emlak'a hoş geldiniz! 🏠", 'success');
+        localStorage.setItem('welcome_shown', '1');
+      }, 1000);
+    }
 });
 
 // Handle window resize
