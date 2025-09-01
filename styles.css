@@ -574,6 +574,31 @@ body {
     color: var(--white);
 }
 
+.plan-value {
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.how-it-works {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.how-it-works h4 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--dark-color);
+    margin-bottom: 0.5rem;
+}
+
+.how-it-works p {
+    color: var(--gray);
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
 /* Stats Section */
 .stats {
     background: var(--dark-color);
@@ -849,6 +874,11 @@ body {
         min-height: 240px;
     }
 }
+
+/* Ensure plan-value color is gold */
+/* .plan-value {
+    color: var(--primary-color) !important;
+} */
 
 /* Animation Classes */
 .fade-in {
@@ -1171,4 +1201,14 @@ body {
 
 .listing-card .listing-badge {
     background: linear-gradient(135deg, #E5A946, #d4941f) !important;
+}
+
+/* Specific rule for plan prices within plan cards */
+.plan-card .plan-price {
+    color: var(--primary-color) !important;
+}
+
+/* Specific rule for plan values within plan cards */
+.plan-card .plan-value {
+    color: var(--primary-color) !important;
 }
