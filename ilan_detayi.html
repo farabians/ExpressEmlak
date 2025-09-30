@@ -394,9 +394,18 @@
         const urlParams = new URLSearchParams(window.location.search);
         const propertyId = urlParams.get('id');
 
+        // ID yoksa ana sayfaya yönlendir
+        if (!propertyId) {
+            window.location.href = 'ilanlar.html';
+            return;
+        }
+
         // İlan detaylarını yükle
         async function loadPropertyDetails() {
             try {
+                // Yükleniyor durumunu göster
+                document.getElementById('propertyTitle').textContent = 'Yükleniyor...';
+                
                 const docRef = doc(db, "ilanlar", propertyId);
                 const docSnap = await getDoc(docRef);
                 
@@ -405,10 +414,7 @@
                     
                     // Temel bilgileri doldur
                     document.getElementById('propertyTitle').textContent = property.isim;
-                                        document.getElementById('propertyPrice').textContent = new Intl.NumberFormat('tr-TR', {
-                        style: 'currency',
-                        currency: 'TRY'
-                    }).format(property.fiyat);
+                    document.getElementById('propertyPrice').textContent = '₺' + new Intl.NumberFormat('tr-TR').format(property.fiyat);
                     document.getElementById('propertySize').textContent = property.metrekare + ' m²';
                     document.getElementById('propertyRooms').textContent = property.odaSayisi;
                     document.getElementById('propertyAge').textContent = property.binaYasi + ' yıl';
