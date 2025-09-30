@@ -390,9 +390,12 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // URL'den ilan ID'sini al
+        // URL'den ilan ID'sini al ve konsola yazdır
         const urlParams = new URLSearchParams(window.location.search);
         const propertyId = urlParams.get('id');
+        console.log('Firebase başlatıldı');
+        console.log('Firestore DB:', db);
+        console.log('Property ID:', propertyId);
 
         // ID yoksa ana sayfaya yönlendir
         if (!propertyId) {
@@ -406,10 +409,20 @@
                 // Yükleniyor durumunu göster
                 document.getElementById('propertyTitle').textContent = 'Yükleniyor...';
                 
-                console.log("Aranan ilan ID'si:", propertyId);
+                if (!propertyId) {
+                    throw new Error('İlan ID bulunamadı');
+                }
+
+                console.log('İlan detayları yükleniyor...');
+                console.log('İlan ID:', propertyId);
+                
                 const docRef = doc(db, "ilanlar", propertyId);
-                console.log("Firestore koleksiyon yolu:", docRef.path);
-                const docSnap = await getDoc(docRef);
+                console.log('Doküman referansı:', docRef);
+                
+                const docSnap = await getDoc(docRef).catch(err => {
+                    console.error('Firestore getDoc hatası:', err);
+                    throw err;
+                });
                 
                 if (docSnap.exists()) {
                     const property = docSnap.data();
