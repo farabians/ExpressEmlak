@@ -405,7 +405,7 @@
                     
                     // Temel bilgileri doldur
                     document.getElementById('propertyTitle').textContent = property.isim;
-                    document.getElementById('propertyPrice').textContent = Number(document.getElementById("fiyat").value)
+                    document.getElementById('propertyPrice').textContent = '₺' + new Intl.NumberFormat('tr-TR').format(property.fiyat);
                     document.getElementById('propertySize').textContent = property.metrekare + ' m²';
                     document.getElementById('propertyRooms').textContent = property.odaSayisi;
                     document.getElementById('propertyAge').textContent = property.binaYasi + ' yıl';
