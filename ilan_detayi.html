@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>İlan Detayı - Express Emlak</title>
-    <link rel="icon" type="image/png" href="images/favicon.png">
     <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -390,46 +389,25 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // URL'den ilan ID'sini al ve konsola yazdır
+        // URL'den ilan ID'sini al
         const urlParams = new URLSearchParams(window.location.search);
         const propertyId = urlParams.get('id');
-        console.log('Firebase başlatıldı');
-        console.log('Firestore DB:', db);
-        console.log('Property ID:', propertyId);
-
-        // ID yoksa ana sayfaya yönlendir
-        if (!propertyId) {
-            window.location.href = 'ilanlar.html';
-            return;
-        }
 
         // İlan detaylarını yükle
         async function loadPropertyDetails() {
             try {
-                // Yükleniyor durumunu göster
-                document.getElementById('propertyTitle').textContent = 'Yükleniyor...';
-                
-                if (!propertyId) {
-                    throw new Error('İlan ID bulunamadı');
-                }
-
-                console.log('İlan detayları yükleniyor...');
-                console.log('İlan ID:', propertyId);
-                
                 const docRef = doc(db, "ilanlar", propertyId);
-                console.log('Doküman referansı:', docRef);
-                
-                const docSnap = await getDoc(docRef).catch(err => {
-                    console.error('Firestore getDoc hatası:', err);
-                    throw err;
-                });
+                const docSnap = await getDoc(docRef);
                 
                 if (docSnap.exists()) {
                     const property = docSnap.data();
                     
                     // Temel bilgileri doldur
                     document.getElementById('propertyTitle').textContent = property.isim;
-                    document.getElementById('propertyPrice').textContent = '₺' + new Intl.NumberFormat('tr-TR').format(property.fiyat);
+                    document.getElementById('propertyPrice').textContent = new Intl.NumberFormat('tr-TR', {
+                        style: 'currency',
+                        currency: 'TRY'
+                    }).format(property.fiyat);
                     document.getElementById('propertySize').textContent = property.metrekare + ' m²';
                     document.getElementById('propertyRooms').textContent = property.odaSayisi;
                     document.getElementById('propertyAge').textContent = property.binaYasi + ' yıl';
