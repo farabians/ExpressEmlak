@@ -406,7 +406,9 @@
                 // Yükleniyor durumunu göster
                 document.getElementById('propertyTitle').textContent = 'Yükleniyor...';
                 
+                console.log("Aranan ilan ID'si:", propertyId);
                 const docRef = doc(db, "ilanlar", propertyId);
+                console.log("Firestore koleksiyon yolu:", docRef.path);
                 const docSnap = await getDoc(docRef);
                 
                 if (docSnap.exists()) {
