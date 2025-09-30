@@ -419,7 +419,78 @@
     </footer>
 
     <script src="script.js"></script>
-    <script>
+    <script type="module">
+        // Firebase SDK import
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getFirestore, collection, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        // Firebase yapılandırması
+        const firebaseConfig = {
+            apiKey: "AIzaSyCtA0h7ZHuuMInAQGoKcfTtthnImZ_Xk_E",
+            authDomain: "expressemlak-f85d3.firebaseapp.com",
+            projectId: "expressemlak-f85d3",
+            storageBucket: "expressemlak-f85d3.firebasestorage.app",
+            appId: "1:328195558403:web:0ba4504f713f6299c0d236"
+        };
+
+        // Firebase başlatma
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // İlanları Firebase'den çek
+        const q = query(collection(db, "ilanlar"), orderBy("tarih", "desc"));
+        onSnapshot(q, (snapshot) => {
+            const propertiesList = document.getElementById('propertiesList');
+            const resultsCount = document.querySelector('.results-count strong');
+            
+            // İlan sayısını güncelle
+            resultsCount.textContent = snapshot.size;
+            
+            // İlanları temizle
+            propertiesList.innerHTML = '';
+            
+            // Her bir ilanı ekle
+            snapshot.forEach((doc) => {
+                const data = doc.data();
+                const card = document.createElement('div');
+                card.className = 'property-card';
+                card.dataset.price = data.fiyat || 0;
+                card.dataset.date = data.tarih?.toDate?.()?.toISOString?.() || new Date().toISOString();
+                
+                // Ana fotoğrafı al (ilk fotoğraf)
+                const mainPhoto = data.photoUrls?.[0] || 'images/placeholder.jpg';
+                
+                card.innerHTML = `
+                    <a href="ilan_detayi.html?id=${doc.id}" style="text-decoration: none; color: inherit;">
+                        <div class="property-image">
+                            <img src="${mainPhoto}" alt="${data.isim}">
+                            <div class="property-badge">${data.ilanTipi === 'kiralik' ? 'Kiralık' : 'Satılık'}</div>
+                            <div class="property-favorite">
+                                <i class="far fa-heart"></i>
+                            </div>
+                        </div>
+                        <div class="property-content">
+                            <div class="property-price">₺${data.fiyat?.toLocaleString('tr-TR') || 'Fiyat Belirtilmemiş'}</div>
+                            <h3 class="property-title">${data.isim}</h3>
+                            <p class="property-location"><i class="fas fa-map-marker-alt"></i> ${data.lokasyon || 'Konya'}</p>
+                            <div class="property-features">
+                                <span><i class="fas fa-home"></i> ${data.odaSayisi || 'Belirtilmemiş'}</span>
+                                <span><i class="fas fa-expand-arrows-alt"></i> ${data.metrekare || '0'} m²</span>
+                                <span><i class="fas fa-building"></i> ${data.binaYasi || '0'} Yaş</span>
+                                <span><i class="fas fa-layer-group"></i> ${data.bulunduguKat || '0'}. Kat</span>
+                            </div>
+                        </div>
+                    </a>
+                `;
+                
+                propertiesList.appendChild(card);
+            });
+            
+            if (snapshot.empty) {
+                propertiesList.innerHTML = '<p class="no-results">Henüz ilan bulunmuyor.</p>';
+            }
+        });
+
         // Sort properties functionality
         function sortProperties() {
             const sortValue = document.getElementById('sortSelect').value;
@@ -486,8 +557,8 @@
                             const actions = document.createElement('div');
                             actions.className = 'property-actions';
                             actions.innerHTML = `
-                                <button class="btn-secondary">Detaylar</button>
-                                <button class="btn-secondary">İletişim</button>
+                                <a href="ilan_detayi.html?id=${doc.id}" class="btn-secondary">Detayları Gör</a>
+                                <a href="tel:+905350608283" class="btn-secondary">Hemen Ara</a>
                             `;
                             content.appendChild(actions);
                         }

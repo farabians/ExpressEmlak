@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>İlanlar</title>
+  <style>
+    :root {
+      --primary-color: #2563eb;
+      --secondary-color: #1e40af;
+      --success-color: #16a34a;
+      --danger-color: #dc2626;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-300: #d1d5db;
+      --gray-600: #4b5563;
+      --gray-700: #374151;
+      --gray-800: #1f2937;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+      --shadow: 0 1px 3px rgba(0,0,0,0.1);
+      --radius: 8px;
+    }
+
+    body { 
+      font-family: system-ui, -apple-system, sans-serif;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px;
+      background: var(--gray-100);
+      color: var(--gray-800);
+    }
+
+    header { 
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 32px;
+      background: white;
+      padding: 16px 24px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    h1 {
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--gray-800);
+      margin: 0;
+    }
+
+    button { 
+      padding: 8px 16px;
+      cursor: pointer;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius);
+      background: white;
+      color: var(--gray-700);
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    button:hover {
+      border-color: var(--primary-color);
+      color: var(--primary-color);
+    }
+
+    button[disabled] { 
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    form { 
+      background: white;
+      padding: 24px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      display: grid;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .form-group {
+      display: grid;
+      gap: 8px;
+    }
+
+    .form-group label {
+      font-weight: 500;
+      color: var(--gray-700);
+      font-size: 14px;
+    }
+
+    input, textarea, select { 
+      padding: 10px;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius);
+      font-size: 16px;
+      transition: border-color 0.2s;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    .ilan { 
+      background: white;
+      padding: 16px;
+      margin-bottom: 16px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 16px;
+      transition: transform 0.2s;
+    }
+
+    .ilan:hover {
+      transform: translateY(-2px);
+    }
+
+    .thumbs { 
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .thumbs img { 
+      width: 100%;
+      height: 110px;
+      object-fit: cover;
+      border-radius: calc(var(--radius) - 2px);
+      background: var(--gray-100);
+    }
+
+    .hidden { 
+      display: none; 
+    }
+
+    .meta { 
+      color: var(--gray-600);
+      font-size: 14px;
+      margin: 6px 0;
+    }
+
+    .progress { 
+      background: var(--gray-200);
+      height: 6px;
+      border-radius: 3px;
+      overflow: hidden;
+      margin: 4px 0 8px;
+    }
+
+    .bar { 
+      height: 100%;
+      width: 0%;
+      background: var(--primary-color);
+      transition: width 0.2s ease;
+    }
+
+    .row { 
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .danger { 
+      color: var(--danger-color);
+    }
+
+    .success {
+      color: var(--success-color);
+    }
+
+    .muted { 
+      color: var(--gray-600);
+      font-size: 14px;
+    }
+
+    .resetBtn { 
+      padding: 6px 12px;
+      background: white;
+      border: 1px solid var(--danger-color);
+      color: var(--danger-color);
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+
+    .resetBtn:hover {
+      background: var(--danger-color);
+      color: white;
+    }
+
+    #submitBtn {
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      font-weight: 600;
+      margin-top: 8px;
+    }
+
+    #submitBtn:hover {
+      background: var(--secondary-color);
+    }
+
+    .radio-group {
+      display: flex;
+      gap: 16px;
+      padding: 8px 0;
+    }
+
+    .radio-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    .radio-label input[type="radio"] {
+      width: 16px;
+      height: 16px;
+    }
+  </style>
+  </style>
+</head>
+<body>
+  <header>
+    <h1>İlanlar</h1>
+    <div>
+      <button id="loginBtn">Google ile Giriş</button>
+      <button id="logoutBtn" class="hidden">Çıkış</button>
+      <span id="userEmail"></span>
+    </div>
+  </header>
+
+  <!-- İlan ekleme formu -->
+  <section id="uploadSection" class="hidden">
+    <h2>Yeni İlan Ekle</h2>
+    <form id="ilanForm">
+      <div class="form-group">
+        <label for="ilanTipi">İlan Tipi</label>
+        <div class="radio-group">
+          <label class="radio-label">
+            <input type="radio" name="ilanTipi" value="satilik" required checked>
+            Satılık
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="ilanTipi" value="kiralik" required>
+            Kiralık
+          </label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="isim">İlan Başlığı</label>
+        <input id="isim" type="text" placeholder="Örn: Meram'da Satılık 3+1 Daire" required />
+      </div>
+
+      <div class="row">
+        <div class="form-group" style="flex: 1;">
+          <label for="fiyat">Fiyat</label>
+          <input id="fiyat" type="number" placeholder="₺" required />
+        </div>
+        
+        <div class="form-group" style="flex: 1;">
+          <label for="lokasyon">Lokasyon</label>
+          <select id="lokasyon" required>
+            <option value="">Seçiniz</option>
+            <option value="Meram">Meram</option>
+            <option value="Selçuklu">Selçuklu</option>
+            <option value="Karatay">Karatay</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="form-group" style="flex: 1;">
+          <label for="odaSayisi">Oda Sayısı</label>
+          <select id="odaSayisi" required>
+            <option value="">Seçiniz</option>
+            <option value="1+0">1+0</option>
+            <option value="1+1">1+1</option>
+            <option value="2+1">2+1</option>
+            <option value="3+1">3+1</option>
+            <option value="4+1">4+1</option>
+            <option value="5+1">5+1</option>
+            <option value="6+1">6+1</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="flex: 1;">
+          <label for="metrekare">Net Metrekare</label>
+          <input id="metrekare" type="number" placeholder="m²" required />
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="form-group" style="flex: 1;">
+          <label for="binaYasi">Bina Yaşı</label>
+          <input id="binaYasi" type="number" placeholder="Yıl" required />
+        </div>
+
+        <div class="form-group" style="flex: 1;">
+          <label for="bulunduguKat">Bulunduğu Kat</label>
+          <input id="bulunduguKat" type="number" placeholder="Kat" required />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="aciklama">Detaylı Açıklama</label>
+        <textarea id="aciklama" rows="4" placeholder="İlan hakkında detaylı bilgi verin"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Fotoğraflar (En az 1 fotoğraf gerekli)</label>
+        <div class="row">
+          <input id="fotolar" type="file" accept="image/*" multiple required />
+          <button type="button" id="resetFotolar" class="resetBtn">Seçimi Temizle</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Video (İsteğe bağlı)</label>
+        <div class="row">
+          <input id="video" type="file" accept="video/*" />
+          <button type="button" id="resetVideo" class="resetBtn">Seçimi Temizle</button>
+        </div>
+      </div>
+
+      <div id="progressArea" class="muted"></div>
+
+      <div class="row">
+        <button id="submitBtn" type="submit">Yükle</button>
+        <span id="formMsg"></span>
+      </div>
+    </form>
+  </section>
+
+  <h2>İlanlar</h2>
+  <div id="ilanListesi"></div>
+
+  <script type="module">
+    // Firebase SDK
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import {
+      getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import {
+      getFirestore, collection, addDoc, setDoc, doc, deleteDoc,
+      query, orderBy, onSnapshot, serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import {
+      getStorage, ref, uploadBytesResumable, getDownloadURL, deleteObject
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+
+    // ✅ Firebase config (storageBucket önemlidir)
+    const firebaseConfig = {
+      apiKey: "AIzaSyCtA0h7ZHuuMInAQGoKcfTtthnImZ_Xk_E",
+      authDomain: "expressemlak-f85d3.firebaseapp.com",
+      projectId: "expressemlak-f85d3",
+      storageBucket: "expressemlak-f85d3.firebasestorage.app",
+      appId: "1:328195558403:web:0ba4504f713f6299c0d236"
+    };
+
+    // Firebase başlat
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const storage = getStorage(app);
+    const provider = new GoogleAuthProvider();
+
+    // UI elemanları
+    const loginBtn = document.getElementById("loginBtn");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const userEmail = document.getElementById("userEmail");
+    const uploadSection = document.getElementById("uploadSection");
+    const ilanForm = document.getElementById("ilanForm");
+    const ilanListesi = document.getElementById("ilanListesi");
+    const formMsg = document.getElementById("formMsg");
+    const progressArea = document.getElementById("progressArea");
+    const submitBtn = document.getElementById("submitBtn");
+    const resetFotolarBtn = document.getElementById("resetFotolar");
+    const resetVideoBtn = document.getElementById("resetVideo");
+    
+    // Reset butonları için event listener'lar
+    resetFotolarBtn.addEventListener("click", () => {
+      document.getElementById("fotolar").value = "";
+    });
+    
+    resetVideoBtn.addEventListener("click", () => {
+      document.getElementById("video").value = "";
+    });
+
+    // ✅ Sadece bu e-postalar yükleyebilsin
+    const ALLOWED_EMAILS = [
+      "osmangundemir1@gmail.com",
+      "expressinsaatgayrimenkul@gmail.com"
+    ];
+
+    // Google ile giriş
+    loginBtn.addEventListener("click", async () => {
+      try { await signInWithPopup(auth, provider); }
+      catch (e) { alert("Giriş başarısız: " + e.message); }
+    });
+    logoutBtn.addEventListener("click", () => signOut(auth));
+
+    // Giriş durumunu izle
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        userEmail.textContent = user.email;
+        loginBtn.classList.add("hidden");
+        logoutBtn.classList.remove("hidden");
+        if (ALLOWED_EMAILS.includes(user.email)) {
+          uploadSection.classList.remove("hidden");
+        }
+      } else {
+        userEmail.textContent = "";
+        loginBtn.classList.remove("hidden");
+        logoutBtn.classList.add("hidden");
+        uploadSection.classList.add("hidden");
+      }
+    });
+
+    // Yükleme geri bildirim yardımcıları
+    function clearProgress() { progressArea.innerHTML = ""; }
+    function addProgress(label) {
+      const wrap = document.createElement("div");
+      wrap.innerHTML = `
+        <div class="muted">${label}</div>
+        <div class="progress"><div class="bar"></div></div>
+      `;
+      progressArea.appendChild(wrap);
+      const bar = wrap.querySelector(".bar");
+      return (pct) => { bar.style.width = Math.max(0, Math.min(100, pct)) + "%"; };
+    }
+
+    // Çifte tıklamada tekrarlı ilan oluşmasın
+    let isSubmitting = false;
+
+    // Form submit
+    ilanForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (isSubmitting) return; // guard
+      isSubmitting = true;
+      submitBtn.disabled = true;
+      formMsg.textContent = "";
+      clearProgress();
+
+      const isim = document.getElementById("isim").value.trim();
+      const fiyat = Number(document.getElementById("fiyat").value);
+      const aciklama = document.getElementById("aciklama").value.trim();
+      const fotoFiles = Array.from(document.getElementById("fotolar").files || []);
+      const videoFile = document.getElementById("video").files[0] || null;
+
+      if (!fotoFiles.length) {
+        alert("En az 1 fotoğraf seçmelisin.");
+        isSubmitting = false; submitBtn.disabled = false;
+        return;
+      }
+
+      try {
+        const user = auth.currentUser;
+        if (!user || !ALLOWED_EMAILS.includes(user.email)) {
+          throw new Error("Yükleme izniniz yok.");
+        }
+
+        // 1) Storage'a fotoğrafları yükle (çoklu) - ilerleme ile
+        const photoUrls = [];
+        const photoPaths = [];
+        for (let i = 0; i < fotoFiles.length; i++) {
+          const f = fotoFiles[i];
+          const label = `Foto ${i+1}/${fotoFiles.length} - ${f.name}`;
+          const setPct = addProgress(label);
+          const path = `ilanlar/fotolar/${Date.now()}-${user.uid}-${i}-${f.name}`;
+          const storageRef = ref(storage, path);
+          const task = uploadBytesResumable(storageRef, f);
+
+          await new Promise((resolve, reject) => {
+            task.on("state_changed",
+              snap => {
+                const pct = (snap.bytesTransferred / snap.totalBytes) * 100;
+                setPct(pct);
+              },
+              reject,
+              async () => {
+                const url = await getDownloadURL(task.snapshot.ref);
+                photoUrls.push(url);
+                photoPaths.push(path);
+                setPct(100);
+                resolve();
+              }
+            );
+          });
+        }
+
+        // 2) Video (opsiyonel) - ilerleme ile
+        let videoUrl = null;
+        let videoPath = null;
+        if (videoFile) {
+          const label = `Video - ${videoFile.name}`;
+          const setPct = addProgress(label);
+          const vPath = `ilanlar/videolar/${Date.now()}-${user.uid}-${videoFile.name}`;
+          const vRef = ref(storage, vPath);
+          const vTask = uploadBytesResumable(vRef, videoFile);
+
+          await new Promise((resolve, reject) => {
+            vTask.on("state_changed",
+              snap => {
+                const pct = (snap.bytesTransferred / snap.totalBytes) * 100;
+                setPct(pct);
+              },
+              reject,
+              async () => {
+                videoUrl = await getDownloadURL(vTask.snapshot.ref);
+                videoPath = vPath;
+                setPct(100);
+                resolve();
+              }
+            );
+          });
+        }
+
+        // 3) Firestore’a tek bir ilan dokümanı olarak kaydet
+        //    (idempotentlik için client tarafında engelledik; tek doküman oluşturuyoruz)
+        const odaSayisi = document.getElementById("odaSayisi").value;
+        const lokasyon = document.getElementById("lokasyon").value;
+        const metrekare = Number(document.getElementById("metrekare").value);
+        const ilanTipi = document.querySelector('input[name="ilanTipi"]:checked').value;
+        const binaYasi = Number(document.getElementById("binaYasi").value);
+        const bulunduguKat = Number(document.getElementById("bulunduguKat").value);
+
+        if (!odaSayisi || !lokasyon || !metrekare || !binaYasi || !bulunduguKat) {
+          throw new Error("Lütfen tüm alanları doldurun.");
+        }
+
+        const docRef = await addDoc(collection(db, "ilanlar"), {
+          isim,
+          fiyat,
+          aciklama,
+          odaSayisi,
+          lokasyon,
+          metrekare,
+          ilanTipi,
+          binaYasi,
+          bulunduguKat,
+          photoUrls,
+          photoPaths,   // silerken lazım olacak
+          videoUrl: videoUrl || null,
+          videoPath: videoPath || null,
+          ownerUid: user.uid,
+          ownerEmail: user.email,
+          tarih: serverTimestamp()
+        });
+
+        formMsg.textContent = "İlan yüklendi ✅";
+        ilanForm.reset();
+        clearProgress();
+      } catch (err) {
+        console.error(err);
+        formMsg.innerHTML = `<span class="danger">Hata: ${err.message}</span>`;
+      } finally {
+        isSubmitting = false;
+        submitBtn.disabled = false;
+      }
+    });
+
+    // Silme (Firestore + Storage)
+    async function deleteIlan(docId, photoPaths = [], videoPath = null) {
+      const user = auth.currentUser;
+      if (!user || !ALLOWED_EMAILS.includes(user.email)) {
+        alert("Silme izniniz yok."); return;
+      }
+      if (!confirm("Bu ilanı silmek istediğinizden emin misiniz?")) return;
+
+      try {
+        // Önce Storage dosyalarını sil
+        for (const p of photoPaths) {
+          try { await deleteObject(ref(storage, p)); } catch (e) { console.warn("Foto silinemedi:", p, e.message); }
+        }
+        if (videoPath) {
+          try { await deleteObject(ref(storage, videoPath)); } catch (e) { console.warn("Video silinemedi:", videoPath, e.message); }
+        }
+        // Sonra Firestore dokümanı sil
+        await deleteDoc(doc(db, "ilanlar", docId));
+      } catch (e) {
+        console.error(e);
+        alert("Silme hatası: " + e.message);
+      }
+    }
+
+    // İlanları canlı izle
+    const q = query(collection(db, "ilanlar"), orderBy("tarih", "desc"));
+    onSnapshot(q, (snapshot) => {
+      ilanListesi.innerHTML = "";
+      snapshot.forEach((dref) => {
+        const d = dref.data();
+
+        const photosHtml = (d.photoUrls || []).map(u => `<img src="${u}" alt="${d.isim}">`).join("");
+        const videoHtml = d.videoUrl ? `<video controls src="${d.videoUrl}" style="width:100%;max-height:240px;border-radius:6px;"></video>` : "";
+
+        const canDelete = auth.currentUser && ALLOWED_EMAILS.includes(auth.currentUser.email);
+        const delBtn = canDelete
+          ? `<button data-del="${dref.id}" style="margin-top:8px;background:#fff;border:1px solid #e33;color:#e33;">Sil</button>`
+          : "";
+
+        const item = document.createElement("div");
+        item.className = "ilan";
+        item.innerHTML = `
+          <div>
+            <div class="thumbs">${photosHtml || '<div class="muted">Fotoğraf yok</div>'}</div>
+            ${videoHtml}
+          </div>
+          <div>
+            <h3>${d.isim} ${Number.isFinite(d.fiyat) ? " - " + d.fiyat + " ₺" : ""}</h3>
+            <div class="meta">${d.ownerEmail ? ("Ekleyen: " + d.ownerEmail) : ""}</div>
+            <p>${d.aciklama || ""}</p>
+            ${delBtn}
+          </div>
+        `;
+        ilanListesi.appendChild(item);
+
+        if (canDelete) {
+          const btn = item.querySelector("button[data-del]");
+          btn?.addEventListener("click", () => deleteIlan(dref.id, d.photoPaths || [], d.videoPath || null));
+        }
+      });
+      if (snapshot.empty) ilanListesi.innerHTML = "<p>Henüz ilan yok.</p>";
+    });
+  </script>
+</body>
+</html>

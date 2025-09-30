@@ -33,14 +33,496 @@
 
     <!-- Hero Section -->
     <section class="hero">
-        <div class="hero-content">
-            <h1 class="hero-title">Konya'nın En <span class="highlight">Güvenilir</span> Emlak Ofisi</h1>
-            <p class="hero-subtitle">Konya'da köklü tecrübemizle, gayrimenkulde güvenin adresi olmanın gururunu yaşıyoruz. Ev alım-satım, kiralama ve yatırım konusunda profesyonel kadromuzla size özel çözümler sunuyoruz.</p>
-            
-            
+        <div class="fullscreen-slider" id="propertySlider">
+            <!-- İlanlar buraya dinamik olarak eklenecek -->
         </div>
-        <div class="hero-bg"></div>
+        
+        <!-- Slider Kontrolleri -->
+        <div class="slider-controls">
+            <button id="prevSlide" class="slider-btn"><i class="fas fa-chevron-left"></i></button>
+            <div class="slider-info">
+                <h1 class="hero-title">Konya'nın En <span class="highlight">Güvenilir</span> Emlak Ofisi</h1>
+                <div class="slide-counter">
+                    <span id="currentSlideNum">1</span>/<span id="totalSlides">5</span>
+                </div>
+            </div>
+            <button id="nextSlide" class="slider-btn"><i class="fas fa-chevron-right"></i></button>
+        </div>
+
+        <style>
+            .hero {
+                position: relative;
+                height: calc(100vh - 80px); /* Header yüksekliğini çıkar */
+                overflow: hidden;
+                background: black;
+            }
+
+            .fullscreen-slider {
+                position: relative;
+                width: 100%;
+                height: 100%;
+                display: flex;
+                transition: transform 0.7s ease-in-out;
+            }
+
+            .slider-item {
+                position: relative;
+                min-width: 100%;
+                height: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .slider-bg {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: 1;
+            }
+
+            .slider-bg img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                filter: brightness(0.6);
+                transition: transform 1s ease;
+            }
+
+            .slider-item.active .slider-bg img {
+                transform: scale(1.05);
+            }
+
+            .slider-content {
+                position: relative;
+                z-index: 2;
+                width: 90%;
+                max-width: 1400px;
+                padding: 2rem;
+                color: white;
+                display: grid;
+                grid-template-columns: 1.2fr 1fr;
+                gap: 3rem;
+                align-items: center;
+                opacity: 0;
+                transform: translateY(30px);
+                transition: all 0.7s ease-out;
+            }
+
+            .slider-item.active .slider-content {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            .slider-details h2 {
+                font-size: 3rem;
+                font-weight: 700;
+                margin-bottom: 1rem;
+                line-height: 1.2;
+            }
+
+            .slider-price {
+                font-size: 2.5rem;
+                color: var(--primary-color);
+                font-weight: 600;
+                margin-bottom: 1.5rem;
+            }
+
+            .slider-features {
+                display: grid;
+                grid-template-columns: repeat(3, auto);
+                gap: 2rem;
+                margin-bottom: 2rem;
+            }
+
+            .slider-feature {
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+                font-size: 1.1rem;
+            }
+
+            .slider-feature i {
+                font-size: 1.5rem;
+                color: var(--primary-color);
+            }
+
+            .cta-buttons {
+                display: flex;
+                gap: 1rem;
+            }
+
+            .btn-primary {
+                background: var(--primary-color);
+                color: white;
+                padding: 1rem 2rem;
+                border-radius: 50px;
+                text-decoration: none;
+                font-weight: 600;
+                transition: all 0.3s;
+                border: none;
+                cursor: pointer;
+            }
+
+            .btn-secondary {
+                background: transparent;
+                color: white;
+                padding: 1rem 2rem;
+                border-radius: 50px;
+                text-decoration: none;
+                font-weight: 600;
+                transition: all 0.3s;
+                border: 2px solid white;
+            }
+
+            .btn-primary:hover {
+                background: var(--secondary-color);
+                transform: translateY(-2px);
+            }
+
+            .btn-secondary:hover {
+                background: white;
+                color: var(--dark-color);
+                transform: translateY(-2px);
+            }
+
+            .slider-controls {
+                position: absolute;
+                bottom: 2rem;
+                left: 50%;
+                transform: translateX(-50%);
+                display: flex;
+                align-items: center;
+                gap: 2rem;
+                z-index: 3;
+            }
+
+            .slider-info {
+                text-align: center;
+                color: white;
+            }
+
+            .hero-title {
+                font-size: 1.2rem;
+                margin-bottom: 0.5rem;
+                color: white;
+            }
+
+            .slide-counter {
+                font-size: 1.2rem;
+                font-weight: 600;
+                color: var(--primary-color);
+            }
+
+            .slider-btn {
+                background: rgba(255,255,255,0.2);
+                color: white;
+                border: none;
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.2rem;
+                backdrop-filter: blur(10px);
+                transition: all 0.3s;
+            }
+
+            .slider-btn:hover {
+                background: var(--primary-color);
+                transform: scale(1.1);
+            }
+
+            @media (max-width: 1200px) {
+                .slider-content {
+                    grid-template-columns: 1fr;
+                    text-align: center;
+                }
+
+                .slider-features {
+                    justify-content: center;
+                }
+
+                .cta-buttons {
+                    justify-content: center;
+                }
+
+                .slider-details h2 {
+                    font-size: 2rem;
+                }
+            }
+
+            @media (max-width: 768px) {
+                .hero {
+                    height: calc(100vh - 60px);
+                }
+
+                .slider-features {
+                    grid-template-columns: 1fr;
+                    gap: 1rem;
+                }
+
+                .slider-details h2 {
+                    font-size: 1.5rem;
+                }
+
+                .slider-price {
+                    font-size: 2rem;
+                }
+
+                .cta-buttons {
+                    flex-direction: column;
+                }
+            }
+        </style>
     </section>
+        </style>
+    </section>
+
+    <script type="module">
+        // Firebase SDK import
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getFirestore, collection, query, orderBy, limit, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        // Firebase yapılandırması
+        const firebaseConfig = {
+            apiKey: "AIzaSyCtA0h7ZHuuMInAQGoKcfTtthnImZ_Xk_E",
+            authDomain: "expressemlak-f85d3.firebaseapp.com",
+            projectId: "expressemlak-f85d3",
+            storageBucket: "expressemlak-f85d3.firebasestorage.app",
+            appId: "1:328195558403:web:0ba4504f713f6299c0d236"
+        };
+
+        // Firebase'i başlat
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Slider elementleri
+        const slider = document.getElementById('propertySlider');
+        const prevBtn = document.getElementById('prevSlide');
+        const nextBtn = document.getElementById('nextSlide');
+        let currentSlide = 0;
+        let totalSlides = 0;
+
+        // Son eklenen 5 ilanı getir
+        const q = query(collection(db, "ilanlar"), orderBy("tarih", "desc"), limit(5));
+        onSnapshot(q, (snapshot) => {
+            slider.innerHTML = '';
+            const currentSlideNum = document.getElementById('currentSlideNum');
+            const totalSlidesNum = document.getElementById('totalSlides');
+            
+            totalSlidesNum.textContent = snapshot.size;
+            
+            // Aynı zamanda öne çıkan ilanları da güncelle
+            const featuredPropertiesGrid = document.getElementById('featuredProperties');
+            featuredPropertiesGrid.innerHTML = '';
+            let cardCount = 0;
+            
+            snapshot.forEach((doc) => {
+                const data = doc.data();
+                const mainPhoto = data.photoUrls?.[0] || 'images/placeholder.jpg';
+                
+                // Slider için slide ekle
+                const slide = document.createElement('div');
+                slide.className = 'slider-item';
+                slide.innerHTML = `
+                    <div class="slider-bg">
+                        <img src="${mainPhoto}" alt="${data.isim}">
+                    </div>
+                    <div class="slider-content">
+                        <div class="slider-details">
+                            <div class="slider-price">₺${data.fiyat?.toLocaleString('tr-TR')}</div>
+                            <h2>${data.isim}</h2>
+                            <div class="slider-features">
+                                <div class="slider-feature">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span>${data.lokasyon}</span>
+                                </div>
+                                <div class="slider-feature">
+                                    <i class="fas fa-home"></i>
+                                    <span>${data.odaSayisi}</span>
+                                </div>
+                                <div class="slider-feature">
+                                    <i class="fas fa-expand-arrows-alt"></i>
+                                    <span>${data.metrekare}m²</span>
+                                </div>
+                                <div class="slider-feature">
+                                    <i class="fas fa-building"></i>
+                                    <span>${data.binaYasi} Yaşında</span>
+                                </div>
+                                <div class="slider-feature">
+                                    <i class="fas fa-layer-group"></i>
+                                    <span>${data.bulunduguKat}. Kat</span>
+                                </div>
+                            </div>
+                            <div class="cta-buttons">
+                                <a href="ilan_detayi.html?id=${doc.id}" class="btn-primary">
+                                    <i class="fas fa-info-circle"></i>
+                                    Detayları Gör
+                                </a>
+                                <a href="iletisim.html" class="btn-secondary">
+                                    <i class="fas fa-phone"></i>
+                                    İletişime Geç
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                slider.appendChild(slide);
+
+                // Öne çıkan ilanlar için kart ekle (ilk 3 ilan)
+                if (cardCount < 3) {
+                    const propertyCard = document.createElement('div');
+                    propertyCard.className = 'property-card';
+                    propertyCard.innerHTML = `
+                        <div class="property-image">
+                            <img src="${mainPhoto}" alt="${data.isim}">
+                            <div class="property-badge">${data.ilanTipi === 'kiralik' ? 'Kiralık' : 'Satılık'}</div>
+                            <div class="property-favorite">
+                                <i class="far fa-heart"></i>
+                            </div>
+                        </div>
+                        <div class="property-content">
+                            <div class="property-price">₺${data.fiyat?.toLocaleString('tr-TR')}</div>
+                            <h3 class="property-title">${data.isim}</h3>
+                            <p class="property-location">
+                                <i class="fas fa-map-marker-alt"></i> ${data.lokasyon}
+                            </p>
+                            <div class="property-features">
+                                <span><i class="fas fa-home"></i> ${data.odaSayisi}</span>
+                                <span><i class="fas fa-expand-arrows-alt"></i> ${data.metrekare} m²</span>
+                                <span><i class="fas fa-building"></i> ${data.binaYasi} Yaş</span>
+                                <span><i class="fas fa-layer-group"></i> ${data.bulunduguKat}. Kat</span>
+                            </div>
+                        </div>
+                    `;
+
+                    propertyCard.style.cursor = 'pointer';
+                    propertyCard.addEventListener('click', () => {
+                        window.location.href = `ilan_detayi.html?id=${doc.id}`;
+                    });
+                    
+                    featuredPropertiesGrid.appendChild(propertyCard);
+                    cardCount++;
+                }
+            });
+
+            // İlan yoksa mesaj göster
+            if (snapshot.empty) {
+                featuredPropertiesGrid.innerHTML = `
+                    <div style="grid-column: 1/-1; text-align: center; padding: 2rem;">
+                        <p class="muted">Henüz ilan bulunmuyor.</p>
+                    </div>
+                `;
+            }
+
+            totalSlides = snapshot.size;
+            if (totalSlides > 0) {
+                showSlide(0);
+                startAutoSlide();
+            }
+        });
+
+        // Slider kontrolleri
+        function showSlide(index) {
+            if (index >= totalSlides) index = 0;
+            if (index < 0) index = totalSlides - 1;
+            
+            const allSlides = document.querySelectorAll('.slider-item');
+            allSlides.forEach(slide => slide.classList.remove('active'));
+            
+            slider.style.transform = `translateX(-${index * 100}%)`;
+            allSlides[index].classList.add('active');
+            
+            document.getElementById('currentSlideNum').textContent = index + 1;
+            
+            currentSlide = index;
+        }
+
+        prevBtn.addEventListener('click', () => {
+            showSlide(currentSlide - 1);
+            resetAutoSlide();
+        });
+
+        nextBtn.addEventListener('click', () => {
+            showSlide(currentSlide + 1);
+            resetAutoSlide();
+        });
+
+        // Otomatik geçiş
+        let autoSlideInterval;
+        function startAutoSlide() {
+            autoSlideInterval = setInterval(() => {
+                showSlide(currentSlide + 1);
+            }, 7000); // Her 7 saniyede bir
+        }
+
+        function resetAutoSlide() {
+            clearInterval(autoSlideInterval);
+            startAutoSlide();
+        }
+
+        // Klavye kontrolü
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') {
+                prevBtn.click();
+            } else if (e.key === 'ArrowRight') {
+                nextBtn.click();
+            }
+        });
+
+        // Stil eklemeleri
+        const style = document.createElement('style');
+        style.textContent = `
+            .property-card {
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+            }
+            .property-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            }
+            .property-badge {
+                position: absolute;
+                top: 20px;
+                left: 20px;
+                background: var(--primary-color);
+                color: white;
+                padding: 8px 16px;
+                border-radius: 8px;
+                font-weight: 600;
+                font-size: 14px;
+                z-index: 2;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            }
+            .property-favorite {
+                position: absolute;
+                top: 20px;
+                right: 20px;
+                background: white;
+                width: 36px;
+                height: 36px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                transition: all 0.3s;
+                z-index: 2;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            }
+            .property-favorite:hover {
+                background: var(--primary-color);
+                color: white;
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
 
     <!-- Services Section -->
     <section class="services">
@@ -89,68 +571,8 @@
                 <h2>Öne Çıkan İlanlar</h2>
                 <p>Konya'nın en prestijli semtlerinden seçilmiş özel emlak ilanlarımız</p>
             </div>
-            <div class="properties-grid">
-                <div class="property-card">
-                    <div class="property-image">
-                        <img src="https://i0.shbdn.com/photos/17/16/52/x5_1251171652r33.jpg" alt="Kooperatif Hisse">
-                        <div class="property-badge">Satılık</div>
-                        <div class="property-favorite">
-                            <i class="far fa-heart"></i>
-                        </div>
-                    </div>
-                    <div class="property-content">
-                        <div class="property-price">₺680.000</div>
-                        <h3 class="property-title">MERAM BELEDİYE ÖNCÜLÜĞÜNDE 2+1 KOPERATİF HİSSESİ</h3>
-                        <p class="property-location"><i class="fas fa-map-marker-alt"></i> Meram, Konya</p>
-                        <div class="property-features">
-                            <span><i class="fas fa-bed"></i> 2+1</span>
-                            <span><i class="fas fa-bath"></i> 1</span>
-                            <span><i class="fas fa-expand-arrows-alt"></i> 121 m²</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="property-card">
-                    <div class="property-image">
-                        <img src="https://i0.shbdn.com/photos/91/68/19/x5_1259916819j5d.jpg" alt="Lüx Daire">
-                        <div class="property-badge">Satılık</div>
-                        <div class="property-favorite">
-                            <i class="far fa-heart"></i>
-                        </div>
-                    </div>
-                    <div class="property-content">
-                        <div class="property-price">₺4.250.000</div>
-                        <h3 class="property-title">ORUÇ REİS EVLERİNDE 3+1 LÜKS SATILIK DAİRE</h3>
-                        <p class="property-location"><i class="fas fa-map-marker-alt"></i> Meram, Konya</p>
-                        <div class="property-features">
-                            <span><i class="fas fa-bed"></i> 3+1</span>
-                            <span><i class="fas fa-bath"></i> 1</span>
-                            <span><i class="fas fa-expand-arrows-alt"></i> 130 m²</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="property-card">
-                    <div class="property-image">
-                        <img src="https://i0.shbdn.com/photos/30/01/49/x5_1254300149x5o.jpg" alt="Masrafsız Daire">
-                        <div class="property-badge">Satılık</div>
-                        <div class="property-favorite">
-                            <i class="far fa-heart"></i>
-                        </div>
-                    </div>
-                    <div class="property-content">
-                        <div class="property-price">₺2.500.000</div>
-                        <h3 class="property-title"> BİNKONUT ŞEYH ŞAMİL'DE 3+1 MASRAFSIZ DAİRE</h3>
-                        <p class="property-location"><i class="fas fa-map-marker-alt"></i> Selçuklu, Konya</p>
-                        <div class="property-features">
-                            <span><i class="fas fa-bed"></i> 3+1</span>
-                            <span><i class="fas fa-bath"></i> 1</span>
-                            <span><i class="fas fa-expand-arrows-alt"></i> 140 m²</span>
-                        </div>
-                    </div>
-                </div>
-
-                
+            <div class="properties-grid" id="featuredProperties">
+                <!-- Firebase'den gelen ilanlar buraya dinamik olarak eklenecek -->
             </div>
             <div class="view-all-btn">
                 <a href="ilanlar.html" class="btn-primary">Tüm İlanları Görüntüle</a>
