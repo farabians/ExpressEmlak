@@ -11,19 +11,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        .listings-header {
-            background: linear-gradient(135deg, var(--dark-color) 0%, #2d2d2d 100%);
-            padding: 120px 0 60px;
-            text-align: center;
-            color: var(--white);
-        }
-        
-        .listings-title {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-        }
-        
         .breadcrumb {
             display: flex;
             justify-content: center;
@@ -38,8 +25,7 @@
         }
         
         .filters-section {
-            background: var(--light-color);
-            padding: 3rem 0;
+            padding: 120px 0 3rem;
         }
         
         .filters-container {
@@ -251,18 +237,9 @@
         </div>
     </header>
 
-    <!-- Listings Header -->
-    <section class="listings-header">
-        <div class="container">
-            <h1 class="listings-title">Emlak İlanları</h1>
-
-        </div>
-    </section>
-
     <!-- Filters Section -->
     <section class="filters-section">
         <div class="container">
-
             <!-- Listings -->
             <div class="listings-grid">
 
@@ -346,8 +323,8 @@
                 <div class="footer-section">
                     <h3>İletişim</h3>
                     <div class="contact-info">
-                        <p><i class="fas fa-phone"></i> +90 535 060 82 83</p>
-                        <p><i class="fas fa-phone"></i> +90 544 471 22 73</p>
+                        <p><i class="fas fa-phone"></i> +90 535 060 82 83  Muhammet Dündar</p>
+                        <p><i class="fas fa-phone"></i> +90 544 471 22 73  Mehmet Üzüm</p>
                         <p><i class="fas fa-envelope"></i> expressinsaatgayrimenkul@gmail.com</p>
                         <p><i class="fas fa-map-marker-alt"></i> Aymanas, Alparslan Türkeş Caddesi No:6/D, 42010 Meram/Konya</p>
                     </div>
@@ -406,9 +383,6 @@
                         <div class="property-image">
                             <img src="${mainPhoto}" alt="${data.isim}">
                             <div class="property-badge">${data.ilanTipi === 'kiralik' ? 'Kiralık' : 'Satılık'}</div>
-                            <div class="property-favorite">
-                                <i class="far fa-heart"></i>
-                            </div>
                         </div>
                         <div class="property-content">
                             <div class="property-price">₺${data.fiyat?.toLocaleString('tr-TR') || 'Fiyat Belirtilmemiş'}</div>

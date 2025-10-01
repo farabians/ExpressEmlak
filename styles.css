@@ -442,26 +442,6 @@ body {
     font-weight: 600;
 }
 
-.property-favorite {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    width: 40px;
-    height: 40px;
-    background: rgba(255,255,255,0.9);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: var(--transition);
-}
-
-.property-favorite:hover {
-    background: var(--primary-color);
-    color: var(--white);
-}
-
 .property-content {
     padding: 1.5rem;
 }
@@ -503,22 +483,28 @@ body {
 
 .view-all-btn {
     text-align: center;
+    margin-top: 2rem;
 }
 
 .btn-primary {
     background: var(--primary-color);
     color: var(--white);
-    padding: 1rem 2rem;
-    border-radius: 50px;
+    padding: 0.7rem 1.5rem;
+    border-radius: 25px;
     text-decoration: none;
     font-weight: 600;
+    font-size: 0.9rem;
     display: inline-block;
     transition: var(--transition);
+    border: none;
+    cursor: pointer;
 }
 
 .btn-primary:hover {
     background: #d4941f;
+    color: var(--white);
     transform: translateY(-2px);
+    text-decoration: none;
 }
 
 /* Express Konut Section Responsive */
@@ -1087,32 +1073,6 @@ body {
     z-index: 2;
 }
 
-.property-card-list .property-favorite {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    background: rgba(255, 255, 255, 0.9);
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    z-index: 2;
-}
-
-.property-card-list .property-favorite:hover {
-    background: white;
-    transform: scale(1.1);
-}
-
-.property-card-list .property-favorite i {
-    color: #e74c3c;
-    font-size: 1.1rem;
-}
-
 /* Responsive Design for List View */
 @media (max-width: 768px) {
     .property-card-list {
@@ -1160,10 +1120,6 @@ body {
 
 .property-card .property-badge {
     background: linear-gradient(135deg, #E5A946, #d4941f) !important;
-}
-
-.property-card .property-favorite i {
-    color: #e74c3c !important;
 }
 
 /* Ensure consistency across all property cards */

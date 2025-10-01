@@ -5,7 +5,6 @@ const nav = document.querySelector('.nav');
 const header = document.querySelector('.header');
 const propertyCards = document.querySelectorAll('.property-card');
 const serviceCards = document.querySelectorAll('.service-card');
-const favoriteIcons = document.querySelectorAll('.property-favorite');
 
 // Tab Switching Functionality
 function initTabs() {
@@ -76,32 +75,6 @@ function initServiceAnimations() {
     serviceCards.forEach((card, index) => {
         card.style.animationDelay = `${index * 0.15}s`;
         card.classList.add('slide-in-left');
-    });
-}
-
-// Favorite Icon Toggle
-function initFavorites() {
-    favoriteIcons.forEach(icon => {
-        icon.addEventListener('click', (e) => {
-            e.preventDefault();
-            const heartIcon = icon.querySelector('i');
-            
-            if (heartIcon.classList.contains('far')) {
-                heartIcon.classList.replace('far', 'fas');
-                icon.style.background = '#E5A946';
-                icon.style.color = '#fff';
-                
-                // Add pulse animation
-                icon.style.animation = 'pulse 0.3s ease';
-                setTimeout(() => {
-                    icon.style.animation = '';
-                }, 300);
-            } else {
-                heartIcon.classList.replace('fas', 'far');
-                icon.style.background = 'rgba(255,255,255,0.9)';
-                icon.style.color = '#333';
-            }
-        });
     });
 }
 
@@ -365,7 +338,6 @@ document.addEventListener('DOMContentLoaded', () => {
     initHeaderScroll();
     initPropertyAnimations();
     initServiceAnimations();
-    initFavorites();
     initSearchForm();
     initScrollAnimations();
     initStatsCounter();

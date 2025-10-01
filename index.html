@@ -99,14 +99,16 @@
             .slider-content {
                 position: relative;
                 z-index: 2;
-                width: 90%;
-                max-width: 1400px;
-                padding: 2rem;
+                width: 70%;
+                max-width: 900px;
+                padding: 1.5rem;
                 color: white;
                 display: grid;
-                grid-template-columns: 1.2fr 1fr;
-                gap: 3rem;
+                grid-template-columns: 1fr;
+                gap: 2rem;
                 align-items: center;
+                justify-content: center;
+                text-align: center;
                 opacity: 0;
                 transform: translateY(30px);
                 transition: all 0.7s ease-out;
@@ -118,69 +120,117 @@
             }
 
             .slider-details h2 {
-                font-size: 3rem;
+                font-size: 2.2rem;
                 font-weight: 700;
                 margin-bottom: 1rem;
-                line-height: 1.2;
+                line-height: 1.3;
+                text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
             }
 
             .slider-price {
-                font-size: 2.5rem;
+                font-size: 2rem;
                 color: var(--primary-color);
                 font-weight: 600;
                 margin-bottom: 1.5rem;
+                text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
             }
 
             .slider-features {
                 display: grid;
-                grid-template-columns: repeat(3, auto);
-                gap: 2rem;
-                margin-bottom: 2rem;
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+                gap: 1rem;
+                margin-bottom: 1.5rem;
+                justify-content: center;
+                max-width: 500px;
+                margin-left: auto;
+                margin-right: auto;
             }
 
             .slider-feature {
                 display: flex;
                 align-items: center;
-                gap: 0.75rem;
-                font-size: 1.1rem;
+                justify-content: center;
+                gap: 0.5rem;
+                font-size: 0.95rem;
+                background: rgba(0,0,0,0.3);
+                padding: 0.7rem 1rem;
+                border-radius: 25px;
+                backdrop-filter: blur(5px);
+                border: 1px solid rgba(255,255,255,0.1);
             }
 
             .slider-feature i {
-                font-size: 1.5rem;
+                font-size: 1.1rem;
                 color: var(--primary-color);
             }
 
             .cta-buttons {
                 display: flex;
                 gap: 1rem;
+                justify-content: center;
+                margin-top: 1rem;
             }
 
             .btn-primary {
                 background: var(--primary-color);
                 color: white;
-                padding: 1rem 2rem;
-                border-radius: 50px;
+                padding: 0.8rem 1.5rem;
+                border-radius: 25px;
                 text-decoration: none;
                 font-weight: 600;
+                font-size: 0.9rem;
                 transition: all 0.3s;
                 border: none;
                 cursor: pointer;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);
             }
 
             .btn-secondary {
                 background: transparent;
                 color: white;
-                padding: 1rem 2rem;
-                border-radius: 50px;
+                padding: 0.8rem 1.5rem;
+                border-radius: 25px;
                 text-decoration: none;
                 font-weight: 600;
+                font-size: 0.9rem;
                 transition: all 0.3s;
-                border: 2px solid white;
+                border: 2px solid rgba(255,255,255,0.8);
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                backdrop-filter: blur(5px);
             }
 
             .btn-primary:hover {
-                background: var(--secondary-color);
+                background: #d4941f;
+                color: white;
                 transform: translateY(-2px);
+                text-decoration: none;
+            }
+
+            .view-all-btn .btn-primary {
+                background: var(--primary-color);
+                color: white;
+                padding: 0.7rem 1.5rem;
+                border-radius: 25px;
+                text-decoration: none;
+                font-weight: 600;
+                font-size: 0.9rem;
+                transition: all 0.3s;
+                border: none;
+                cursor: pointer;
+                display: inline-block;
+                box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);
+            }
+
+            .view-all-btn .btn-primary:hover {
+                background: #d4941f;
+                color: white;
+                transform: translateY(-2px);
+                text-decoration: none;
             }
 
             .btn-secondary:hover {
@@ -240,12 +290,12 @@
 
             @media (max-width: 1200px) {
                 .slider-content {
-                    grid-template-columns: 1fr;
-                    text-align: center;
+                    width: 90%;
+                    padding: 1.2rem;
                 }
 
                 .slider-features {
-                    justify-content: center;
+                    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
                 }
 
                 .cta-buttons {
@@ -253,7 +303,11 @@
                 }
 
                 .slider-details h2 {
-                    font-size: 2rem;
+                    font-size: 1.8rem;
+                }
+
+                .slider-price {
+                    font-size: 1.7rem;
                 }
             }
 
@@ -262,21 +316,37 @@
                     height: calc(100vh - 60px);
                 }
 
+                .slider-content {
+                    width: 95%;
+                    padding: 1rem;
+                }
+
                 .slider-features {
-                    grid-template-columns: 1fr;
-                    gap: 1rem;
+                    grid-template-columns: repeat(2, 1fr);
+                    gap: 0.8rem;
                 }
 
                 .slider-details h2 {
-                    font-size: 1.5rem;
+                    font-size: 1.4rem;
                 }
 
                 .slider-price {
-                    font-size: 2rem;
+                    font-size: 1.5rem;
+                }
+
+                .slider-feature {
+                    font-size: 0.85rem;
+                    padding: 0.5rem 0.8rem;
                 }
 
                 .cta-buttons {
                     flex-direction: column;
+                    gap: 0.8rem;
+                }
+
+                .btn-primary, .btn-secondary {
+                    padding: 0.7rem 1.2rem;
+                    font-size: 0.85rem;
                 }
             }
         </style>
@@ -336,7 +406,6 @@
                     </div>
                     <div class="slider-content">
                         <div class="slider-details">
-                            <div class="slider-price">₺${data.fiyat?.toLocaleString('tr-TR')}</div>
                             <h2>${data.isim}</h2>
                             <div class="slider-features">
                                 <div class="slider-feature">
@@ -383,9 +452,6 @@
                         <div class="property-image">
                             <img src="${mainPhoto}" alt="${data.isim}">
                             <div class="property-badge">${data.ilanTipi === 'kiralik' ? 'Kiralık' : 'Satılık'}</div>
-                            <div class="property-favorite">
-                                <i class="far fa-heart"></i>
-                            </div>
                         </div>
                         <div class="property-content">
                             <div class="property-price">₺${data.fiyat?.toLocaleString('tr-TR')}</div>
@@ -500,26 +566,6 @@
                 text-transform: uppercase;
                 letter-spacing: 0.5px;
                 box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            }
-            .property-favorite {
-                position: absolute;
-                top: 20px;
-                right: 20px;
-                background: white;
-                width: 36px;
-                height: 36px;
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                cursor: pointer;
-                transition: all 0.3s;
-                z-index: 2;
-                box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            }
-            .property-favorite:hover {
-                background: var(--primary-color);
-                color: white;
             }
         `;
         document.head.appendChild(style);
@@ -711,8 +757,8 @@
                 <div class="footer-section">
                     <h3>İletişim</h3>
                     <div class="contact-info">
-                        <p><i class="fas fa-phone"></i> +90 535 060 82 83</p>
-                        <p><i class="fas fa-phone"></i> +90 544 471 22 73</p>
+                        <p><i class="fas fa-phone"></i> +90 535 060 82 83  Muhammet Dündar</p>
+                        <p><i class="fas fa-phone"></i> +90 544 471 22 73  Mehmet Üzüm</p>
                         <p><i class="fas fa-envelope"></i>expressinsaatgayrimenkul@gmail.com</p>
                         <p><i class="fas fa-map-marker-alt"></i> Aymanas, Alparslan Türkeş Caddesi No:6/D, 42010 Meram/Konya</p>
                     </div>
