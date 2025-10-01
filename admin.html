@@ -224,7 +224,258 @@
       width: 16px;
       height: 16px;
     }
-  </style>
+
+    /* Responsive Styles for Admin Panel */
+    @media (max-width: 1024px) {
+      body {
+        max-width: 95%;
+        padding: 16px;
+      }
+      
+      .grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+      
+      .property-actions {
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      
+      .property-actions button {
+        flex: 1;
+        min-width: 120px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 12px;
+      }
+      
+      header {
+        flex-direction: column;
+        gap: 16px;
+        text-align: center;
+        padding: 16px;
+      }
+      
+      h1 {
+        font-size: 20px;
+      }
+      
+      button {
+        padding: 8px 16px;
+        font-size: 14px;
+      }
+      
+      .modal-content {
+        width: 95%;
+        max-height: 90vh;
+        margin: 5vh auto;
+        padding: 16px;
+      }
+      
+      .modal-header {
+        flex-direction: column;
+        gap: 12px;
+        text-align: center;
+      }
+      
+      .modal-title {
+        font-size: 18px;
+      }
+      
+      .close-btn {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        width: 24px;
+        height: 24px;
+        padding: 0;
+        font-size: 18px;
+      }
+      
+      .form-group {
+        margin-bottom: 16px;
+      }
+      
+      .form-row {
+        flex-direction: column;
+        gap: 16px;
+      }
+      
+      input, textarea, select {
+        padding: 8px 12px;
+        font-size: 14px;
+      }
+      
+      textarea {
+        min-height: 80px;
+      }
+      
+      .photo-upload-container {
+        max-height: 200px;
+      }
+      
+      .photo-preview {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+      }
+      
+      .photo-item {
+        height: 80px;
+      }
+      
+      .photo-item img {
+        border-radius: 4px;
+      }
+      
+      .remove-photo {
+        width: 20px;
+        height: 20px;
+        font-size: 10px;
+        top: 4px;
+        right: 4px;
+      }
+      
+      .modal-footer {
+        flex-direction: column;
+        gap: 12px;
+      }
+      
+      .modal-footer button {
+        width: 100%;
+      }
+      
+      .property-card {
+        padding: 12px;
+      }
+      
+      .property-title {
+        font-size: 16px;
+      }
+      
+      .property-price {
+        font-size: 18px;
+      }
+      
+      .property-meta {
+        font-size: 13px;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      
+      .property-actions {
+        margin-top: 12px;
+      }
+      
+      .property-actions button {
+        padding: 6px 12px;
+        font-size: 12px;
+        min-width: 80px;
+      }
+      
+      .radio-group {
+        flex-direction: column;
+        gap: 12px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 8px;
+      }
+      
+      header {
+        padding: 12px;
+        margin-bottom: 16px;
+      }
+      
+      h1 {
+        font-size: 18px;
+      }
+      
+      button {
+        padding: 6px 12px;
+        font-size: 13px;
+      }
+      
+      .modal-content {
+        width: 98%;
+        padding: 12px;
+        max-height: 95vh;
+      }
+      
+      .modal-title {
+        font-size: 16px;
+      }
+      
+      .form-group label {
+        font-size: 13px;
+      }
+      
+      input, textarea, select {
+        padding: 6px 10px;
+        font-size: 13px;
+      }
+      
+      .photo-preview {
+        grid-template-columns: 1fr;
+      }
+      
+      .photo-item {
+        height: 120px;
+      }
+      
+      .property-card {
+        padding: 10px;
+      }
+      
+      .property-title {
+        font-size: 14px;
+        line-height: 1.3;
+      }
+      
+      .property-price {
+        font-size: 16px;
+      }
+      
+      .property-meta {
+        font-size: 12px;
+      }
+      
+      .property-actions button {
+        padding: 4px 8px;
+        font-size: 11px;
+        min-width: 70px;
+      }
+      
+      .radio-label {
+        font-size: 13px;
+      }
+      
+      .grid {
+        gap: 12px;
+      }
+    }
+
+    /* Landscape orientation for mobile */
+    @media (max-width: 768px) and (orientation: landscape) {
+      .modal-content {
+        max-height: 85vh;
+        overflow-y: auto;
+      }
+      
+      header {
+        flex-direction: row;
+        justify-content: space-between;
+      }
+      
+      .photo-preview {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
   </style>
 </head>
 <body>

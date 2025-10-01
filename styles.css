@@ -1168,3 +1168,435 @@ body {
 .plan-card .plan-value {
     color: var(--primary-color) !important;
 }
+
+/* ===============================
+   ENHANCED RESPONSIVE DESIGN
+   =============================== */
+
+/* Large Tablets and Small Desktops */
+@media (max-width: 1024px) {
+    .container {
+        max-width: 95%;
+        padding: 0 20px;
+    }
+    
+    .hero-title {
+        font-size: 3.5rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.3rem;
+    }
+    
+    .search-form {
+        max-width: 90%;
+    }
+    
+    .properties-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2rem;
+    }
+    
+    .services-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+    
+    .section-padding {
+        padding: 4rem 0;
+    }
+}
+
+/* Tablets */
+@media (max-width: 768px) {
+    /* Reset existing styles */
+    .container {
+        padding: 0 15px;
+        max-width: 100%;
+    }
+    
+    /* Header */
+    .header {
+        padding: 0.8rem 0;
+    }
+    
+    .logo-img {
+        height: 50px;
+    }
+    
+    .nav {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: rgba(26, 26, 26, 0.98);
+        flex-direction: column;
+        padding: 1rem;
+        gap: 1rem;
+        border-radius: 0 0 10px 10px;
+    }
+    
+    .nav.active {
+        display: flex;
+    }
+    
+    .mobile-menu-btn {
+        display: block;
+        font-size: 1.2rem;
+    }
+    
+    /* Hero Section */
+    .hero {
+        height: 70vh;
+        min-height: 500px;
+    }
+    
+    .hero-content {
+        padding: 2rem 1rem;
+    }
+    
+    .hero-title {
+        font-size: 2.8rem;
+        line-height: 1.2;
+        margin-bottom: 1rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+    }
+    
+    /* Search Form */
+    .search-form {
+        padding: 2rem 1.5rem;
+        margin-top: 1rem;
+    }
+    
+    .search-inputs {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .search-btn {
+        width: 100%;
+        margin-top: 1rem;
+        padding: 0.8rem;
+    }
+    
+    /* Properties Grid */
+    .properties-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        padding: 0 10px;
+    }
+    
+    .property-card {
+        max-width: 100%;
+        margin: 0 auto;
+    }
+    
+    /* Services Grid */
+    .services-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+    
+    .service-card {
+        padding: 1.5rem 1rem;
+    }
+    
+    .service-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 1.5rem;
+    }
+    
+    /* Stats Grid */
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+    
+    .stat-number {
+        font-size: 2.5rem;
+    }
+    
+    /* Plans Grid */
+    .plans-preview {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+    
+    /* Footer */
+    .footer-content {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        text-align: center;
+    }
+    
+    .footer-section {
+        margin-bottom: 1rem;
+    }
+    
+    .social-links {
+        justify-content: center;
+    }
+    
+    /* Section Padding */
+    .section-padding {
+        padding: 3rem 0;
+    }
+    
+    .section-header h2 {
+        font-size: 2.2rem;
+    }
+    
+    .section-header p {
+        font-size: 1rem;
+    }
+}
+
+/* Large Mobile Phones */
+@media (max-width: 480px) {
+    /* Container */
+    .container {
+        padding: 0 10px;
+    }
+    
+    /* Header */
+    .logo-img {
+        height: 45px;
+        max-width: 180px;
+    }
+    
+    .header {
+        padding: 0.6rem 0;
+    }
+    
+    /* Hero Section */
+    .hero {
+        height: 60vh;
+        min-height: 450px;
+    }
+    
+    .hero-content {
+        padding: 1.5rem 0.5rem;
+    }
+    
+    .hero-title {
+        font-size: 2.2rem;
+        line-height: 1.1;
+    }
+    
+    .hero-subtitle {
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    /* Search Form */
+    .search-form {
+        padding: 1.5rem 1rem;
+        margin: 0.5rem;
+    }
+    
+    .input-field {
+        padding: 0.7rem;
+        font-size: 0.9rem;
+    }
+    
+    .search-btn {
+        padding: 0.7rem;
+        font-size: 0.9rem;
+    }
+    
+    /* Properties */
+    .properties-grid {
+        padding: 0 5px;
+    }
+    
+    .property-card {
+        border-radius: 12px;
+    }
+    
+    .property-content {
+        padding: 1rem;
+    }
+    
+    .property-title {
+        font-size: 1.1rem;
+    }
+    
+    .property-price {
+        font-size: 1.3rem;
+    }
+    
+    .property-features {
+        gap: 0.8rem;
+        flex-wrap: wrap;
+    }
+    
+    .property-features span {
+        font-size: 0.8rem;
+    }
+    
+    /* Services */
+    .services-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        padding: 0 10px;
+    }
+    
+    .service-card {
+        padding: 1.5rem;
+        text-align: center;
+    }
+    
+    .service-icon {
+        width: 45px;
+        height: 45px;
+        font-size: 1.3rem;
+        margin: 0 auto 1rem;
+    }
+    
+    /* Stats */
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .stat-card {
+        padding: 1.5rem;
+        text-align: center;
+    }
+    
+    .stat-number {
+        font-size: 2.2rem;
+    }
+    
+    .stat-label {
+        font-size: 0.9rem;
+    }
+    
+    /* Plans */
+    .plan-card {
+        padding: 1.5rem;
+        margin: 0 5px;
+    }
+    
+    .plan-price {
+        font-size: 1.8rem;
+    }
+    
+    /* Buttons */
+    .btn-primary {
+        padding: 0.7rem 1.5rem;
+        font-size: 0.9rem;
+    }
+    
+    .btn-secondary {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.85rem;
+    }
+    
+    /* Section Spacing */
+    .section-padding {
+        padding: 2.5rem 0;
+    }
+    
+    .section-header h2 {
+        font-size: 1.8rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .section-header p {
+        font-size: 0.9rem;
+    }
+    
+    /* Footer */
+    .footer {
+        padding: 2rem 0 1rem;
+    }
+    
+    .footer-logo-img {
+        height: 40px;
+    }
+    
+    .footer-section h3 {
+        font-size: 1.1rem;
+    }
+    
+    .footer-section p,
+    .footer-section li {
+        font-size: 0.85rem;
+    }
+    
+    .contact-info p {
+        margin-bottom: 0.5rem;
+    }
+    
+    .social-links a {
+        width: 35px;
+        height: 35px;
+        font-size: 0.9rem;
+    }
+}
+
+/* Extra Small Mobile Phones */
+@media (max-width: 375px) {
+    .hero-title {
+        font-size: 1.9rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 0.9rem;
+    }
+    
+    .search-form {
+        margin: 0.2rem;
+        padding: 1.2rem 0.8rem;
+    }
+    
+    .section-header h2 {
+        font-size: 1.6rem;
+    }
+    
+    .property-price {
+        font-size: 1.2rem;
+    }
+    
+    .stat-number {
+        font-size: 2rem;
+    }
+    
+    .plan-price {
+        font-size: 1.6rem;
+    }
+    
+    .container {
+        padding: 0 8px;
+    }
+}
+
+/* Landscape Mobile Orientation */
+@media (max-width: 768px) and (orientation: landscape) {
+    .hero {
+        height: 100vh;
+    }
+    
+    .hero-content {
+        padding: 1rem;
+    }
+    
+    .hero-title {
+        font-size: 2.5rem;
+    }
+    
+    .search-form {
+        padding: 1.5rem;
+    }
+}

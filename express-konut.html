@@ -1,13 +1,10 @@
-<!D    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Express Konut - Express Emlak</title>
-    <link rel="icon" type="image/png" href="images/favicon.png">
-    <link rel="stylesheet" href="styles.css">PE html>
+<!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Express Konut Projesi - Express Emlak</title>
+    <title>Express Konut - Express Emlak</title>
+    <link rel="icon" type="image/png" href="images/favicon.png">
     <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -418,22 +415,308 @@
                 grid-template-columns: 1fr;
             }
 
+        /* Enhanced Responsive Styles for Express Konut */
+        @media (max-width: 1024px) {
+            .project-title {
+                font-size: 2.5rem;
+            }
+            
+            .project-subtitle {
+                font-size: 1.2rem;
+            }
+            
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1.5rem;
+            }
+            
+            .plans-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 2rem;
+            }
+            
+            .calculator-container {
+                margin: 0 2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .project-header {
+                padding: 100px 0 40px;
+            }
+            
+            .project-title {
+                font-size: 2.2rem;
+                line-height: 1.2;
+            }
+            
+            .project-subtitle {
+                font-size: 1.1rem;
+                margin-bottom: 1.5rem;
+            }
+            
+            .project-stats {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+                margin: 0 1rem;
+            }
+            
+            .stat-item {
+                padding: 1rem;
+            }
+            
+            .stat-number {
+                font-size: 2rem;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+                padding: 0 1rem;
+            }
+            
+            .feature-card {
+                padding: 1.5rem;
+                text-align: center;
+            }
+            
+            .feature-icon {
+                margin: 0 auto 1rem;
+                width: 50px;
+                height: 50px;
+                font-size: 1.5rem;
+            }
+
             .plans-grid {
                 grid-template-columns: 1fr;
+                gap: 1.5rem;
+                padding: 0 1rem;
+            }
+            
+            .plan-card {
+                padding: 1.5rem;
+            }
+            
+            .plan-title {
+                font-size: 1.3rem;
+            }
+            
+            .plan-price {
+                font-size: 2rem;
+            }
+            
+            .plan-features {
+                margin: 1rem 0;
             }
 
             .steps-container {
                 grid-template-columns: 1fr;
+                gap: 1.5rem;
+                padding: 0 1rem;
+            }
+            
+            .step-card {
+                padding: 1.5rem;
+                text-align: center;
+            }
+            
+            .step-number {
+                position: static;
+                margin: 0 auto 1rem;
+                width: 50px;
+                height: 50px;
+                font-size: 1.2rem;
             }
 
             .calculator-container {
-                padding: 2rem;
+                padding: 1.5rem;
                 margin: 0 1rem;
+                border-radius: 12px;
+            }
+            
+            .calculator-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .input-group {
+                margin-bottom: 1rem;
+            }
+            
+            .input-field {
+                padding: 0.7rem;
+                font-size: 0.9rem;
             }
 
             .cta-buttons {
                 flex-direction: column;
-                align-items: center;
+                gap: 1rem;
+                align-items: stretch;
+                padding: 0 1rem;
+            }
+            
+            .btn-primary,
+            .btn-secondary {
+                width: 100%;
+                text-align: center;
+                padding: 0.8rem 1.5rem;
+            }
+            
+            .section-padding {
+                padding: 3rem 0;
+            }
+            
+            .container {
+                padding: 0 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .project-header {
+                padding: 90px 0 30px;
+            }
+            
+            .project-title {
+                font-size: 1.8rem;
+            }
+            
+            .project-subtitle {
+                font-size: 1rem;
+            }
+            
+            .project-stats {
+                grid-template-columns: 1fr;
+                gap: 0.8rem;
+                margin: 0 0.5rem;
+            }
+            
+            .stat-item {
+                padding: 0.8rem;
+            }
+            
+            .stat-number {
+                font-size: 1.8rem;
+            }
+            
+            .stat-label {
+                font-size: 0.85rem;
+            }
+            
+            .features-grid {
+                padding: 0 0.5rem;
+            }
+            
+            .feature-card {
+                padding: 1.2rem;
+            }
+            
+            .feature-icon {
+                width: 45px;
+                height: 45px;
+                font-size: 1.3rem;
+            }
+            
+            .feature-title {
+                font-size: 1.1rem;
+            }
+            
+            .plans-grid {
+                padding: 0 0.5rem;
+            }
+            
+            .plan-card {
+                padding: 1.2rem;
+            }
+            
+            .plan-title {
+                font-size: 1.2rem;
+            }
+            
+            .plan-price {
+                font-size: 1.8rem;
+            }
+            
+            .plan-features li {
+                font-size: 0.85rem;
+                padding: 0.3rem 0;
+            }
+            
+            .steps-container {
+                padding: 0 0.5rem;
+            }
+            
+            .step-card {
+                padding: 1.2rem;
+            }
+            
+            .step-number {
+                width: 45px;
+                height: 45px;
+                font-size: 1.1rem;
+            }
+            
+            .step-title {
+                font-size: 1.1rem;
+            }
+            
+            .calculator-container {
+                padding: 1.2rem;
+                margin: 0 0.5rem;
+            }
+            
+            .calculator-title {
+                font-size: 1.3rem;
+                margin-bottom: 1rem;
+            }
+            
+            .input-field {
+                padding: 0.6rem;
+                font-size: 0.85rem;
+            }
+            
+            .calculator-result {
+                padding: 1rem;
+                font-size: 0.9rem;
+            }
+            
+            .result-amount {
+                font-size: 1.5rem;
+            }
+            
+            .cta-buttons {
+                padding: 0 0.5rem;
+            }
+            
+            .btn-primary,
+            .btn-secondary {
+                padding: 0.7rem 1.2rem;
+                font-size: 0.9rem;
+            }
+            
+            .section-padding {
+                padding: 2.5rem 0;
+            }
+            
+            .section-header h2 {
+                font-size: 1.8rem;
+            }
+            
+            .section-header p {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 375px) {
+            .project-title {
+                font-size: 1.6rem;
+            }
+            
+            .calculator-container {
+                margin: 0 0.2rem;
+            }
+            
+            .cta-buttons {
+                padding: 0 0.2rem;
             }
         }
     </style>

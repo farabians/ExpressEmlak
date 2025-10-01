@@ -237,23 +237,253 @@
             margin-bottom: 0;
         }
         
-        @media (max-width: 768px) {
+        /* Enhanced Responsive Styles for Contact Page */
+        @media (max-width: 1024px) {
+            .contact-info-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1.5rem;
+            }
+            
             .contact-container {
-                grid-template-columns: 1fr;
                 gap: 2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .contact-info-section {
+                padding: 100px 0 3rem;
             }
             
             .contact-info-grid {
                 grid-template-columns: 1fr;
+                gap: 1.5rem;
+                padding: 0 1rem;
             }
             
-            .hours-grid {
+            .contact-info-card {
+                padding: 1.5rem;
+            }
+            
+            .contact-icon {
+                width: 60px;
+                height: 60px;
+                font-size: 1.5rem;
+                margin-bottom: 1rem;
+            }
+            
+            .contact-info-card h3 {
+                font-size: 1.2rem;
+                margin-bottom: 0.8rem;
+            }
+            
+            .contact-info-card p {
+                font-size: 0.9rem;
+            }
+            
+            .contact-container {
                 grid-template-columns: 1fr;
+                gap: 2rem;
+                padding: 0 1rem;
             }
             
             .contact-form,
             .contact-details {
                 padding: 1.5rem;
+                border-radius: 12px;
+            }
+            
+            .contact-form h2,
+            .contact-details h3 {
+                font-size: 1.3rem;
+                margin-bottom: 1rem;
+            }
+            
+            .form-group {
+                margin-bottom: 1rem;
+            }
+            
+            .form-input,
+            .form-textarea {
+                padding: 0.7rem;
+                font-size: 0.9rem;
+            }
+            
+            .btn-primary {
+                width: 100%;
+                padding: 0.8rem;
+                font-size: 0.9rem;
+            }
+            
+            .hours-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .hours-item {
+                padding: 0.8rem;
+                text-align: center;
+            }
+            
+            .map-container {
+                height: 250px;
+                border-radius: 12px;
+            }
+            
+            .section-padding {
+                padding: 3rem 0;
+            }
+            
+            .section-header h2 {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .contact-info-section {
+                padding: 90px 0 2rem;
+            }
+            
+            .contact-info-grid {
+                padding: 0 0.5rem;
+                gap: 1rem;
+            }
+            
+            .contact-info-card {
+                padding: 1.2rem;
+            }
+            
+            .contact-icon {
+                width: 50px;
+                height: 50px;
+                font-size: 1.3rem;
+            }
+            
+            .contact-info-card h3 {
+                font-size: 1.1rem;
+            }
+            
+            .contact-info-card p {
+                font-size: 0.85rem;
+                line-height: 1.4;
+            }
+            
+            .contact-container {
+                padding: 0 0.5rem;
+                gap: 1.5rem;
+            }
+            
+            .contact-form,
+            .contact-details {
+                padding: 1.2rem;
+            }
+            
+            .contact-form h2 {
+                font-size: 1.2rem;
+                text-align: center;
+                margin-bottom: 1.5rem;
+            }
+            
+            .contact-details h3 {
+                font-size: 1.1rem;
+                margin-bottom: 1rem;
+            }
+            
+            .form-input,
+            .form-textarea {
+                padding: 0.6rem;
+                font-size: 0.85rem;
+            }
+            
+            .form-textarea {
+                min-height: 100px;
+            }
+            
+            .btn-primary {
+                padding: 0.7rem;
+                font-size: 0.85rem;
+            }
+            
+            .hours-item {
+                padding: 0.6rem;
+                font-size: 0.85rem;
+            }
+            
+            .map-container {
+                height: 200px;
+                margin: 0 0.5rem;
+            }
+            
+            .section-padding {
+                padding: 2.5rem 0;
+            }
+            
+            .section-header {
+                margin-bottom: 2rem;
+            }
+            
+            .section-header h2 {
+                font-size: 1.8rem;
+                margin-bottom: 0.5rem;
+            }
+            
+            .section-header p {
+                font-size: 0.9rem;
+            }
+            
+            .contact-details .contact-item {
+                margin-bottom: 1rem;
+                padding: 0.8rem;
+                background: #f8f9fa;
+                border-radius: 8px;
+            }
+            
+            .contact-details .contact-item i {
+                font-size: 1rem;
+                margin-right: 0.5rem;
+            }
+            
+            .contact-details .contact-item span {
+                font-size: 0.85rem;
+                display: block;
+                margin-top: 0.2rem;
+            }
+        }
+
+        @media (max-width: 375px) {
+            .contact-info-section {
+                padding: 85px 0 1.5rem;
+            }
+            
+            .contact-form h2 {
+                font-size: 1.1rem;
+            }
+            
+            .contact-details h3 {
+                font-size: 1rem;
+            }
+            
+            .section-header h2 {
+                font-size: 1.6rem;
+            }
+            
+            .map-container {
+                height: 180px;
+                margin: 0 0.2rem;
+            }
+        }
+
+        /* Landscape orientation for mobile */
+        @media (max-width: 768px) and (orientation: landscape) {
+            .contact-info-section {
+                padding: 80px 0 2rem;
+            }
+            
+            .contact-info-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .map-container {
+                height: 200px;
             }
         }
     </style>
