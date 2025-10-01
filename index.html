@@ -146,9 +146,29 @@
             }
 
             /* Hero Responsive Styles */
+            @media (max-width: 1024px) {
+                .hero {
+                    height: calc(100vh - 70px);
+                }
+                
+                .slider-content {
+                    width: 85%;
+                    padding: 1.2rem;
+                }
+                
+                .slider-details h2 {
+                    font-size: 2rem;
+                }
+                
+                .slider-price {
+                    font-size: 1.8rem;
+                }
+            }
+
             @media (max-width: 768px) {
                 .hero {
                     height: calc(100vh - 70px);
+                    min-height: 500px;
                 }
                 
                 .slider-content {
@@ -160,21 +180,49 @@
                 .slider-details h2 {
                     font-size: 1.8rem;
                     margin-bottom: 0.8rem;
+                    text-align: center;
                 }
                 
                 .slider-price {
                     font-size: 1.6rem;
                     margin-bottom: 1rem;
+                    text-align: center;
                 }
                 
                 .slider-features {
                     grid-template-columns: repeat(2, 1fr);
                     gap: 0.8rem;
-                    max-width: 300px;
+                    max-width: 320px;
+                    margin: 0 auto 1.5rem;
+                }
+                
+                .slider-feature {
+                    font-size: 0.85rem;
+                    padding: 0.5rem 0.8rem;
+                }
+                
+                .slider-feature i {
+                    font-size: 1rem;
+                }
+                
+                .cta-buttons {
+                    flex-direction: column;
+                    gap: 0.8rem;
+                    max-width: 280px;
+                    margin: 0 auto;
+                }
+                
+                .btn-primary,
+                .btn-secondary {
+                    width: 100%;
+                    justify-content: center;
+                    padding: 0.8rem 1rem;
+                    font-size: 0.9rem;
                 }
                 
                 .slider-controls {
-                    padding: 0 10px;
+                    bottom: 1.5rem;
+                    gap: 1.5rem;
                 }
                 
                 .slider-btn {
@@ -191,6 +239,7 @@
             @media (max-width: 480px) {
                 .hero {
                     height: calc(100vh - 60px);
+                    min-height: 450px;
                 }
                 
                 .slider-content {
@@ -200,12 +249,14 @@
                 }
                 
                 .slider-details h2 {
-                    font-size: 1.5rem;
+                    font-size: 1.4rem;
                     line-height: 1.2;
+                    margin-bottom: 0.6rem;
                 }
                 
                 .slider-price {
-                    font-size: 1.4rem;
+                    font-size: 1.3rem;
+                    margin-bottom: 0.8rem;
                 }
                 
                 .slider-features {
@@ -216,13 +267,60 @@
                 
                 .slider-feature {
                     justify-content: center;
-                    font-size: 0.85rem;
+                    font-size: 0.8rem;
+                    padding: 0.4rem 0.6rem;
+                }
+                
+                .slider-feature i {
+                    font-size: 0.9rem;
+                }
+                
+                .cta-buttons {
+                    gap: 0.6rem;
+                    max-width: 260px;
+                }
+                
+                .btn-primary,
+                .btn-secondary {
+                    padding: 0.7rem 0.8rem;
+                    font-size: 0.8rem;
+                }
+                
+                .slider-controls {
+                    bottom: 1rem;
+                    gap: 1rem;
                 }
                 
                 .slider-btn {
                     width: 35px;
                     height: 35px;
                     font-size: 0.8rem;
+                }
+                
+                .slide-counter {
+                    font-size: 0.8rem;
+                }
+            }
+
+            @media (max-width: 375px) {
+                .hero {
+                    min-height: 400px;
+                }
+                
+                .slider-details h2 {
+                    font-size: 1.2rem;
+                }
+                
+                .slider-price {
+                    font-size: 1.1rem;
+                }
+                
+                .slider-features {
+                    max-width: 220px;
+                }
+                
+                .cta-buttons {
+                    max-width: 240px;
                 }
             }
 
@@ -330,9 +428,37 @@
                 z-index: 3;
             }
 
+            .slider-btn {
+                width: 50px;
+                height: 50px;
+                background: rgba(255, 255, 255, 0.2);
+                border: 2px solid rgba(255, 255, 255, 0.3);
+                border-radius: 50%;
+                color: white;
+                font-size: 1.2rem;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                backdrop-filter: blur(10px);
+            }
+
+            .slider-btn:hover {
+                background: var(--primary-color);
+                border-color: var(--primary-color);
+                transform: scale(1.1);
+            }
+
             .slider-info {
                 text-align: center;
                 color: white;
+            }
+
+            .slide-counter {
+                font-size: 1.1rem;
+                font-weight: 600;
+                margin-bottom: 0.5rem;
             }
 
             .hero-title {
@@ -429,8 +555,6 @@
                     font-size: 0.85rem;
                 }
             }
-        </style>
-    </section>
         </style>
     </section>
 
@@ -715,12 +839,12 @@
                 <p style="color: var(--light-color);">Konya'da Ev Sahibi Olmanın En Kolay ve Güvenli Yolu!</p>
             </div>
             
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; margin-top: 3rem;">
-                <div>
+            <div class="express-konut-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; margin-top: 3rem;">
+                <div class="express-konut-features">
                     <h3 style="color: var(--primary-color); font-size: 2rem; margin-bottom: 2rem;">Neden Express Konut?</h3>
                     <div style="display: flex; flex-direction: column; gap: 1.5rem;">
-                        <div style="display: flex; align-items: center; gap: 1rem;">
-                            <div style="width: 60px; height: 60px; background: var(--primary-color); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                        <div class="feature-item" style="display: flex; align-items: center; gap: 1rem;">
+                            <div style="width: 60px; height: 60px; background: var(--primary-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                                 <i class="fas fa-percent" style="font-size: 1.5rem; color: var(--white);"></i>
                             </div>
                             <div>
@@ -728,8 +852,8 @@
                                 <p>Kira öder gibi ev sahibi olun</p>
                             </div>
                         </div>
-                        <div style="display: flex; align-items: center; gap: 1rem;">
-                            <div style="width: 60px; height: 60px; background: var(--primary-color); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                        <div class="feature-item" style="display: flex; align-items: center; gap: 1rem;">
+                            <div style="width: 60px; height: 60px; background: var(--primary-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                                 <i class="fas fa-coins" style="font-size: 1.5rem; color: var(--white);"></i>
                             </div>
                             <div>
@@ -737,8 +861,8 @@
                                 <p>1.000.000 - 1.500.000 ₺ arası</p>
                             </div>
                         </div>
-                        <div style="display: flex; align-items: center; gap: 1rem;">
-                            <div style="width: 60px; height: 60px; background: var(--primary-color); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                        <div class="feature-item" style="display: flex; align-items: center; gap: 1rem;">
+                            <div style="width: 60px; height: 60px; background: var(--primary-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                                 <i class="fas fa-calendar-alt" style="font-size: 1.5rem; color: var(--white);"></i>
                             </div>
                             <div>
@@ -748,9 +872,9 @@
                         </div>
                     </div>
                 </div>
-                <div style="background: rgba(255,255,255,0.1); padding: 2rem; border-radius: 20px; backdrop-filter: blur(10px); text-align: center;">
+                <div class="express-konut-plans" style="background: rgba(255,255,255,0.1); padding: 2rem; border-radius: 20px; backdrop-filter: blur(10px); text-align: center;">
                     <h3 style="color: var(--primary-color); margin-bottom: 2rem;">6 Farklı Ödeme Planı</h3>
-                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem;">
+                    <div class="plans-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem;">
                         <div style="background: var(--primary-color); padding: 1rem; border-radius: 10px; color: var(--white);">
                             <div style="font-size: 1.5rem; font-weight: 700;">Plan 1</div>
                             <div style="font-size: 0.9rem;">44.000₺/ay</div>
@@ -784,6 +908,110 @@
             </div>
         </div>
     </section>
+
+    <style>
+        /* Express Konut Responsive Styles */
+        @media (max-width: 1024px) {
+            .express-konut-grid {
+                gap: 3rem !important;
+            }
+            
+            .express-konut-features h3 {
+                font-size: 1.8rem !important;
+            }
+            
+            .plans-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .express-konut-grid {
+                grid-template-columns: 1fr !important;
+                gap: 2rem !important;
+            }
+            
+            .express-konut-features h3 {
+                font-size: 1.5rem !important;
+            }
+            
+            .express-konut-plans {
+                padding: 1.5rem !important;
+            }
+            
+            .plans-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 0.8rem !important;
+            }
+            
+            .plans-grid > div {
+                padding: 0.8rem !important;
+                font-size: 0.85rem !important;
+            }
+            
+            .plans-grid > div > div:first-child {
+                font-size: 1.2rem !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .feature-item {
+                flex-direction: column !important;
+                text-align: center !important;
+                gap: 0.8rem !important;
+            }
+            
+            .feature-item > div:first-child {
+                width: 50px !important;
+                height: 50px !important;
+            }
+            
+            .feature-item i {
+                font-size: 1.2rem !important;
+            }
+            
+            .express-konut-features h3 {
+                font-size: 1.3rem !important;
+            }
+            
+            .express-konut-plans h3 {
+                font-size: 1.2rem !important;
+                margin-bottom: 1.5rem !important;
+            }
+            
+            .plans-grid {
+                grid-template-columns: 1fr !important;
+                gap: 0.6rem !important;
+            }
+            
+            .plans-grid > div {
+                padding: 1rem !important;
+            }
+            
+            .express-konut-plans a {
+                padding: 0.8rem 1.5rem !important;
+                font-size: 0.9rem !important;
+            }
+        }
+
+        @media (max-width: 375px) {
+            .express-konut-features h3 {
+                font-size: 1.2rem !important;
+            }
+            
+            .express-konut-plans {
+                padding: 1rem !important;
+            }
+            
+            .feature-item h4 {
+                font-size: 1rem !important;
+            }
+            
+            .feature-item p {
+                font-size: 0.9rem !important;
+            }
+        }
+    </style>
 
     <!-- Stats Section -->
     <section class="stats">

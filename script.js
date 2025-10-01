@@ -413,11 +413,42 @@ style.textContent = `
         padding: 1rem;
         backdrop-filter: blur(15px);
         border-radius: 0 0 15px 15px;
+        z-index: 9999;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+    
+    .nav.active .nav-link {
+        padding: 1rem 0;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        text-align: center;
+        font-size: 1.1rem;
+    }
+    
+    .nav.active .nav-link:last-child {
+        border-bottom: none;
     }
     
     .lazy {
         filter: blur(5px);
         transition: filter 0.3s;
+    }
+    
+    /* Mobile header fixes */
+    @media (max-width: 768px) {
+        .header {
+            position: fixed !important;
+            width: 100% !important;
+            top: 0 !important;
+            z-index: 10000 !important;
+        }
+        
+        .mobile-menu-btn {
+            z-index: 10001 !important;
+        }
+        
+        .nav.active {
+            z-index: 10000 !important;
+        }
     }
 `;
 
