@@ -492,9 +492,29 @@
   <section id="uploadSection" class="hidden">
     <h2>Yeni İlan Ekle</h2>
     <form id="ilanForm">
+      <!-- İlan Kategorisi -->
       <div class="form-group">
-        <label for="ilanTipi">İlan Tipi</label>
+        <label>İlan Kategorisi</label>
         <div class="radio-group">
+          <label class="radio-label">
+            <input type="radio" name="kategori" value="konut" required checked onchange="changeCategory()">
+            Konut
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="kategori" value="isyeri" required onchange="changeCategory()">
+            İş Yeri
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="kategori" value="arsa" required onchange="changeCategory()">
+            Arsa
+          </label>
+        </div>
+      </div>
+
+      <!-- İlan Tipi -->
+      <div class="form-group" id="ilanTipiGroup">
+        <label>İlan Tipi</label>
+        <div class="radio-group" id="ilanTipiRadios">
           <label class="radio-label">
             <input type="radio" name="ilanTipi" value="satilik" required checked>
             Satılık
@@ -506,66 +526,413 @@
         </div>
       </div>
 
+      <!-- İlan Başlığı -->
       <div class="form-group">
         <label for="isim">İlan Başlığı</label>
         <input id="isim" type="text" placeholder="Örn: Meram'da Satılık 3+1 Daire" required />
       </div>
 
-      <div class="row">
-        <div class="form-group" style="flex: 1;">
-          <label for="fiyat">Fiyat</label>
-          <input id="fiyat" type="number" placeholder="₺" required />
+      <!-- Lokasyon -->
+      <div class="form-group">
+        <label>Lokasyon</label>
+        <div class="row">
+          <div style="flex: 1;">
+            <select id="il" required onchange="updateIlce()">
+              <option value="">İl Seçiniz</option>
+            </select>
+          </div>
+          <div style="flex: 1;">
+            <select id="ilce" required onchange="updateMahalle()">
+              <option value="">İlçe Seçiniz</option>
+            </select>
+          </div>
+          <div style="flex: 1;">
+            <select id="mahalle" required>
+              <option value="">Mahalle Seçiniz</option>
+            </select>
+          </div>
         </div>
-        
-        <div class="form-group" style="flex: 1;">
-          <label for="lokasyon">Lokasyon</label>
-          <select id="lokasyon" required>
+      </div>
+
+      <!-- Fiyat -->
+      <div class="form-group">
+        <label for="fiyat">Fiyat</label>
+        <input id="fiyat" type="number" placeholder="₺" required />
+      </div>
+
+      <!-- KONUT ÖZELLİKLERİ -->
+      <div id="konutFields">
+        <!-- Metrekare -->
+        <div class="row">
+          <div class="form-group" style="flex: 1;">
+            <label for="brutMetrekare">Brüt Metrekare</label>
+            <input id="brutMetrekare" type="number" placeholder="m²" />
+          </div>
+          <div class="form-group" style="flex: 1;">
+            <label for="netMetrekare">Net Metrekare</label>
+            <input id="netMetrekare" type="number" placeholder="m²" required />
+          </div>
+        </div>
+
+        <!-- Oda Sayısı ve Bina Yaşı -->
+        <div class="row">
+          <div class="form-group" style="flex: 1;">
+            <label for="odaSayisi">Oda Sayısı</label>
+            <select id="odaSayisi" required>
+              <option value="">Seçiniz</option>
+              <option value="1+0">1+0</option>
+              <option value="1+1">1+1</option>
+              <option value="2+1">2+1</option>
+              <option value="3+1">3+1</option>
+              <option value="4+1">4+1</option>
+              <option value="5+1">5+1</option>
+              <option value="6+1">6+1 ve üzeri</option>
+            </select>
+          </div>
+          <div class="form-group" style="flex: 1;">
+            <label for="binaYasi">Bina Yaşı</label>
+            <select id="binaYasi" required>
+              <option value="">Seçiniz</option>
+              <option value="0">0 (Sıfır)</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6-10">6-10</option>
+              <option value="11-15">11-15</option>
+              <option value="16-20">16-20</option>
+              <option value="21-25">21-25</option>
+              <option value="26-30">26-30</option>
+              <option value="31+">31 ve üzeri</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Kat Bilgileri -->
+        <div class="row">
+          <div class="form-group" style="flex: 1;">
+            <label for="bulunduguKat">Bulunduğu Kat</label>
+            <select id="bulunduguKat" required>
+              <option value="">Seçiniz</option>
+              <option value="Bodrum Kat">Bodrum Kat</option>
+              <option value="Zemin Kat">Zemin Kat</option>
+              <option value="Bahçe Katı">Bahçe Katı</option>
+              <option value="Yüksek Zemin">Yüksek Zemin</option>
+              <option value="1">1. Kat</option>
+              <option value="2">2. Kat</option>
+              <option value="3">3. Kat</option>
+              <option value="4">4. Kat</option>
+              <option value="5">5. Kat</option>
+              <option value="6">6. Kat</option>
+              <option value="7">7. Kat</option>
+              <option value="8">8. Kat</option>
+              <option value="9">9. Kat</option>
+              <option value="10">10. Kat</option>
+              <option value="11+">11. Kat ve üzeri</option>
+            </select>
+          </div>
+          <div class="form-group" style="flex: 1;">
+            <label for="katSayisi">Bina Kat Sayısı</label>
+            <select id="katSayisi" required>
+              <option value="">Seçiniz</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+              <option value="9">9</option>
+              <option value="10">10</option>
+              <option value="15">15</option>
+              <option value="20">20</option>
+              <option value="25">25</option>
+              <option value="30+">30 ve üzeri</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Isıtma ve Banyo -->
+        <div class="row">
+          <div class="form-group" style="flex: 1;">
+            <label for="isitma">Isıtma</label>
+            <select id="isitma">
+              <option value="">Seçiniz</option>
+              <option value="Merkezi Sistem">Merkezi Sistem</option>
+              <option value="Kombi (Doğalgaz)">Kombi (Doğalgaz)</option>
+              <option value="Yerden Isıtma">Yerden Isıtma</option>
+              <option value="Klima">Klima</option>
+              <option value="Soba">Soba</option>
+              <option value="Kalorifer">Kalorifer</option>
+              <option value="Yok">Yok</option>
+            </select>
+          </div>
+          <div class="form-group" style="flex: 1;">
+            <label for="banyoSayisi">Banyo Sayısı</label>
+            <select id="banyoSayisi">
+              <option value="">Seçiniz</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5+">5 ve üzeri</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Mutfak ve Balkon -->
+        <div class="row">
+          <div class="form-group" style="flex: 1;">
+            <label for="mutfak">Mutfak</label>
+            <select id="mutfak">
+              <option value="">Seçiniz</option>
+              <option value="Ayrı">Ayrı</option>
+              <option value="Açık">Açık</option>
+              <option value="Amerikan Mutfak">Amerikan Mutfak</option>
+              <option value="Kapalı">Kapalı</option>
+            </select>
+          </div>
+          <div class="form-group" style="flex: 1;">
+            <label for="balkonSayisi">Balkon</label>
+            <select id="balkonSayisi">
+              <option value="">Seçiniz</option>
+              <option value="Yok">Yok</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4+">4 ve üzeri</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Konut Tipi -->
+        <div class="form-group">
+          <label for="konutTipi">Konut Tipi</label>
+          <select id="konutTipi">
             <option value="">Seçiniz</option>
-            <option value="Meram">Meram</option>
-            <option value="Selçuklu">Selçuklu</option>
-            <option value="Karatay">Karatay</option>
+            <option value="Daire">Daire</option>
+            <option value="Residence">Residence</option>
+            <option value="Müstakil Ev">Müstakil Ev</option>
+            <option value="Villa">Villa</option>
+            <option value="Çiftlik Evi">Çiftlik Evi</option>
+            <option value="Yazlık">Yazlık</option>
+            <option value="Apart">Apart</option>
+            <option value="Loft">Loft</option>
+            <option value="Stüdyo">Stüdyo</option>
+            <option value="Tek Katlı Ev">Tek Katlı Ev</option>
+            <option value="İkiz Ev">İkiz Ev</option>
+            <option value="Tripleks">Tripleks</option>
+            <option value="Dubleks">Dubleks</option>
           </select>
         </div>
-      </div>
 
-      <div class="row">
-        <div class="form-group" style="flex: 1;">
-          <label for="odaSayisi">Oda Sayısı</label>
-          <select id="odaSayisi" required>
+        <!-- Özellikler Checkboxlar -->
+        <div class="form-group">
+          <label>Özellikler</label>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 8px;">
+            <label class="radio-label"><input type="checkbox" id="asansor"> Asansör</label>
+            <label class="radio-label"><input type="checkbox" id="otopark"> Otopark</label>
+            <label class="radio-label"><input type="checkbox" id="esyali"> Eşyalı</label>
+            <label class="radio-label"><input type="checkbox" id="siteIcerisinde"> Site İçerisinde</label>
+            <label class="radio-label"><input type="checkbox" id="krediyeUygun"> Krediye Uygun</label>
+            <label class="radio-label"><input type="checkbox" id="takasli"> Takaslı</label>
+            <label class="radio-label"><input type="checkbox" id="engelliyeUygun"> Engelliye Uygun</label>
+            <label class="radio-label"><input type="checkbox" id="yasliyaUygun"> Yaşlıya Uygun</label>
+          </div>
+        </div>
+
+        <!-- Kullanım Durumu ve Tapu -->
+        <div class="row">
+          <div class="form-group" style="flex: 1;">
+            <label for="kullanimDurumu">Kullanım Durumu</label>
+            <select id="kullanimDurumu">
+              <option value="">Seçiniz</option>
+              <option value="Boş">Boş</option>
+              <option value="Kiracılı">Kiracılı</option>
+              <option value="Mülk Sahibi">Mülk Sahibi</option>
+            </select>
+          </div>
+          <div class="form-group" style="flex: 1;">
+            <label for="tapuDurumu">Tapu Durumu</label>
+            <select id="tapuDurumu">
+              <option value="">Seçiniz</option>
+              <option value="Kat Mülkiyetli">Kat Mülkiyetli</option>
+              <option value="Kat İrtifaklı">Kat İrtifaklı</option>
+              <option value="Arsa Paylı">Arsa Paylı</option>
+              <option value="Müstakil Tapulu">Müstakil Tapulu</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Kimden -->
+        <div class="form-group">
+          <label for="kimden">Kimden</label>
+          <select id="kimden">
             <option value="">Seçiniz</option>
-            <option value="1+0">1+0</option>
-            <option value="1+1">1+1</option>
-            <option value="2+1">2+1</option>
-            <option value="3+1">3+1</option>
-            <option value="4+1">4+1</option>
-            <option value="5+1">5+1</option>
-            <option value="6+1">6+1</option>
+            <option value="Sahibinden">Sahibinden</option>
+            <option value="Emlak Ofisinden">Emlak Ofisinden</option>
+            <option value="İnşaat Firmasından">İnşaat Firmasından</option>
           </select>
         </div>
 
-        <div class="form-group" style="flex: 1;">
-          <label for="metrekare">Net Metrekare</label>
-          <input id="metrekare" type="number" placeholder="m²" required />
+        <!-- Cephe -->
+        <div class="form-group">
+          <label for="cephe">Cephe</label>
+          <select id="cephe">
+            <option value="">Seçiniz</option>
+            <option value="Kuzey">Kuzey</option>
+            <option value="Güney">Güney</option>
+            <option value="Doğu">Doğu</option>
+            <option value="Batı">Batı</option>
+            <option value="Güneydoğu">Güneydoğu</option>
+            <option value="Güneybatı">Güneybatı</option>
+            <option value="Kuzeydoğu">Kuzeydoğu</option>
+            <option value="Kuzeybatı">Kuzeybatı</option>
+          </select>
+        </div>
+
+        <!-- Manzara -->
+        <div class="form-group">
+          <label>Manzara</label>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 8px;">
+            <label class="radio-label"><input type="checkbox" id="manzaraDoğa"> Doğa</label>
+            <label class="radio-label"><input type="checkbox" id="manzaraSehir"> Şehir</label>
+            <label class="radio-label"><input type="checkbox" id="manzaraDeniz"> Deniz</label>
+            <label class="radio-label"><input type="checkbox" id="manzaraGol"> Göl</label>
+            <label class="radio-label"><input type="checkbox" id="manzaraDag"> Dağ</label>
+            <label class="radio-label"><input type="checkbox" id="manzaraPark"> Park</label>
+          </div>
+        </div>
+
+        <!-- İç Özellikler -->
+        <div class="form-group">
+          <label for="icOzellikler">İç Özellikler</label>
+          <textarea id="icOzellikler" rows="3" placeholder="Laminat parke, spot aydınlatma, amerikan kapı vb."></textarea>
+        </div>
+
+        <!-- Dış Özellikler -->
+        <div class="form-group">
+          <label for="disOzellikler">Dış Özellikler</label>
+          <textarea id="disOzellikler" rows="3" placeholder="Hidrofor, jeneratör, güvenlik vb."></textarea>
+        </div>
+
+        <!-- Muhit -->
+        <div class="form-group">
+          <label for="muhit">Muhit</label>
+          <textarea id="muhit" rows="2" placeholder="Okul, hastane, market yakınlığı vb."></textarea>
+        </div>
+
+        <!-- Ulaşım -->
+        <div class="form-group">
+          <label for="ulasim">Ulaşım</label>
+          <textarea id="ulasim" rows="2" placeholder="Toplu taşıma, ana yol bağlantıları vb."></textarea>
         </div>
       </div>
 
-      <div class="row">
-        <div class="form-group" style="flex: 1;">
-          <label for="binaYasi">Bina Yaşı</label>
-          <input id="binaYasi" type="number" placeholder="Yıl" required />
+      <!-- İŞ YERİ ÖZELLİKLERİ -->
+      <div id="isyeriFields" style="display: none;">
+        <!-- Metrekare -->
+        <div class="row">
+          <div class="form-group" style="flex: 1;">
+            <label for="isyeriBrutMetrekare">Brüt Metrekare</label>
+            <input id="isyeriBrutMetrekare" type="number" placeholder="m²" />
+          </div>
+          <div class="form-group" style="flex: 1;">
+            <label for="isyeriNetMetrekare">Net Metrekare</label>
+            <input id="isyeriNetMetrekare" type="number" placeholder="m²" />
+          </div>
         </div>
 
-        <div class="form-group" style="flex: 1;">
-          <label for="bulunduguKat">Bulunduğu Kat</label>
-          <input id="bulunduguKat" type="number" placeholder="Kat" required />
+        <!-- İş Yeri Tipi -->
+        <div class="form-group">
+          <label for="isyeriTipi">İş Yeri Tipi</label>
+          <select id="isyeriTipi">
+            <option value="">Seçiniz</option>
+            <option value="Büro">Büro</option>
+            <option value="Dükkan">Dükkan</option>
+            <option value="Mağaza">Mağaza</option>
+            <option value="Depo">Depo</option>
+            <option value="Fabrika">Fabrika</option>
+            <option value="Atölye">Atölye</option>
+            <option value="Plaza">Plaza</option>
+            <option value="İş Hanı">İş Hanı</option>
+            <option value="Ofis">Ofis</option>
+            <option value="Showroom">Showroom</option>
+            <option value="Cafe">Cafe</option>
+            <option value="Restoran">Restoran</option>
+            <option value="Otel">Otel</option>
+            <option value="Klinik">Klinik</option>
+            <option value="Diğer">Diğer</option>
+          </select>
+        </div>
+
+        <!-- İş Yeri Özellikleri -->
+        <div class="form-group">
+          <label>Özellikler</label>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 8px;">
+            <label class="radio-label"><input type="checkbox" id="isyeriAsansor"> Asansör</label>
+            <label class="radio-label"><input type="checkbox" id="isyeriOtopark"> Otopark</label>
+            <label class="radio-label"><input type="checkbox" id="isyeriKrediyeUygun"> Krediye Uygun</label>
+            <label class="radio-label"><input type="checkbox" id="isyeriTakasli"> Takaslı</label>
+          </div>
+        </div>
+
+        <!-- İş Yeri Ek Bilgiler -->
+        <div class="form-group">
+          <label for="isyeriOzellikler">İş Yeri Özellikleri</label>
+          <textarea id="isyeriOzellikler" rows="3" placeholder="İş yeri ile ilgili özel açıklamalar"></textarea>
         </div>
       </div>
 
+      <!-- ARSA ÖZELLİKLERİ -->
+      <div id="arsaFields" style="display: none;">
+        <!-- Arsa Tipi -->
+        <div class="form-group">
+          <label for="arsaTipi">Arsa Tipi</label>
+          <select id="arsaTipi">
+            <option value="">Seçiniz</option>
+            <option value="Arsa">Arsa</option>
+            <option value="Tarla">Tarla</option>
+            <option value="Bağ">Bağ</option>
+            <option value="Bahçe">Bahçe</option>
+            <option value="Kooperatif">Kooperatif</option>
+            <option value="Diğer">Diğer</option>
+          </select>
+        </div>
+
+        <!-- Arsa Metrekare -->
+        <div class="form-group">
+          <label for="arsaMetrekare">Metrekare</label>
+          <input id="arsaMetrekare" type="number" placeholder="m²" />
+        </div>
+
+        <!-- Arsa Özellikleri -->
+        <div class="form-group">
+          <label>Özellikler</label>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 8px;">
+            <label class="radio-label"><input type="checkbox" id="arsaImarli"> İmarlı</label>
+            <label class="radio-label"><input type="checkbox" id="arsaSatılabilir"> Satılabilir</label>
+            <label class="radio-label"><input type="checkbox" id="arsaKrediyeUygun"> Krediye Uygun</label>
+            <label class="radio-label"><input type="checkbox" id="arsaTakasli"> Takaslı</label>
+          </div>
+        </div>
+
+        <!-- Arsa Ek Bilgiler -->
+        <div class="form-group">
+          <label for="arsaOzellikler">Arsa Özellikleri</label>
+          <textarea id="arsaOzellikler" rows="3" placeholder="Arsa ile ilgili özel açıklamalar"></textarea>
+        </div>
+      </div>
+
+      <!-- Açıklama -->
       <div class="form-group">
         <label for="aciklama">Detaylı Açıklama</label>
         <textarea id="aciklama" rows="4" placeholder="İlan hakkında detaylı bilgi verin"></textarea>
       </div>
 
+      <!-- Fotoğraflar -->
       <div class="form-group">
         <label>Fotoğraflar (En az 1 fotoğraf gerekli)</label>
         <div class="row">
@@ -574,6 +941,7 @@
         </div>
       </div>
 
+      <!-- Video -->
       <div class="form-group">
         <label>Video (İsteğe bağlı)</label>
         <div class="row">
@@ -582,10 +950,19 @@
         </div>
       </div>
 
+      <!-- Harita Koordinatları -->
+      <div class="form-group">
+        <label>Harita Koordinatları (İsteğe bağlı)</label>
+        <div class="row">
+          <input id="enlem" type="text" placeholder="Enlem (Latitude)" style="flex: 1;" />
+          <input id="boylam" type="text" placeholder="Boylam (Longitude)" style="flex: 1;" />
+        </div>
+      </div>
+
       <div id="progressArea" class="muted"></div>
 
       <div class="row">
-        <button id="submitBtn" type="submit">Yükle</button>
+        <button id="submitBtn" type="submit">İlan Yükle</button>
         <span id="formMsg"></span>
       </div>
     </form>
@@ -645,6 +1022,128 @@
     resetVideoBtn.addEventListener("click", () => {
       document.getElementById("video").value = "";
     });
+
+    // Kategori değiştirme fonksiyonu
+    window.changeCategory = function() {
+      const category = document.querySelector('input[name="kategori"]:checked').value;
+      const ilanTipiRadios = document.getElementById('ilanTipiRadios');
+      const konutFields = document.getElementById('konutFields');
+      const isyeriFields = document.getElementById('isyeriFields');
+      const arsaFields = document.getElementById('arsaFields');
+
+      // Tüm alanları gizle
+      konutFields.style.display = 'none';
+      isyeriFields.style.display = 'none';
+      arsaFields.style.display = 'none';
+
+      // İlan tipi seçeneklerini güncelle
+      if (category === 'isyeri') {
+        ilanTipiRadios.innerHTML = `
+          <label class="radio-label">
+            <input type="radio" name="ilanTipi" value="satilik" required checked>
+            Satılık
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="ilanTipi" value="kiralik" required>
+            Kiralık
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="ilanTipi" value="devren-satilik" required>
+            Devren Satılık
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="ilanTipi" value="devren-kiralik" required>
+            Devren Kiralık
+          </label>
+        `;
+        isyeriFields.style.display = 'block';
+      } else if (category === 'arsa') {
+        ilanTipiRadios.innerHTML = `
+          <label class="radio-label">
+            <input type="radio" name="ilanTipi" value="satilik" required checked>
+            Satılık
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="ilanTipi" value="kiralik" required>
+            Kiralık
+          </label>
+        `;
+        arsaFields.style.display = 'block';
+      } else {
+        ilanTipiRadios.innerHTML = `
+          <label class="radio-label">
+            <input type="radio" name="ilanTipi" value="satilik" required checked>
+            Satılık
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="ilanTipi" value="kiralik" required>
+            Kiralık
+          </label>
+        `;
+        konutFields.style.display = 'block';
+      }
+    };
+
+    // Türkiye İl/İlçe/Mahalle Verileri
+    const turkiyeVerileri = {
+      "Konya": {
+        "Karatay": ["Akşehir", "Alaaddin", "Aydınlıkevler", "Bosna Hersek", "Büyükdikili", "Cumhuriyet", "Darülihsan", "Durunday", "Fetih", "Gazi Mustafa Kemal", "Gülveren", "Hamidiye", "Horozluhan", "İhsaniye", "İsmil", "Karaaslan", "Karahöyük", "Küçükdikili", "Kurtuluş", "Medrese", "Nişantaş", "Özkat", "Parsana", "Şerhöyük", "Şeyh Şamil", "Tacir Veli", "Turan", "Türkan Saylan", "Ülküler", "Veysel Karani", "Yaka", "Yarış"],
+        "Meram": ["Abdülhamid Han", "Aşıklı", "Bahçelievler", "Barış", "Dumlupınar", "Emirgazi", "Günyüzü", "Hacıkaymak", "Hanlı", "Hasanköy", "Hisar", "İsmet Paşa", "Kılıçaslan", "Lalebahçe", "Mareşal Fevzi Çakmak", "Osmangazi", "Sahip Ata", "Şeyh Şamil", "Şükran", "Uluırmak", "Yenidoğan"],
+        "Selçuklu": ["Aziziye", "Bedir", "Binkonut", "Buhara", "Ferhuniye", "Hacıveyiszade", "Hanaybaşı", "Horozluhan", "Kosova", "Kullar", "Maltepe", "Paşıkent", "Pınar", "Saray", "Sille Ak", "Sille Parsana", "Tatlıcak", "Topraklık", "Yazır", "Zafer"]
+      },
+      "İstanbul": {
+        "Kadıköy": ["19 Mayıs", "Acıbadem", "Bostancı", "Caferağa", "Caddebostan", "Erenköy", "Fenerbahçe", "Feneryolu", "Fikirtepe", "Göztepe", "Hasanpaşa", "İçerenköy", "Jülide", "Koşuyolu", "Kozyatağı", "Kriton", "Merdivenköy", "Moda", "Osmanağa", "Rasimpaşa", "Sahrayıcedit", "Selamiçeşme", "Suadiye", "Şaşkınbakkal", "Zühtüpaşa"],
+        "Beyoğlu": ["Asmalımescit", "Bereketzade", "Bostan", "Bulbul", "Camcı Ali", "Cihangir", "Fetihtepe", "Galipdede", "Hacımimi", "Halıcıoğlu", "Kamerhatun", "Kapıdağlı", "Karakuyu", "Katip Mustafa Çelebi", "Keçeci Piri", "Kemankeş Karamustafapaşa", "Kılıçalipaşa", "Kocatepe", "Küçükpiyale", "Ömeravni", "Piyalepaşa", "Pürtelaş Hasan Efendi", "Sütlüce", "Şahkulu", "Şehit Muhtar", "Taksim", "Tomtom", "Yenişehir"],
+        "Üsküdar": ["Ahmediye", "Altunizade", "Aziz Mahmud Hüdai", "Baruthane", "Beylerbeyi", "Bulgurlu", "Burhaniye", "Doğancılar", "Fetih", "İcadiye", "İmrahor", "Kandilli", "Kapıağası", "Kılıçali Paşa", "Kisikli", "Kuleli", "Kuzguncuk", "Mihrabad", "Murat Reis", "Nuh Kuyusu", "Paşalimanı", "Salacak", "Selamiali", "Sultantepe", "Şemsipaşa", "Uncular", "Valide-i Atik", "Yavuztürk", "Zeynep Kamil"]
+      },
+      "Ankara": {
+        "Çankaya": ["15 Temmuz", "Ahlatlıbel", "Akay", "Akyurt", "Algın", "Alacaatlı", "Bahçelievler", "Barbaros", "Birlik", "Bülbülderesi", "Büyükesat", "Cayyolu", "Çukurambar", "Dikmen", "Emek", "Gazino", "Gimat", "GOP", "Güvenevler", "Hilal", "Huzur", "İlkbahar", "İncek", "Kavaklıdere", "Köşk", "Kültür", "Kumrular", "Küçükesat", "Mamak", "Mesa Koru", "Mimar Sinan", "Öveçler", "Panora", "Remzi Oğuz Arık", "Seyranbağları", "Şehit Teğmen Kalmaz", "Şenyuva", "Taşpınar", "Turan Güneş", "Ümit", "Ümitköy", "Yaşamkent", "Yıldız"],
+        "Keçiören": ["19 Mayıs", "Ağaç İşleri", "Aktepe", "Atapark", "Bağlarbaşı", "Baksı", "Birinevler", "Etlik", "Esertepe", "Gülseren", "Haberal", "Hamidiye", "Hasköy", "İmrahor", "Kalaba", "Karşıyaka", "Kuşcağız", "Ovacık", "Pınarbaşı", "Sanatoryum", "Şafak", "Şenlik", "Şenyurt", "Subay Evleri", "Uyanık", "Yakacık", "Yenimahalle"]
+      }
+    };
+
+    // İl dropdown'unu doldur
+    function initializeLocation() {
+      const ilSelect = document.getElementById('il');
+      ilSelect.innerHTML = '<option value="">İl Seçiniz</option>';
+      Object.keys(turkiyeVerileri).forEach(il => {
+        ilSelect.innerHTML += `<option value="${il}">${il}</option>`;
+      });
+    }
+
+    // İlçe dropdown'unu güncelle
+    window.updateIlce = function() {
+      const il = document.getElementById('il').value;
+      const ilceSelect = document.getElementById('ilce');
+      const mahalleSelect = document.getElementById('mahalle');
+      
+      ilceSelect.innerHTML = '<option value="">İlçe Seçiniz</option>';
+      mahalleSelect.innerHTML = '<option value="">Mahalle Seçiniz</option>';
+      
+      if (il && turkiyeVerileri[il]) {
+        Object.keys(turkiyeVerileri[il]).forEach(ilce => {
+          ilceSelect.innerHTML += `<option value="${ilce}">${ilce}</option>`;
+        });
+      }
+    };
+
+    // Mahalle dropdown'unu güncelle
+    window.updateMahalle = function() {
+      const il = document.getElementById('il').value;
+      const ilce = document.getElementById('ilce').value;
+      const mahalleSelect = document.getElementById('mahalle');
+      
+      mahalleSelect.innerHTML = '<option value="">Mahalle Seçiniz</option>';
+      
+      if (il && ilce && turkiyeVerileri[il] && turkiyeVerileri[il][ilce]) {
+        turkiyeVerileri[il][ilce].forEach(mahalle => {
+          mahalleSelect.innerHTML += `<option value="${mahalle}">${mahalle}</option>`;
+        });
+      }
+    };
+
+    // Sayfa yüklendiğinde lokasyon verilerini başlat
+    initializeLocation();
 
     // ✅ Sadece bu e-postalar yükleyebilsin
     const ALLOWED_EMAILS = [
@@ -790,10 +1289,122 @@
           throw new Error("Lütfen tüm alanları doldurun.");
         }
 
-        const docRef = await addDoc(collection(db, "ilanlar"), {
+        // Yeni veri yapısını hazırla
+        const kategori = document.querySelector('input[name="kategori"]:checked').value;
+        const ilanTipi = document.querySelector('input[name="ilanTipi"]:checked').value;
+        const il = document.getElementById("il").value;
+        const ilce = document.getElementById("ilce").value;
+        const mahalle = document.getElementById("mahalle").value;
+
+        if (!il || !ilce || !mahalle) {
+          throw new Error("Lütfen lokasyon bilgilerini tam olarak doldurun.");
+        }
+
+        let ilanData = {
           isim,
           fiyat,
           aciklama,
+          kategori,
+          ilanTipi,
+          il,
+          ilce,
+          mahalle,
+          lokasyon: `${il} / ${ilce} / ${mahalle}`,
+          photoUrls,
+          photoPaths,
+          videoUrl: videoUrl || null,
+          videoPath: videoPath || null,
+          ownerUid: user.uid,
+          ownerEmail: user.email,
+          tarih: serverTimestamp(),
+          enlem: document.getElementById("enlem")?.value?.trim() || null,
+          boylam: document.getElementById("boylam")?.value?.trim() || null
+        };
+
+        // Kategori özel alanları ekle
+        if (kategori === 'konut') {
+          const netMetrekareEl = document.getElementById("netMetrekare");
+          const odaSayisiEl = document.getElementById("odaSayisi");
+          const binaYasiEl = document.getElementById("binaYasi");
+          const bulunduguKatEl = document.getElementById("bulunduguKat");
+
+          if (!netMetrekareEl?.value || !odaSayisiEl?.value || !binaYasiEl?.value || !bulunduguKatEl?.value) {
+            throw new Error("Lütfen konut için gerekli tüm alanları doldurun.");
+          }
+
+          Object.assign(ilanData, {
+            brutMetrekare: Number(document.getElementById("brutMetrekare")?.value) || null,
+            netMetrekare: Number(netMetrekareEl.value),
+            metrekare: Number(netMetrekareEl.value), // Geriye dönük uyumluluk
+            odaSayisi: odaSayisiEl.value,
+            binaYasi: binaYasiEl.value,
+            bulunduguKat: bulunduguKatEl.value,
+            katSayisi: document.getElementById("katSayisi")?.value || null,
+            isitma: document.getElementById("isitma")?.value || null,
+            banyoSayisi: document.getElementById("banyoSayisi")?.value || null,
+            mutfak: document.getElementById("mutfak")?.value || null,
+            balkonSayisi: document.getElementById("balkonSayisi")?.value || null,
+            konutTipi: document.getElementById("konutTipi")?.value || null,
+            kullanimDurumu: document.getElementById("kullanimDurumu")?.value || null,
+            tapuDurumu: document.getElementById("tapuDurumu")?.value || null,
+            kimden: document.getElementById("kimden")?.value || null,
+            cephe: document.getElementById("cephe")?.value || null,
+            icOzellikler: document.getElementById("icOzellikler")?.value?.trim() || null,
+            disOzellikler: document.getElementById("disOzellikler")?.value?.trim() || null,
+            muhit: document.getElementById("muhit")?.value?.trim() || null,
+            ulasim: document.getElementById("ulasim")?.value?.trim() || null,
+            // Özellikler
+            asansor: document.getElementById("asansor")?.checked || false,
+            otopark: document.getElementById("otopark")?.checked || false,
+            esyali: document.getElementById("esyali")?.checked || false,
+            siteIcerisinde: document.getElementById("siteIcerisinde")?.checked || false,
+            krediyeUygun: document.getElementById("krediyeUygun")?.checked || false,
+            takasli: document.getElementById("takasli")?.checked || false,
+            engelliyeUygun: document.getElementById("engelliyeUygun")?.checked || false,
+            yasliyaUygun: document.getElementById("yasliyaUygun")?.checked || false,
+            // Manzara
+            manzara: {
+              doga: document.getElementById("manzaraDoğa")?.checked || false,
+              sehir: document.getElementById("manzaraSehir")?.checked || false,
+              deniz: document.getElementById("manzaraDeniz")?.checked || false,
+              gol: document.getElementById("manzaraGol")?.checked || false,
+              dag: document.getElementById("manzaraDag")?.checked || false,
+              park: document.getElementById("manzaraPark")?.checked || false
+            }
+          });
+        } else if (kategori === 'isyeri') {
+          Object.assign(ilanData, {
+            isyeriBrutMetrekare: Number(document.getElementById("isyeriBrutMetrekare")?.value) || null,
+            isyeriNetMetrekare: Number(document.getElementById("isyeriNetMetrekare")?.value) || null,
+            isyeriTipi: document.getElementById("isyeriTipi")?.value || null,
+            isyeriOzellikler: document.getElementById("isyeriOzellikler")?.value?.trim() || null,
+            // İş yeri özellikleri
+            isyeriAsansor: document.getElementById("isyeriAsansor")?.checked || false,
+            isyeriOtopark: document.getElementById("isyeriOtopark")?.checked || false,
+            isyeriKrediyeUygun: document.getElementById("isyeriKrediyeUygun")?.checked || false,
+            isyeriTakasli: document.getElementById("isyeriTakasli")?.checked || false
+          });
+        } else if (kategori === 'arsa') {
+          Object.assign(ilanData, {
+            arsaTipi: document.getElementById("arsaTipi")?.value || null,
+            arsaMetrekare: Number(document.getElementById("arsaMetrekare")?.value) || null,
+            arsaOzellikler: document.getElementById("arsaOzellikler")?.value?.trim() || null,
+            // Arsa özellikleri
+            arsaImarli: document.getElementById("arsaImarli")?.checked || false,
+            arsaSatılabilir: document.getElementById("arsaSatılabilir")?.checked || false,
+            arsaKrediyeUygun: document.getElementById("arsaKrediyeUygun")?.checked || false,
+            arsaTakasli: document.getElementById("arsaTakasli")?.checked || false
+          });
+        }
+
+        const docRef = await addDoc(collection(db, "ilanlar"), ilanData);
+
+        formMsg.textContent = "İlan başarıyla yüklendi ✅";
+        ilanForm.reset();
+        clearProgress();
+        // Form resetlendiğinde kategori alanlarını da resetle
+        changeCategory();
+        initializeLocation();
           odaSayisi,
           lokasyon,
           metrekare,
@@ -806,12 +1417,17 @@
           videoPath: videoPath || null,
           ownerUid: user.uid,
           ownerEmail: user.email,
-          tarih: serverTimestamp()
-        });
+          tarih: serverTimestamp(),
+          enlem: document.getElementById("enlem")?.value?.trim() || null,
+          boylam: document.getElementById("boylam")?.value?.trim() || null
+        };
 
-        formMsg.textContent = "İlan yüklendi ✅";
+        formMsg.textContent = "İlan başarıyla yüklendi ✅";
         ilanForm.reset();
         clearProgress();
+        // Form resetlendiğinde kategori alanlarını da resetle
+        changeCategory();
+        initializeLocation();
       } catch (err) {
         console.error(err);
         formMsg.innerHTML = `<span class="danger">Hata: ${err.message}</span>`;
@@ -883,6 +1499,9 @@
       });
       if (snapshot.empty) ilanListesi.innerHTML = "<p>Henüz ilan yok.</p>";
     });
+
+    // Global değişken
+    window.isSubmitting = false;
   </script>
 </body>
 </html>
