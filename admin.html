@@ -1278,16 +1278,6 @@
 
         // 3) Firestore’a tek bir ilan dokümanı olarak kaydet
         //    (idempotentlik için client tarafında engelledik; tek doküman oluşturuyoruz)
-        const odaSayisi = document.getElementById("odaSayisi").value;
-        const lokasyon = document.getElementById("lokasyon").value;
-        const metrekare = Number(document.getElementById("metrekare").value);
-        const ilanTipi = document.querySelector('input[name="ilanTipi"]:checked').value;
-        const binaYasi = Number(document.getElementById("binaYasi").value);
-        const bulunduguKat = Number(document.getElementById("bulunduguKat").value);
-
-        if (!odaSayisi || !lokasyon || !metrekare || !binaYasi || !bulunduguKat) {
-          throw new Error("Lütfen tüm alanları doldurun.");
-        }
 
         // Yeni veri yapısını hazırla
         const kategori = document.querySelector('input[name="kategori"]:checked').value;
@@ -1405,29 +1395,7 @@
         // Form resetlendiğinde kategori alanlarını da resetle
         changeCategory();
         initializeLocation();
-          odaSayisi,
-          lokasyon,
-          metrekare,
-          ilanTipi,
-          binaYasi,
-          bulunduguKat,
-          photoUrls,
-          photoPaths,   // silerken lazım olacak
-          videoUrl: videoUrl || null,
-          videoPath: videoPath || null,
-          ownerUid: user.uid,
-          ownerEmail: user.email,
-          tarih: serverTimestamp(),
-          enlem: document.getElementById("enlem")?.value?.trim() || null,
-          boylam: document.getElementById("boylam")?.value?.trim() || null
-        };
 
-        formMsg.textContent = "İlan başarıyla yüklendi ✅";
-        ilanForm.reset();
-        clearProgress();
-        // Form resetlendiğinde kategori alanlarını da resetle
-        changeCategory();
-        initializeLocation();
       } catch (err) {
         console.error(err);
         formMsg.innerHTML = `<span class="danger">Hata: ${err.message}</span>`;
