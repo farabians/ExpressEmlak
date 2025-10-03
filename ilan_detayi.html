@@ -151,6 +151,86 @@
             }
         }
 
+        /* Mobile Menu Styles - Mobil menü stilleri */
+        .mobile-menu {
+            position: fixed !important;
+            top: 0 !important;
+            left: -100% !important;
+            width: 100% !important;
+            height: 100vh !important;
+            background: rgba(26, 26, 26, 0.98) !important;
+            z-index: 10000 !important;
+            transition: left 0.3s ease !important;
+            padding-top: 100px !important;
+        }
+
+        .mobile-menu.active {
+            left: 0 !important;
+        }
+
+        .mobile-menu .nav {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            gap: 2rem !important;
+            padding: 2rem !important;
+        }
+
+        .mobile-menu .nav-link {
+            font-size: 1.2rem !important;
+            padding: 1rem !important;
+            width: 200px !important;
+            text-align: center !important;
+            border-bottom: 1px solid rgba(255,255,255,0.1) !important;
+        }
+
+        .mobile-menu-close {
+            position: absolute !important;
+            top: 20px !important;
+            right: 20px !important;
+            background: none !important;
+            border: none !important;
+            color: var(--white) !important;
+            font-size: 2rem !important;
+            cursor: pointer !important;
+            z-index: 10001 !important;
+        }
+
+        @media (max-width: 768px) {
+            .nav {
+                display: none !important;
+            }
+            
+            .mobile-menu-btn {
+                display: block !important;
+                z-index: 10001 !important;
+            }
+            
+            .header {
+                z-index: 9999 !important;
+            }
+            
+            .logo-img {
+                height: 50px !important;
+                max-width: 180px !important;
+            }
+            
+            .nav-wrapper {
+                padding: 0 10px !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: 0.8rem 0 !important;
+            }
+            
+            .logo-img {
+                height: 45px !important;
+                max-width: 160px !important;
+            }
+        }
+
         /* Property Styles */
         .listings-header {
             background: linear-gradient(135deg, var(--dark-color) 0%, #2d2d2d 100%);
@@ -614,10 +694,23 @@
                     <a href="express-konut.html" class="nav-link">Express Konut</a>
                     <a href="iletisim.html" class="nav-link">İletişim</a>
                 </nav>
-                <div class="mobile-menu-btn">
+                <div class="mobile-menu-btn" onclick="toggleMobileMenu()">
                     <i class="fas fa-bars"></i>
                 </div>
             </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div class="mobile-menu" id="mobileMenu">
+            <button class="mobile-menu-close" onclick="toggleMobileMenu()">
+                <i class="fas fa-times"></i>
+            </button>
+            <nav class="nav">
+                <a href="index.html" class="nav-link">Ana Sayfa</a>
+                <a href="ilanlar.html" class="nav-link active">İlanlar</a>
+                <a href="express-konut.html" class="nav-link">Express Konut</a>
+                <a href="iletisim.html" class="nav-link">İletişim</a>
+            </nav>
         </div>
     </header>
 
@@ -947,5 +1040,29 @@
     </footer>
 
     <script src="script.js"></script>
+    <script>
+        // Mobile menu toggle function
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobileMenu');
+            mobileMenu.classList.toggle('active');
+        }
+
+        // Close mobile menu when clicking on a link
+        document.querySelectorAll('.mobile-menu .nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                document.getElementById('mobileMenu').classList.remove('active');
+            });
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', (e) => {
+            const mobileMenu = document.getElementById('mobileMenu');
+            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+            
+            if (!mobileMenu.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+                mobileMenu.classList.remove('active');
+            }
+        });
+    </script>
 </body>
 </html>
