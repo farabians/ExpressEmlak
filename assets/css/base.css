@@ -1,0 +1,195 @@
+/* ==========================================================================
+   Express Emlak - temel katman
+   Palet, reset, header ve footer. Hem ilan detayı hem admin bu dosyayı kullanır.
+   ========================================================================== */
+
+:root {
+  /* Marka */
+  --primary: #E5A946;          /* altın */
+  --primary-dark: #c98f2f;
+  --primary-soft: rgba(229, 169, 70, 0.12);
+  --dark: #1a1a1a;
+  --dark-soft: #2a2a2a;
+
+  /* Açık tema yüzeyleri */
+  --bg: #f4f5f7;
+  --surface: #ffffff;
+  --surface-alt: #fafafa;
+  --border: #e4e6ea;
+  --border-strong: #d0d3d9;
+
+  /* Metin */
+  --text: #23262b;
+  --text-muted: #6c757d;
+  --text-faint: #9aa0a6;
+
+  /* Durum */
+  --success: #23a559;
+  --danger: #e54040;
+  --info: #2f6fa8;
+
+  /* Biçim */
+  --radius: 10px;
+  --radius-sm: 6px;
+  --shadow-sm: 0 1px 3px rgba(16, 20, 27, 0.06);
+  --shadow: 0 4px 16px rgba(16, 20, 27, 0.08);
+  --shadow-lg: 0 12px 32px rgba(16, 20, 27, 0.12);
+  --header-h: 82px;
+  --transition: 0.25s ease;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+* { margin: 0; padding: 0; }
+
+body {
+  font-family: 'Poppins', -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+img { max-width: 100%; display: block; }
+a { color: var(--info); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* Klavye kullanıcıları için görünür odak */
+:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* ---------- Header (sitenin geri kalanıyla aynı) ---------- */
+.ee-header {
+  background: rgba(26, 26, 26, 0.96);
+  backdrop-filter: blur(10px);
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  padding: 1rem 0;
+}
+
+.ee-header-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.ee-logo-img { height: 50px; width: auto; }
+
+.ee-nav { display: flex; gap: 2rem; align-items: center; }
+.ee-nav a {
+  color: #fff;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: color var(--transition);
+}
+.ee-nav a:hover, .ee-nav a.active { color: var(--primary); text-decoration: none; }
+
+.ee-menu-btn {
+  display: none;
+  background: none; border: none;
+  color: #fff; font-size: 1.4rem; cursor: pointer; padding: 4px 8px;
+}
+
+/* Mobil açılır menü */
+.ee-nav.open {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 100%; left: 0; right: 0;
+  background: rgba(26, 26, 26, 0.98);
+  padding: 1rem 20px 1.25rem;
+  gap: 1rem;
+}
+
+@media (max-width: 860px) {
+  .ee-header-inner { position: relative; }
+  .ee-nav { display: none; }
+  .ee-menu-btn { display: block; }
+}
+
+/* Sabit header'ın altında kalan içerik için üst boşluk */
+.ee-page { padding-top: var(--header-h); }
+
+/* ---------- Footer ---------- */
+.ee-footer {
+  background: var(--dark);
+  color: #c8ccd2;
+  margin-top: 50px;
+  padding: 40px 0 0;
+}
+
+.ee-footer-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 30px;
+}
+
+.ee-footer h4 {
+  color: #fff;
+  font-size: 15px;
+  margin-bottom: 14px;
+  font-weight: 600;
+}
+
+.ee-footer a { color: #c8ccd2; }
+.ee-footer a:hover { color: var(--primary); text-decoration: none; }
+
+.ee-footer-links { list-style: none; display: grid; gap: 8px; font-size: 13px; }
+.ee-footer-logo { height: 46px; margin-bottom: 12px; }
+.ee-footer p { font-size: 13px; color: #9aa0a6; }
+
+.ee-footer-bottom {
+  max-width: 1200px;
+  margin: 30px auto 0;
+  padding: 18px 20px;
+  border-top: 1px solid #2e3238;
+  font-size: 12px;
+  color: #8b9098;
+  text-align: center;
+}
+
+/* ---------- Genel yardımcı sınıflar ---------- */
+.hidden { display: none !important; }
+
+.ee-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px 22px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: var(--primary);
+  color: var(--dark);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--transition), border-color var(--transition), color var(--transition);
+}
+.ee-btn:hover { background: var(--primary-dark); text-decoration: none; }
+.ee-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+
+.ee-btn-ghost {
+  background: transparent;
+  border-color: var(--border-strong);
+  color: var(--text);
+}
+.ee-btn-ghost:hover { background: rgba(0, 0, 0, 0.04); border-color: var(--text-muted); }
+
+.ee-btn-dark {
+  background: var(--dark);
+  color: #fff;
+}
+.ee-btn-dark:hover { background: var(--dark-soft); }

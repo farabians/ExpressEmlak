@@ -4,21 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Express Emlak - Ana Sayfa</title>
+    <meta name="description" content="Konya’da satılık ve kiralık daire, iş yeri ve arsa ilanları. Express Emlak ile güvenilir gayrimenkul danışmanlığı.">
     <link rel="icon" type="image/png" href="images/favicon.png">
     <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
 <body>
     <!-- Header -->
     <header class="header">
         <div class="container">
             <div class="nav-wrapper">
-                <div class="logo">
+                <a href="index.html" class="logo" aria-label="Express Emlak ana sayfa">
                     <img src="images/logo.png" alt="Express Emlak" class="logo-img">
-                </div>
+                </a>
                 <nav class="nav">
                     <a href="index.html" class="nav-link active">Ana Sayfa</a>
                     <a href="ilanlar.html" class="nav-link">İlanlar</a>
@@ -559,22 +560,12 @@
     </section>
 
     <script type="module">
-        // Firebase SDK import
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getFirestore, collection, query, orderBy, limit, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-        // Firebase yapılandırması
-        const firebaseConfig = {
-            apiKey: "AIzaSyCtA0h7ZHuuMInAQGoKcfTtthnImZ_Xk_E",
-            authDomain: "expressemlak-f85d3.firebaseapp.com",
-            projectId: "expressemlak-f85d3",
-            storageBucket: "expressemlak-f85d3.firebasestorage.app",
-            appId: "1:328195558403:web:0ba4504f713f6299c0d236"
-        };
-
-        // Firebase'i başlat
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+        import { collection, query, orderBy, limit, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        // Firebase yapılandırması tek yerde: assets/js/firebase-config.js
+        import { db } from "./assets/js/firebase-config.js";
+        import { anaFoto, ilanTipiEtiketi, konumEtiketi, renderKart, sliderOzellikleri }
+            from "./assets/js/ilan-kart.js";
+        import { escapeHtml, priceLabel } from "./assets/js/utils.js";
 
         // Slider elementleri
         const slider = document.getElementById('propertySlider');
@@ -597,45 +588,34 @@
             featuredPropertiesGrid.innerHTML = '';
             let cardCount = 0;
             
-            snapshot.forEach((doc) => {
-                const data = doc.data();
-                const mainPhoto = data.photoUrls?.[0] || 'images/placeholder.jpg';
-                
-                // Slider için slide ekle
+            snapshot.forEach((docSnap) => {
+                // Alan türetmeleri assets/js/ilan-kart.js'te tek yerde: metrekare
+                // hangi alandan geliyorsa oradan okunur, Satılık/Kiralık etiketi
+                // gerçek değerden hesaplanır, boş alanlar hiç basılmaz.
+                const ilan = { id: docSnap.id, ...docSnap.data() };
+
+                const ozellikler = sliderOzellikleri(ilan)
+                    .map((o) => `
+                                <div class="slider-feature">
+                                    <i class="fas ${o.ikon}"></i>
+                                    <span>${escapeHtml(o.metin)}</span>
+                                </div>`)
+                    .join('');
+
                 const slide = document.createElement('div');
                 slide.className = 'slider-item';
                 slide.innerHTML = `
                     <div class="slider-bg">
-                        <img src="${mainPhoto}" alt="${data.isim}">
+                        <img src="${escapeHtml(anaFoto(ilan))}" alt="${escapeHtml(ilan.isim || '')}">
                     </div>
                     <div class="slider-content">
                         <div class="slider-details">
-                            <h2>${data.isim}</h2>
-                            <div class="slider-features">
-                                <div class="slider-feature">
-                                    <i class="fas fa-map-marker-alt"></i>
-                                    <span>${data.lokasyon}</span>
-                                </div>
-                                <div class="slider-feature">
-                                    <i class="fas fa-home"></i>
-                                    <span>${data.odaSayisi}</span>
-                                </div>
-                                <div class="slider-feature">
-                                    <i class="fas fa-expand-arrows-alt"></i>
-                                    <span>${data.metrekare}m²</span>
-                                </div>
-                                <div class="slider-feature">
-                                    <i class="fas fa-building"></i>
-                                    <span>${data.binaYasi} Yaşında</span>
-                                </div>
-                                <div class="slider-feature">
-                                    <i class="fas fa-layer-group"></i>
-                                    <span>${data.bulunduguKat}. Kat</span>
-                                </div>
-                            </div>
+                            <h2>${escapeHtml(ilan.isim || '')}</h2>
+                            <div class="slider-price">${escapeHtml(priceLabel(ilan.fiyat))}</div>
+                            <div class="slider-features">${ozellikler}</div>
                             <div class="cta-buttons">
-                                <a href="ilan_detayi.html?id=${doc.id}" class="btn-primary">
-                                    <i class="fas fa-info-circle"></i>
+                                <a href="ilan_detayi.html?id=${encodeURIComponent(ilan.id)}" class="btn-primary">
+                                    <i class="fas fa-circle-info"></i>
                                     Detayları Gör
                                 </a>
                                 <a href="iletisim.html" class="btn-secondary">
@@ -650,34 +630,7 @@
 
                 // Öne çıkan ilanlar için kart ekle (ilk 3 ilan)
                 if (cardCount < 3) {
-                    const propertyCard = document.createElement('div');
-                    propertyCard.className = 'property-card';
-                    propertyCard.innerHTML = `
-                        <div class="property-image">
-                            <img src="${mainPhoto}" alt="${data.isim}">
-                            <div class="property-badge">${data.ilanTipi === 'kiralik' ? 'Kiralık' : 'Satılık'}</div>
-                        </div>
-                        <div class="property-content">
-                            <div class="property-price">₺${data.fiyat?.toLocaleString('tr-TR')}</div>
-                            <h3 class="property-title">${data.isim}</h3>
-                            <p class="property-location">
-                                <i class="fas fa-map-marker-alt"></i> ${data.lokasyon}
-                            </p>
-                            <div class="property-features">
-                                <span><i class="fas fa-home"></i> ${data.odaSayisi}</span>
-                                <span><i class="fas fa-expand-arrows-alt"></i> ${data.metrekare} m²</span>
-                                <span><i class="fas fa-building"></i> ${data.binaYasi} Yaş</span>
-                                <span><i class="fas fa-layer-group"></i> ${data.bulunduguKat}. Kat</span>
-                            </div>
-                        </div>
-                    `;
-
-                    propertyCard.style.cursor = 'pointer';
-                    propertyCard.addEventListener('click', () => {
-                        window.location.href = `ilan_detayi.html?id=${doc.id}`;
-                    });
-                    
-                    featuredPropertiesGrid.appendChild(propertyCard);
+                    featuredPropertiesGrid.insertAdjacentHTML('beforeend', renderKart(ilan));
                     cardCount++;
                 }
             });
@@ -695,6 +648,21 @@
             if (totalSlides > 0) {
                 showSlide(0);
                 startAutoSlide();
+            }
+        }, (err) => {
+            // Firestore'a ulaşılamazsa (bağlantı yok, izin hatası) sayfa sessizce
+            // boş kalmasın; ziyaretçi ne olduğunu görsün.
+            console.error('İlanlar yüklenemedi:', err);
+            const grid = document.getElementById('featuredProperties');
+            if (grid) {
+                grid.innerHTML = `
+                    <div style="grid-column: 1/-1; text-align: center; padding: 2rem;">
+                        <p class="muted">İlanlar şu anda yüklenemiyor. Lütfen sayfayı yenileyin.</p>
+                        <a href="iletisim.html" class="btn-primary" style="margin-top:1rem; display:inline-block;">
+                            Bize Ulaşın
+                        </a>
+                    </div>
+                `;
             }
         });
 
@@ -1046,12 +1014,6 @@
                         <img src="images/logo.png" alt="Express Emlak" class="footer-logo-img">
                     </div>
                     <p>Konya'da köklü tecrübemizle güvenilir emlak hizmetleri sunuyoruz. Hayalinizdeki evi bulmanızda yanınızdayız.</p>
-                    <div class="social-links">
-                        <a href="#"><i class="fab fa-facebook"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-linkedin"></i></a>
-                    </div>
                 </div>
                 <div class="footer-section">
                     <h3>Hızlı Bağlantılar</h3>
@@ -1067,7 +1029,7 @@
                     <div class="contact-info">
                         <p><i class="fas fa-phone"></i> +90 535 060 82 83  Muhammet Dündar</p>
                         <p><i class="fas fa-phone"></i> +90 544 471 22 73  Mehmet Üzüm</p>
-                        <p><i class="fas fa-envelope"></i>expressinsaatgayrimenkul@gmail.com</p>
+                        <p><i class="fas fa-envelope"></i> expressinsaatgayrimenkul@gmail.com</p>
                         <p><i class="fas fa-map-marker-alt"></i> Aymanas, Alparslan Türkeş Caddesi No:6/D, 42010 Meram/Konya</p>
                     </div>
                 </div>

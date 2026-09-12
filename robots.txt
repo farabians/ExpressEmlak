@@ -1,4 +1,7 @@
 User-agent: *
 Allow: /
 
+# Yönetim paneli arama sonuçlarında görünmesin.
+Disallow: /admin.html
+
 Sitemap: https://expressinsaaat.com.tr/sitemap.xml

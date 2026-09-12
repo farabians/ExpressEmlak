@@ -1,4 +1,4 @@
-# Simple workflow for deploying static content to GitHub Pages
+# Simple workflow for deploying static content to Pages
 name: Deploy static content to Pages
 
 on:
@@ -31,13 +31,45 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
+
+      # Sitenin yayınlanacak dosyalarını _site/ altında topla.
+      # Eskiden tüm repo (path: '.') yayınlanıyordu; bu, geliştirme dosyalarını
+      # ve yetkili e-posta listesini de herkese açık hale getiriyordu.
+      - name: Yayın klasörünü hazırla
+        run: |
+          rsync -a --delete \
+            --exclude '.git' \
+            --exclude '.github' \
+            --exclude '_site' \
+            --exclude 'node_modules' \
+            --exclude 'sahibinden' \
+            --exclude 'firestore.rules' \
+            --exclude 'storage.rules' \
+            --exclude 'assets/js/admin-config.js' \
+            ./ _site/
+          echo "--- yayınlanacak dosyalar ---"
+          find _site -type f | sort
+
+      # admin-config.js yayından çıkarıldığı için admin.html panelde import
+      # edemez. Panelin çalışmaya devam etmesi için yer tutucu bir dosya konur;
+      # yetkisiz hesaplar zaten Firestore kurallarıyla engellenir.
+      - name: Panel için yer tutucu yetki dosyası
+        run: |
+          cat > _site/assets/js/admin-config.js <<'EOF'
+          // Yetkili adres listesi yayına dahil edilmez.
+          // Panel arayüzü bu listeyle gizlenmez; gerçek yetkilendirme
+          // firestore.rules / storage.rules tarafından sunucuda yapılır.
+          export const ALLOWED_EMAILS = null;
+          EOF
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Upload entire repository
-          path: '.'
+          path: '_site'
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4

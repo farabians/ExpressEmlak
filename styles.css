@@ -424,9 +424,11 @@ body {
     opacity: 0.5;
 }
 
+/* src'i olmayan gorseller gizlenir. images/placeholder.svg artik gercek bir
+   dosya ve "fotograf yok" gorseli olarak gosterilmesi gerekiyor - bu yuzden
+   eskiden burada olan [src*="placeholder"] kurali kaldirildi. */
 .property-image img:not([src]),
-.property-image img[src=""],
-.property-image img[src*="placeholder"] {
+.property-image img[src=""] {
     display: none;
 }
 
@@ -928,6 +930,27 @@ body {
 
 @keyframes spin {
     to { transform: rotate(360deg); }
+}
+
+/* Bilgi / bos durum metinleri
+   (index.html ve ilanlar.html bu siniflari kullaniyordu ama tanimi yoktu) */
+.muted {
+    color: var(--gray);
+}
+
+.no-results {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 3rem 1.5rem;
+    color: var(--gray);
+    background: var(--light-color);
+    border: 1px dashed var(--border-color);
+    border-radius: 12px;
+}
+
+.no-results .btn-secondary {
+    margin-top: 1rem;
+    display: inline-block;
 }
 
 /* Properties List Views */

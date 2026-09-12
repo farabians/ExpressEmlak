@@ -1,1068 +1,255 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>İlan Detayı - Express Emlak</title>
-    <link rel="icon" type="image/png" href="images/favicon.png">
-    <link rel="stylesheet" href="styles.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        /* CSS Variables */
-        :root {
-            --primary-color: #E5A946;
-            --dark-color: #1a1a1a;
-            --light-color: #f8f9fa;
-            --white: #ffffff;
-            --gray: #6c757d;
-            --border-color: #e9ecef;
-            --shadow: 0 5px 15px rgba(0,0,0,0.1);
-            --transition: all 0.3s ease;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>İlan Detayı - Express Emlak</title>
+  <!-- İlan yüklenince ilan-detay.js bu açıklamayı ilanın metniyle değiştirir. -->
+  <meta name="description" content="Express Emlak ilan detayı: fotoğraflar, özellikler, konum ve iletişim bilgileri.">
+  <link rel="icon" type="image/png" href="images/favicon.png">
 
-        /* Header Override Styles - Bootstrap Override */
-        .header {
-            background: rgba(26, 26, 26, 0.95) !important;
-            backdrop-filter: blur(10px) !important;
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            right: 0 !important;
-            z-index: 1000 !important;
-            padding: 1rem 0 !important;
-            transition: var(--transition) !important;
-            border: none !important;
-            margin: 0 !important;
-            width: 100% !important;
-        }
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
-        .nav-wrapper {
-            display: flex !important;
-            justify-content: space-between !important;
-            align-items: center !important;
-            width: 100% !important;
-        }
-
-        .logo {
-            display: flex !important;
-            align-items: center !important;
-            font-size: 1.5rem !important;
-            font-weight: 700 !important;
-            color: var(--white) !important;
-            text-decoration: none !important;
-            margin: 0 !important;
-            padding: 0 !important;
-        }
-
-        .logo-img {
-            height: 65px !important;
-            width: auto !important;
-            max-width: 250px !important;
-            object-fit: contain !important;
-        }
-
-        .nav {
-            display: flex !important;
-            gap: 2rem !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            list-style: none !important;
-            background: none !important;
-            border: none !important;
-            flex-direction: row !important;
-        }
-
-        .nav-link {
-            color: var(--white) !important;
-            text-decoration: none !important;
-            font-weight: 500 !important;
-            padding: 0.5rem 0 !important;
-            position: relative !important;
-            transition: var(--transition) !important;
-            border: none !important;
-            background: none !important;
-            font-family: 'Poppins', sans-serif !important;
-            font-size: 1rem !important;
-            display: inline-block !important;
-            margin: 0 !important;
-        }
-
-        .nav-link:hover,
-        .nav-link.active {
-            color: var(--primary-color) !important;
-            text-decoration: none !important;
-            background: none !important;
-            border: none !important;
-        }
-
-        .nav-link::after {
-            content: '' !important;
-            position: absolute !important;
-            bottom: -5px !important;
-            left: 0 !important;
-            width: 0 !important;
-            height: 2px !important;
-            background: var(--primary-color) !important;
-            transition: var(--transition) !important;
-        }
-
-        .nav-link:hover::after,
-        .nav-link.active::after {
-            width: 100% !important;
-        }
-
-        .mobile-menu-btn {
-            display: none !important;
-            background: none !important;
-            border: none !important;
-            color: var(--white) !important;
-            font-size: 1.5rem !important;
-            cursor: pointer !important;
-            padding: 0 !important;
-            margin: 0 !important;
-        }
-
-        /* Bootstrap Override for Navigation */
-        .navbar, .navbar-nav, .nav-pills, .nav-tabs {
-            background: none !important;
-            border: none !important;
-            padding: 0 !important;
-            margin: 0 !important;
-        }
-
-        /* Container override to prevent Bootstrap interference */
-        .header .container {
-            max-width: 1200px !important;
-            margin: 0 auto !important;
-            padding: 0 15px !important;
-        }
-
-        @media (max-width: 768px) {
-            .nav {
-                display: none !important;
-            }
-            
-            .mobile-menu-btn {
-                display: block !important;
-            }
-        }
-
-        /* Mobile Menu Styles - Mobil menü stilleri */
-        .mobile-menu {
-            position: fixed !important;
-            top: 0 !important;
-            left: -100% !important;
-            width: 100% !important;
-            height: 100vh !important;
-            background: rgba(26, 26, 26, 0.98) !important;
-            z-index: 10000 !important;
-            transition: left 0.3s ease !important;
-            padding-top: 100px !important;
-        }
-
-        .mobile-menu.active {
-            left: 0 !important;
-        }
-
-        .mobile-menu .nav {
-            display: flex !important;
-            flex-direction: column !important;
-            align-items: center !important;
-            gap: 2rem !important;
-            padding: 2rem !important;
-        }
-
-        .mobile-menu .nav-link {
-            font-size: 1.2rem !important;
-            padding: 1rem !important;
-            width: 200px !important;
-            text-align: center !important;
-            border-bottom: 1px solid rgba(255,255,255,0.1) !important;
-        }
-
-        .mobile-menu-close {
-            position: absolute !important;
-            top: 20px !important;
-            right: 20px !important;
-            background: none !important;
-            border: none !important;
-            color: var(--white) !important;
-            font-size: 2rem !important;
-            cursor: pointer !important;
-            z-index: 10001 !important;
-        }
-
-        @media (max-width: 768px) {
-            .nav {
-                display: none !important;
-            }
-            
-            .mobile-menu-btn {
-                display: block !important;
-                z-index: 10001 !important;
-            }
-            
-            .header {
-                z-index: 9999 !important;
-            }
-            
-            .logo-img {
-                height: 50px !important;
-                max-width: 180px !important;
-            }
-            
-            .nav-wrapper {
-                padding: 0 10px !important;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .header {
-                padding: 0.8rem 0 !important;
-            }
-            
-            .logo-img {
-                height: 45px !important;
-                max-width: 160px !important;
-            }
-        }
-
-        /* Property Styles */
-        .listings-header {
-            background: linear-gradient(135deg, var(--dark-color) 0%, #2d2d2d 100%);
-            padding: 120px 0 60px;
-            text-align: center;
-            color: var(--white);
-        }
-        
-        .listings-title {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-        }
-        
-        .breadcrumb {
-            display: flex;
-            justify-content: center;
-            gap: 0.5rem;
-            align-items: center;
-            color: var(--light-color);
-        }
-        
-        .breadcrumb a {
-            color: var(--primary-color);
-            text-decoration: none;
-        }
-
-        /* Property Details Styles */
-
-        .property-gallery {
-            position: relative;
-            width: 100%;
-            height: 500px;
-            margin-bottom: 2rem;
-            border-radius: 10px;
-            overflow: hidden;
-            margin-top: 0;
-        }
-
-        .gallery-main {
-            width: 100%;
-            height: 100%;
-            position: relative;
-        }
-
-        .gallery-main img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .gallery-thumbs {
-            display: flex;
-            gap: 10px;
-            margin-top: 1rem;
-            overflow-x: auto;
-            padding: 10px 0;
-        }
-
-        .gallery-thumb {
-            width: 120px;
-            height: 80px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: all 0.3s;
-            border: 2px solid transparent;
-        }
-
-        .gallery-thumb img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 3px;
-        }
-
-        .gallery-thumb.active {
-            border-color: #007bff;
-        }
-
-        .gallery-nav {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 40px;
-            height: 40px;
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s;
-            z-index: 2;
-        }
-
-        .gallery-nav:hover {
-            background: #fff;
-        }
-
-        .gallery-nav.prev {
-            left: 20px;
-        }
-
-        .gallery-nav.next {
-            right: 20px;
-        }
-
-        .property-info {
-            padding: 2rem;
-            background: #fff;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            margin-bottom: 2rem;
-        }
-
-        .property-price {
-            font-size: 2rem;
-            color: #007bff;
-            font-weight: bold;
-            margin-bottom: 1rem;
-        }
-
-        .property-features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-            margin: 2rem 0;
-        }
-
-        .feature-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .feature-icon {
-            width: 40px;
-            height: 40px;
-            background: #f8f9fa;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #007bff;
-        }
-
-        .property-description {
-            line-height: 1.8;
-            color: #666;
-        }
-
-        .video-container {
-            width: 100%;
-            margin: 1rem 0;
-            border-radius: 10px;
-            overflow: hidden;
-            position: relative;
-            padding-bottom: 56.25%;
-            height: 0;
-            background: #f8f9fa;
-        }
-
-        .video-container video {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: none;
-            object-fit: contain;
-        }
-
-        #noVideoMessage {
-            background: #f8f9fa;
-            border-radius: 10px;
-            color: #666;
-            font-size: 0.9rem;
-        }
-
-        .contact-box {
-            background: #f8f9fa;
-            padding: 2rem;
-            border-radius: 10px;
-            margin-top: 2rem;
-        }
-
-        .share-buttons {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .share-button {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #fff;
-            color: #007bff;
-            border: 1px solid #007bff;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .share-button:hover {
-            background: #007bff;
-            color: #fff;
-        }
-
-        /* Responsive Styles for Property Detail Page */
-        @media (max-width: 992px) {
-            .container {
-                max-width: 95%;
-            }
-            
-            .property-gallery {
-                height: 400px;
-            }
-            
-            .property-features {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 1rem;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding-top: 100px !important;
-            }
-            
-            .property-gallery {
-                height: 300px;
-                margin-bottom: 1.5rem;
-            }
-            
-            .gallery-thumbs {
-                gap: 5px;
-                padding: 5px 0;
-            }
-            
-            .gallery-thumb {
-                width: 80px;
-                height: 60px;
-            }
-            
-            .gallery-nav {
-                width: 35px;
-                height: 35px;
-                font-size: 0.8rem;
-            }
-            
-            .gallery-nav.prev {
-                left: 10px;
-            }
-            
-            .gallery-nav.next {
-                right: 10px;
-            }
-            
-            .property-info {
-                padding: 1.5rem;
-                margin-bottom: 1.5rem;
-            }
-            
-            .property-price {
-                font-size: 1.6rem;
-                margin-bottom: 0.8rem;
-            }
-            
-            .property-features {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-                margin: 1.5rem 0;
-            }
-            
-            .feature-item {
-                background: #f8f9fa;
-                padding: 0.8rem;
-                border-radius: 8px;
-                gap: 12px;
-            }
-            
-            .feature-icon {
-                width: 35px;
-                height: 35px;
-                font-size: 0.9rem;
-            }
-            
-            .feature-text {
-                flex: 1;
-            }
-            
-            .feature-text small {
-                font-size: 0.75rem;
-                color: #666;
-            }
-            
-            .feature-text div {
-                font-weight: 600;
-                color: #333;
-                margin-top: 2px;
-            }
-            
-            .property-description {
-                font-size: 0.9rem;
-                line-height: 1.6;
-            }
-            
-            .video-container {
-                margin: 0.8rem 0;
-            }
-            
-            .contact-box {
-                padding: 1.5rem;
-                margin-top: 1.5rem;
-            }
-            
-            .contact-box h5 {
-                font-size: 1.1rem;
-                margin-bottom: 1rem;
-            }
-            
-            .share-buttons {
-                gap: 0.8rem;
-                margin-top: 0.8rem;
-                justify-content: center;
-            }
-            
-            .share-button {
-                width: 35px;
-                height: 35px;
-                font-size: 0.9rem;
-            }
-            
-            .btn {
-                font-size: 0.9rem;
-                padding: 0.6rem 1rem;
-            }
-            
-            /* Two column layout becomes single column */
-            .row {
-                margin: 0;
-            }
-            
-            .col-lg-8,
-            .col-lg-4 {
-                padding: 0 10px;
-                max-width: 100%;
-                flex: 0 0 100%;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .container {
-                padding-top: 90px !important;
-                padding-left: 5px !important;
-                padding-right: 5px !important;
-            }
-            
-            .property-gallery {
-                height: 250px;
-                border-radius: 8px;
-            }
-            
-            .gallery-thumbs {
-                margin-top: 0.5rem;
-            }
-            
-            .gallery-thumb {
-                width: 70px;
-                height: 50px;
-            }
-            
-            .gallery-nav {
-                width: 30px;
-                height: 30px;
-                font-size: 0.7rem;
-            }
-            
-            .property-info {
-                padding: 1rem;
-                border-radius: 8px;
-            }
-            
-            .property-info h1 {
-                font-size: 1.3rem;
-                line-height: 1.3;
-                margin-bottom: 0.8rem;
-            }
-            
-            .property-price {
-                font-size: 1.4rem;
-            }
-            
-            .property-features {
-                margin: 1rem 0;
-            }
-            
-            .feature-item {
-                padding: 0.6rem;
-            }
-            
-            .feature-icon {
-                width: 30px;
-                height: 30px;
-                font-size: 0.8rem;
-            }
-            
-            .feature-text div {
-                font-size: 0.9rem;
-            }
-            
-            .property-description {
-                font-size: 0.85rem;
-            }
-            
-            .contact-box {
-                padding: 1rem;
-            }
-            
-            .share-buttons {
-                flex-wrap: wrap;
-                gap: 0.6rem;
-            }
-            
-            .share-button {
-                width: 32px;
-                height: 32px;
-                font-size: 0.8rem;
-            }
-            
-            .btn {
-                font-size: 0.85rem;
-                padding: 0.5rem 0.8rem;
-            }
-            
-            .d-grid {
-                gap: 0.8rem !important;
-            }
-            
-            .col-lg-8,
-            .col-lg-4 {
-                padding: 0 5px;
-            }
-        }
-    </style>
+  <link rel="stylesheet" href="assets/css/base.css">
+  <link rel="stylesheet" href="assets/css/ilan-detay.css">
 </head>
 <body>
-    <!-- Header -->
-    <header class="header">
-        <div class="container">
-            <div class="nav-wrapper">
-                <div class="logo">
-                    <img src="images/logo.png" alt="Express Emlak" class="logo-img">
-                </div>
-                <nav class="nav">
-                    <a href="index.html" class="nav-link">Ana Sayfa</a>
-                    <a href="ilanlar.html" class="nav-link active">İlanlar</a>
-                    <a href="express-konut.html" class="nav-link">Express Konut</a>
-                    <a href="iletisim.html" class="nav-link">İletişim</a>
-                </nav>
-                <div class="mobile-menu-btn" onclick="toggleMobileMenu()">
-                    <i class="fas fa-bars"></i>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Mobile Menu -->
-        <div class="mobile-menu" id="mobileMenu">
-            <button class="mobile-menu-close" onclick="toggleMobileMenu()">
-                <i class="fas fa-times"></i>
-            </button>
-            <nav class="nav">
-                <a href="index.html" class="nav-link">Ana Sayfa</a>
-                <a href="ilanlar.html" class="nav-link active">İlanlar</a>
-                <a href="express-konut.html" class="nav-link">Express Konut</a>
-                <a href="iletisim.html" class="nav-link">İletişim</a>
-            </nav>
-        </div>
-    </header>
 
-    <!-- Main Content -->
-    <div class="container" style="padding-top: 120px;">
-        <div class="row">
-            <div class="col-lg-8">
-                <!-- Property Gallery -->
-                <div class="property-gallery">
-                    <div class="gallery-main">
-                        <img src="" alt="Ana Görsel" id="mainImage">
-                        <div class="gallery-nav prev">
-                            <i class="fas fa-chevron-left"></i>
-                        </div>
-                        <div class="gallery-nav next">
-                            <i class="fas fa-chevron-right"></i>
-                        </div>
-                    </div>
-                    <div class="gallery-thumbs" id="galleryThumbs">
-                        <!-- Thumbnails will be added here -->
-                    </div>
-                </div>
+  <!-- ===== Header ===== -->
+  <header class="ee-header">
+    <div class="ee-header-inner">
+      <a href="index.html" aria-label="Express Emlak ana sayfa">
+        <img src="images/logo.png" alt="Express Emlak" class="ee-logo-img">
+      </a>
+      <nav class="ee-nav" aria-label="Ana menü">
+        <a href="index.html">Ana Sayfa</a>
+        <a href="ilanlar.html" class="active">İlanlar</a>
+        <a href="express-konut.html">Express Konut</a>
+        <a href="iletisim.html">İletişim</a>
+      </nav>
+      <button class="ee-menu-btn" aria-label="Menüyü aç" aria-expanded="false">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+  </header>
 
-                <!-- Property Info -->
-                <div class="property-info">
-                    <h1 id="propertyTitle"></h1>
-                    <div class="property-price" id="propertyPrice"></div>
-                    <div class="property-features">
-                        <div class="feature-item">
-                            <div class="feature-icon">
-                                <i class="fas fa-vector-square"></i>
-                            </div>
-                            <div class="feature-text">
-                                <small>Brüt Alan</small>
-                                <div id="propertySize"></div>
-                            </div>
-                        </div>
-                        <div class="feature-item">
-                            <div class="feature-icon">
-                                <i class="fas fa-bed"></i>
-                            </div>
-                            <div class="feature-text">
-                                <small>Oda Sayısı</small>
-                                <div id="propertyRooms"></div>
-                            </div>
-                        </div>
-                        <div class="feature-item">
-                            <div class="feature-icon">
-                                <i class="fas fa-building"></i>
-                            </div>
-                            <div class="feature-text">
-                                <small>Bina Yaşı</small>
-                                <div id="propertyAge"></div>
-                            </div>
-                        </div>
-                        <div class="feature-item">
-                            <div class="feature-icon">
-                                <i class="fas fa-th-large"></i>
-                            </div>
-                            <div class="feature-text">
-                                <small>Kat</small>
-                                <div id="propertyFloor"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="property-description" id="propertyDescription">
-                    </div>
-                </div>
+  <main class="ee-page">
 
-                <!-- Video Section (if available) -->
-                <div class="property-info">
-                    <h3>Video</h3>
-                    <div id="videoContainer" style="display: none;">
-                        <div class="video-container">
-                            <video id="propertyVideo" controls style="width: 100%; height: 100%; object-fit: cover;">
-                                Tarayıcınız video oynatmayı desteklemiyor.
-                            </video>
-                        </div>
-                    </div>
-                    <div id="noVideoMessage" class="muted" style="text-align: center; padding: 20px;">
-                        Bu ilan için video bulunmuyor.
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-4">
-                <!-- Share Box -->
-                <div class="contact-box">
-                    <h5>Bu İlanı Paylaş</h5>
-                    <div class="share-buttons">
-                        <div class="share-button" onclick="shareOnWhatsApp()">
-                            <i class="fab fa-whatsapp"></i>
-                        </div>
-                        <div class="share-button" onclick="shareOnFacebook()">
-                            <i class="fab fa-facebook-f"></i>
-                        </div>
-                        <div class="share-button" onclick="shareOnTwitter()">
-                            <i class="fab fa-twitter"></i>
-                        </div>
-                        <div class="share-button" onclick="copyLink()">
-                            <i class="fas fa-link"></i>
-                        </div>
-                    </div>
-                    <hr>
-                    <div class="d-grid gap-2">
-                        <a href="tel:+905350608283" class="btn btn-primary">
-                            <i class="fas fa-phone"></i> Hemen Ara
-                        </a>
-                        <a href="https://wa.me/905350608283" target="_blank" class="btn btn-success">
-                            <i class="fab fa-whatsapp"></i> WhatsApp'tan Yaz
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <!-- ===== Yükleniyor ===== -->
+    <div class="durum-box" id="loadingState">
+      <i class="fas fa-spinner fa-spin"></i>
+      <h2>İlan yükleniyor</h2>
+      <p>Bilgiler getiriliyor, lütfen bekleyin.</p>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script type="module">
-        // Firebase SDK import
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    <!-- ===== Hata ===== -->
+    <div class="durum-box" id="errorState" hidden>
+      <i class="fas fa-triangle-exclamation"></i>
+      <h2>İlan görüntülenemiyor</h2>
+      <p id="errorText">Bu ilan bulunamadı veya yayından kaldırılmış olabilir.</p>
+      <a href="ilanlar.html" class="ee-btn"><i class="fas fa-arrow-left"></i> Tüm İlanlara Dön</a>
+    </div>
 
-        // Firebase yapılandırması
-        const firebaseConfig = {
-            apiKey: "AIzaSyCtA0h7ZHuuMInAQGoKcfTtthnImZ_Xk_E",
-            authDomain: "expressemlak-f85d3.firebaseapp.com",
-            projectId: "expressemlak-f85d3",
-            storageBucket: "expressemlak-f85d3.firebasestorage.app",
-            appId: "1:328195558403:web:0ba4504f713f6299c0d236"
-        };
+    <!-- ===== İçerik ===== -->
+    <div class="detay-wrap" id="detayContent" hidden>
 
-        // Firebase'i başlat
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+      <!-- Breadcrumb -->
+      <nav class="detay-breadcrumb" aria-label="Sayfa yolu">
+        <a href="index.html">Ana Sayfa</a>
+        <span class="sep">/</span>
+        <a href="ilanlar.html">İlanlar</a>
+        <span id="breadcrumbTrail"></span>
+      </nav>
 
-        // URL'den ilan ID'sini al
-        const urlParams = new URLSearchParams(window.location.search);
-        const propertyId = urlParams.get('id');
-
-        // İlan detaylarını yükle
-        async function loadPropertyDetails() {
-            try {
-                const docRef = doc(db, "ilanlar", propertyId);
-                const docSnap = await getDoc(docRef);
-                
-                if (docSnap.exists()) {
-                    const property = docSnap.data();
-                    
-                    // Temel bilgileri doldur
-                    document.getElementById('propertyTitle').textContent = property.isim;
-                    document.getElementById('propertyPrice').textContent = '₺' + new Intl.NumberFormat('tr-TR').format(property.fiyat);
-                    document.getElementById('propertySize').textContent = property.metrekare + ' m²';
-                    document.getElementById('propertyRooms').textContent = property.odaSayisi;
-                    document.getElementById('propertyAge').textContent = property.binaYasi + ' yıl';
-                    document.getElementById('propertyFloor').textContent = property.bulunduguKat + '. Kat';
-                    document.getElementById('propertyDescription').textContent = property.aciklama;
-
-                    // Fotoğraf galerisini doldur
-                    if (property.photoUrls && property.photoUrls.length > 0) {
-                        loadGallery(property.photoUrls);
-                    }
-
-                    // Video kontrolü ve gösterimi
-                    if (property.videoUrl) {
-                        document.getElementById('videoContainer').style.display = 'block';
-                        document.getElementById('noVideoMessage').style.display = 'none';
-                        document.getElementById('propertyVideo').src = property.videoUrl;
-                    } else {
-                        document.getElementById('videoContainer').style.display = 'none';
-                        document.getElementById('noVideoMessage').style.display = 'block';
-                    }
-                } else {
-                    console.log("İlan bulunamadı!");
-                    window.location.href = 'index.html';
-                }
-            } catch (error) {
-                console.error("Error loading property details:", error);
-                window.location.href = 'index.html';
-            }
-        }
-
-        // Galeri fonksiyonları
-        let currentImageIndex = 0;
-        let images = [];
-
-        function loadGallery(imageUrls) {
-            images = imageUrls;
-            const mainImage = document.getElementById('mainImage');
-            const thumbsContainer = document.getElementById('galleryThumbs');
-
-            // Ana görsel
-            mainImage.src = images[0];
-
-            // Küçük resimler
-            thumbsContainer.innerHTML = '';
-            images.forEach((url, index) => {
-                const thumb = document.createElement('div');
-                thumb.className = `gallery-thumb ${index === 0 ? 'active' : ''}`;
-                thumb.innerHTML = `<img src="${url}" alt="Thumbnail ${index + 1}">`;
-                thumb.onclick = () => showImage(index);
-                thumbsContainer.appendChild(thumb);
-            });
-        }
-
-        function showImage(index) {
-            const mainImage = document.getElementById('mainImage');
-            const thumbs = document.querySelectorAll('.gallery-thumb');
-
-            currentImageIndex = index;
-            mainImage.src = images[index];
-
-            // Aktif thumbnail'i güncelle
-            thumbs.forEach((thumb, i) => {
-                thumb.classList.toggle('active', i === index);
-            });
-        }
-
-        function nextImage() {
-            showImage((currentImageIndex + 1) % images.length);
-        }
-
-        function prevImage() {
-            showImage((currentImageIndex - 1 + images.length) % images.length);
-        }
-
-        // İletişim ve paylaşım fonksiyonları
-        function sendMessage() {
-            const name = document.getElementById('contactName').value;
-            const phone = document.getElementById('contactPhone').value;
-            const message = document.getElementById('contactMessage').value;
-
-            if (!name || !phone || !message) {
-                alert('Lütfen tüm alanları doldurunuz.');
-                return;
-            }
-
-            // Mesajı Firestore'a kaydet
-            db.collection('messages').add({
-                propertyId: propertyId,
-                name: name,
-                phone: phone,
-                message: message,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            })
-            .then(() => {
-                alert('Mesajınız başarıyla gönderildi.');
-                // Formu temizle
-                document.getElementById('contactName').value = '';
-                document.getElementById('contactPhone').value = '';
-                document.getElementById('contactMessage').value = '';
-            })
-            .catch((error) => {
-                console.error("Error sending message:", error);
-                alert('Mesaj gönderilirken bir hata oluştu.');
-            });
-        }
-
-        function shareOnWhatsApp() {
-            const text = encodeURIComponent(`${document.getElementById('propertyTitle').textContent}\n${window.location.href}`);
-            window.open(`https://wa.me/?text=${text}`, '_blank');
-        }
-
-        function shareOnFacebook() {
-            window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`, '_blank');
-        }
-
-        function shareOnTwitter() {
-            const text = encodeURIComponent(`${document.getElementById('propertyTitle').textContent}`);
-            window.open(`https://twitter.com/intent/tweet?text=${text}&url=${encodeURIComponent(window.location.href)}`, '_blank');
-        }
-
-        function copyLink() {
-            navigator.clipboard.writeText(window.location.href).then(() => {
-                alert('Bağlantı kopyalandı!');
-            });
-        }
-
-        // Sayfa yüklendiğinde
-        document.addEventListener('DOMContentLoaded', () => {
-            loadPropertyDetails();
-
-            // Galeri navigasyon olayları
-            document.querySelector('.gallery-nav.prev').addEventListener('click', prevImage);
-            document.querySelector('.gallery-nav.next').addEventListener('click', nextImage);
-        });
-    </script>
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <div class="footer-logo">
-                        <img src="images/logo.png" alt="Express Emlak" class="footer-logo-img">
-                    </div>
-                    <p>Güvenilir emlak hizmetleri ile hayalinizdeki evi bulmanızda yanınızdayız.</p>
-                    <div class="social-links">
-                        <a href="#"><i class="fab fa-facebook"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-linkedin"></i></a>
-                    </div>
-                </div>
-                <div class="footer-section">
-                    <h3>Hızlı Bağlantılar</h3>
-                    <ul>
-                        <li><a href="index.html">Ana Sayfa</a></li>
-                        <li><a href="ilanlar.html">İlanlar</a></li>
-                        <li><a href="express-konut.html">Express Konut</a></li>
-                        <li><a href="iletisim.html">İletişim</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h3>İletişim</h3>
-                    <div class="contact-info">
-                        <p><i class="fas fa-phone"></i> +90 535 060 82 83  Muhammet Dündar</p>
-                        <p><i class="fas fa-phone"></i> +90 544 471 22 73  Mehmet Üzüm</p>
-                        <p><i class="fas fa-envelope"></i> expressinsaatgayrimenkul@gmail.com</p>
-                        <p><i class="fas fa-map-marker-alt"></i> Aymanas, Alparslan Türkeş Caddesi No:6/D, 42010 Meram/Konya</p>
-                    </div>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2025 Express Emlak. Tüm hakları saklıdır.</p>
-            </div>
+      <!-- Başlık + aksiyonlar -->
+      <div class="detay-head">
+        <h1 class="detay-title" id="ilanBaslik"></h1>
+        <div class="detay-head-actions">
+          <button type="button" class="detay-action" id="btnFavori" aria-pressed="false">
+            <i class="far fa-star"></i><span>Favorilerime Ekle</span>
+          </button>
+          <button type="button" class="detay-action" id="btnYazdir">
+            <i class="fas fa-print"></i><span>Yazdır</span>
+          </button>
+          <button type="button" class="detay-action" id="btnPaylas">
+            <i class="fas fa-share-nodes"></i><span>Paylaş</span>
+          </button>
         </div>
-    </footer>
+      </div>
 
-    <script src="script.js"></script>
-    <script>
-        // Mobile menu toggle function
-        function toggleMobileMenu() {
-            const mobileMenu = document.getElementById('mobileMenu');
-            mobileMenu.classList.toggle('active');
-        }
+      <!-- Üç kolon: galeri | özellikler | satıcı -->
+      <div class="detay-grid">
 
-        // Close mobile menu when clicking on a link
-        document.querySelectorAll('.mobile-menu .nav-link').forEach(link => {
-            link.addEventListener('click', () => {
-                document.getElementById('mobileMenu').classList.remove('active');
-            });
-        });
+        <!-- Galeri -->
+        <section class="detay-card" aria-label="İlan fotoğrafları">
+          <div class="galeri-stage" id="galeriStage">
+            <button type="button" class="galeri-nav prev" id="galeriPrev" aria-label="Önceki fotoğraf">
+              <i class="fas fa-chevron-left"></i>
+            </button>
+            <button type="button" class="galeri-nav next" id="galeriNext" aria-label="Sonraki fotoğraf">
+              <i class="fas fa-chevron-right"></i>
+            </button>
+            <span class="galeri-counter" id="galeriCounter"></span>
+          </div>
+          <div class="galeri-thumbs" id="galeriThumbs"></div>
+        </section>
 
-        // Close mobile menu when clicking outside
-        document.addEventListener('click', (e) => {
-            const mobileMenu = document.getElementById('mobileMenu');
-            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-            
-            if (!mobileMenu.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
-                mobileMenu.classList.remove('active');
-            }
-        });
-    </script>
+        <!-- Özellik tablosu -->
+        <section class="detay-card detay-specs" aria-label="İlan özellikleri">
+          <div class="spec-price" id="specPrice"></div>
+          <div class="spec-badges" id="specBadges"></div>
+          <div class="spec-location" id="specLocation"></div>
+          <dl class="spec-table" id="specTable"></dl>
+        </section>
+
+        <!-- Satıcı + güvenlik -->
+        <div class="detay-right">
+          <section class="detay-card satici-box" aria-label="İletişim bilgileri">
+            <div class="satici-brand">
+              <img src="images/logo.png" alt="">
+              <div class="satici-name" id="saticiName">Express Emlak</div>
+            </div>
+            <div class="satici-since" id="saticiSince"></div>
+
+            <div id="saticiPhones"></div>
+
+            <div class="satici-actions">
+              <a class="ee-btn" id="btnAra" href="#"><i class="fas fa-phone"></i> Hemen Ara</a>
+              <a class="ee-btn ee-btn-whatsapp" id="btnWhatsapp" href="#" target="_blank" rel="noopener">
+                <i class="fab fa-whatsapp"></i> WhatsApp&#39;tan Yaz
+              </a>
+              <a class="ee-btn ee-btn-ghost" id="btnMesaj" href="#">
+                <i class="far fa-envelope"></i> E-posta Gönder
+              </a>
+            </div>
+
+            <div class="share-label">Bu ilanı paylaş</div>
+            <div class="share-row">
+              <a id="shareWhatsapp" href="#" target="_blank" rel="noopener" aria-label="WhatsApp ile paylaş"><i class="fab fa-whatsapp"></i></a>
+              <a id="shareFacebook" href="#" target="_blank" rel="noopener" aria-label="Facebook ile paylaş"><i class="fab fa-facebook-f"></i></a>
+              <a id="shareTwitter" href="#" target="_blank" rel="noopener" aria-label="X ile paylaş"><i class="fab fa-x-twitter"></i></a>
+            </div>
+          </section>
+
+          <section class="detay-card guvenlik-box" aria-label="Güvenlik ipuçları">
+            <div class="guvenlik-title">
+              <i class="fas fa-shield-halved"></i> Güvenlik İpuçları
+            </div>
+            <ul>
+              <li>Gayrimenkulü görmeden kapora veya benzeri ödeme yapmayın.</li>
+              <li>Tapu ve kimlik bilgilerini yüz yüze kontrol edin.</li>
+              <li>Ödemeleri yalnızca sözleşme sonrası banka üzerinden yapın.</li>
+            </ul>
+          </section>
+        </div>
+      </div>
+
+      <!-- Sekmeler -->
+      <div class="detay-tabs" role="tablist" aria-label="İlan bilgi sekmeleri">
+        <button type="button" class="detay-tab" role="tab" id="detayTab"
+                aria-controls="panel-detay" aria-selected="true" tabindex="0">İlan Detayları</button>
+        <button type="button" class="detay-tab" role="tab" id="konumTab"
+                aria-controls="panel-konum" aria-selected="false" tabindex="-1">Konumu ve Bölge Bilgisi</button>
+        <button type="button" class="detay-tab" role="tab" id="videoTab" hidden
+                aria-controls="panel-video" aria-selected="false" tabindex="-1">Video</button>
+      </div>
+
+      <!-- Sekme 1: İlan detayları -->
+      <div class="detay-panel" id="panel-detay" role="tabpanel" aria-labelledby="detayTab" tabindex="0">
+        <details class="detay-section" open>
+          <summary>Açıklama</summary>
+          <div class="detay-section-body detay-aciklama" id="aciklamaBody"></div>
+        </details>
+
+        <details class="detay-section" id="ozelliklerSection" open hidden>
+          <summary>Özellikler</summary>
+          <div class="detay-section-body" id="ozelliklerBody"></div>
+        </details>
+      </div>
+
+      <!-- Sekme 2: Konum -->
+      <div class="detay-panel" id="panel-konum" role="tabpanel" aria-labelledby="konumTab" tabindex="0" hidden>
+        <details class="detay-section" open>
+          <summary>Adres</summary>
+          <div class="detay-section-body">
+            <dl class="spec-table" id="adresTablo"></dl>
+          </div>
+        </details>
+
+        <details class="detay-section" open>
+          <summary>Harita</summary>
+          <div>
+            <div class="harita-box" id="haritaBox"></div>
+            <div class="harita-note">
+              <i class="fas fa-circle-info"></i>
+              <span id="haritaAdres"></span>
+            </div>
+            <div class="harita-actions">
+              <a class="ee-btn ee-btn-ghost" id="yolTarifi" href="#" target="_blank" rel="noopener">
+                <i class="fas fa-diamond-turn-right"></i> Yol Tarifi Al
+              </a>
+              <a class="ee-btn ee-btn-ghost" id="buyukHarita" href="#" target="_blank" rel="noopener">
+                <i class="fas fa-up-right-and-down-left-from-center"></i> Büyük Haritada Aç
+              </a>
+              <a class="ee-btn ee-btn-ghost" id="sokakGorunumu" href="#" target="_blank" rel="noopener" hidden>
+                <i class="fas fa-street-view"></i> Sokak Görünümü
+              </a>
+            </div>
+          </div>
+        </details>
+      </div>
+
+      <!-- Sekme 3: Video -->
+      <div class="detay-panel" id="panel-video" role="tabpanel" aria-labelledby="videoTab" tabindex="0" hidden>
+        <details class="detay-section" open>
+          <summary>İlan Videosu</summary>
+          <div class="video-box">
+            <video id="ilanVideo" controls preload="metadata">
+              Tarayıcınız video oynatmayı desteklemiyor.
+            </video>
+          </div>
+        </details>
+      </div>
+
+      <!-- Benzer ilanlar -->
+      <h2 class="benzer-baslik" id="benzerBaslik" hidden>Benzer İlanlar</h2>
+      <div class="benzer-grid" id="benzerGrid"></div>
+
+    </div>
+  </main>
+
+  <!-- ===== Footer ===== -->
+  <footer class="ee-footer">
+    <div class="ee-footer-inner">
+      <div>
+        <img src="images/logo.png" alt="Express Emlak" class="ee-footer-logo">
+        <p>Güvenilir gayrimenkul danışmanlığı. Satılık ve kiralık ilanlarımızı inceleyin.</p>
+      </div>
+      <div>
+        <h4>Sayfalar</h4>
+        <ul class="ee-footer-links">
+          <li><a href="index.html">Ana Sayfa</a></li>
+          <li><a href="ilanlar.html">İlanlar</a></li>
+          <li><a href="express-konut.html">Express Konut</a></li>
+          <li><a href="iletisim.html">İletişim</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>İletişim</h4>
+        <ul class="ee-footer-links">
+          <li><a href="tel:+905350608283"><i class="fas fa-phone"></i> 0 (535) 060 82 83</a></li>
+          <li><a href="tel:+905444712273"><i class="fas fa-phone"></i> 0 (544) 471 22 73</a></li>
+          <li><a href="mailto:expressinsaatgayrimenkul@gmail.com"><i class="fas fa-envelope"></i> E-posta gönder</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="ee-footer-bottom">© 2026 Express Emlak. Tüm hakları saklıdır.</div>
+  </footer>
+
+  <script type="module" src="assets/js/header.js"></script>
+  <script type="module" src="assets/js/ilan-detay.js"></script>
 </body>
 </html>

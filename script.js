@@ -360,6 +360,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Handle window resize
 window.addEventListener('resize', () => {
+    // Bu dosya yeni mimariye geçmemiş sayfalar tarafından yükleniyor. Header'ı
+    // .ee-* yapısına taşınan bir sayfada .nav / .mobile-menu-btn bulunmaz;
+    // guard olmadan her resize olayında TypeError atılır.
+    if (!nav || !mobileMenuBtn) return;
+
     // Close mobile menu on resize
     if (window.innerWidth > 768) {
         nav.classList.remove('active');

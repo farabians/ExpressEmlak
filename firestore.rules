@@ -1,0 +1,49 @@
+rules_version = '2';
+
+// Express Emlak - Firestore güvenlik kuralları
+//
+// ÖNEMLİ: Bu dosya sürüm kontrolü içindir. Firebase bu dosyayı kendiliğinden
+// okumaz; değişiklikten sonra Firebase Console > Firestore Database > Rules
+// ekranına yapıştırıp "Yayınla" demek gerekir.
+//
+// Yetkilendirme burada sunucu tarafında yapılır. admin.html'deki
+// ALLOWED_EMAILS kontrolü yalnızca arayüz kolaylığıdır; gerçek koruma bu kurallardır.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAllowedUploader() {
+      return request.auth != null
+        && request.auth.token.email in [
+          "osmangundemir1@gmail.com",
+          "expressinsaatgayrimenkul@gmail.com",
+          "ab.sametdundar@gmail.com",
+          "ipekcimipek@gmail.com"
+        ];
+    }
+
+    // İlanlar: herkes okur (site ziyaretçileri), yalnızca yetkili yazar.
+    match /ilanlar/{ilanId} {
+      allow read: if true;
+
+      // Yeni ilan oluşturma
+      allow create: if isAllowedUploader();
+
+      // Güncelleme/silme: yalnızca yetkili kullanıcı
+      allow update, delete: if isAllowedUploader();
+    }
+
+    // Site ayarları (Express Konut ödeme planları vb.):
+    // herkes okur çünkü express-konut.html ve index.html bu veriyi gösterir;
+    // yalnızca yetkili yazar çünkü panelden düzenlenir.
+    match /ayarlar/{ayarId} {
+      allow read: if true;
+      allow create, update, delete: if isAllowedUploader();
+    }
+
+    // Yukarıda açıkça izin verilmeyen her yol kapalı.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

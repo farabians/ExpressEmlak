@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>İlanlar - Express Emlak</title>
+    <meta name="description" content="Express Emlak’ın güncel satılık ve kiralık ilanlarını inceleyin; kategori, ilçe ve fiyata göre filtreleyin.">
     <link rel="icon" type="image/png" href="images/favicon.png">
     <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
         .breadcrumb {
             display: flex;
@@ -107,6 +108,15 @@
             grid-template-columns: 1fr;
         }
         
+        /* Kart govdesi tumuyle bir <a> icinde: tum yuzey tiklanabilir olsun
+           ama metin rengi ve alt cizgi devralinmasin. */
+        .property-card-link {
+            display: block;
+            text-decoration: none;
+            color: inherit;
+        }
+        .property-card-link:hover { text-decoration: none; }
+
         .property-card-list {
             display: flex;
             background: var(--white);
@@ -114,24 +124,37 @@
             overflow: hidden;
             box-shadow: var(--shadow);
             transition: var(--transition);
+            align-items: stretch;
         }
-        
+
         .property-card-list:hover {
             transform: translateY(-3px);
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
         }
-        
+
+        /* Liste gorunumunde govde + aksiyonlar yan yana */
+        .property-card-list > .property-card-link {
+            flex: 1;
+            display: flex;
+            min-width: 0;
+        }
+
         .property-card-list .property-image {
             width: 300px;
             height: 200px;
+            flex-shrink: 0;
         }
-        
+
         .property-card-list .property-content {
             flex: 1;
             padding: 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
+            min-width: 0;
+        }
+
+        .property-card-list .property-actions {
+            padding: 1.5rem;
+            justify-content: center;
+            flex-shrink: 0;
         }
         
         .property-details {
@@ -206,10 +229,11 @@
                 align-self: center;
             }
             
-            .property-card-list {
+            .property-card-list,
+            .property-card-list > .property-card-link {
                 flex-direction: column;
             }
-            
+
             .property-card-list .property-image {
                 width: 100%;
                 height: 200px;
@@ -352,9 +376,9 @@
     <header class="header">
         <div class="container">
             <div class="nav-wrapper">
-                <div class="logo">
+                <a href="index.html" class="logo" aria-label="Express Emlak ana sayfa">
                     <img src="images/logo.png" alt="Express Emlak" class="logo-img">
-                </div>
+                </a>
                 <nav class="nav">
                     <a href="index.html" class="nav-link">Ana Sayfa</a>
                     <a href="ilanlar.html" class="nav-link active">İlanlar</a>
@@ -369,11 +393,47 @@
     </header>
 
     <!-- Filters Section -->
-    <section class="filters-section">
+    <section class="filters-section" id="ilanlarBaslangic">
         <div class="container">
-            <!-- Listings -->
-            <div class="listings-grid">
+            <div class="section-header" style="margin-bottom:1.5rem;">
+                <h2>İlanlar</h2>
+                <p>Aradığınız gayrimenkulü kategori, ilçe ve fiyata göre filtreleyin</p>
+            </div>
 
+            <div class="filters-container">
+                <div class="filter-group">
+                    <label class="filter-label" for="fKategori">Kategori</label>
+                    <select class="input-field" id="fKategori"></select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label" for="fTip">İlan Tipi</label>
+                    <select class="input-field" id="fTip">
+                        <option value="">Satılık ve Kiralık</option>
+                        <option value="satilik">Satılık</option>
+                        <option value="kiralik">Kiralık</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label" for="fIlce">İlçe</label>
+                    <select class="input-field" id="fIlce"></select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label" for="fOda">Oda Sayısı</label>
+                    <select class="input-field" id="fOda"></select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label" for="fMin">Fiyat Aralığı (TL)</label>
+                    <div class="price-range">
+                        <input class="input-field" id="fMin" type="number" min="0" step="50000" placeholder="En az" aria-label="En az fiyat">
+                        <input class="input-field" id="fMax" type="number" min="0" step="50000" placeholder="En çok" aria-label="En çok fiyat">
+                    </div>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">&nbsp;</label>
+                    <button type="button" class="btn-secondary" id="filtreTemizle">
+                        <i class="fas fa-rotate-left"></i> Filtreleri Temizle
+                    </button>
+                </div>
             </div>
         </div>
     </section>
@@ -383,22 +443,23 @@
         <div class="container">
             <div class="listings-controls">
                 <div class="results-count">
-                    <strong>3</strong> ilan bulundu
+                    <strong id="sonucSayisi">&hellip;</strong> ilan bulundu
                 </div>
                 <div class="sort-controls">
-                    <select class="input-field" id="sortSelect" onchange="sortProperties()">
-                        <option value="price-asc">Fiyat (Düşükten Yükseğe)</option>
-                        <option value="price-desc">Fiyat (Yüksekten Düşüğe)</option>
+                    <label class="sr-only" for="sortSelect">Sıralama</label>
+                    <select class="input-field" id="sortSelect">
                         <option value="date-desc">Tarih (Yeniden Eskiye)</option>
                         <option value="date-asc">Tarih (Eskiden Yeniye)</option>
+                        <option value="price-asc">Fiyat (Düşükten Yükseğe)</option>
+                        <option value="price-desc">Fiyat (Yüksekten Düşüğe)</option>
                         <option value="area-asc">M² (Küçükten Büyüğe)</option>
                         <option value="area-desc">M² (Büyükten Küçüğe)</option>
                     </select>
                     <div class="view-toggle">
-                        <button class="view-btn active" data-view="grid">
-                            <i class="fas fa-th"></i>
+                        <button type="button" class="view-btn active" data-view="grid" aria-pressed="true" aria-label="Izgara görünümü">
+                            <i class="fas fa-table-cells-large"></i>
                         </button>
-                        <button class="view-btn" data-view="list">
+                        <button type="button" class="view-btn" data-view="list" aria-pressed="false" aria-label="Liste görünümü">
                             <i class="fas fa-list"></i>
                         </button>
                     </div>
@@ -406,22 +467,13 @@
             </div>
 
             <div class="properties-list grid-view" id="propertiesList">
-                <!-- Property Cards will be dynamically loaded from Firebase -->
-                
+                <p class="muted" style="grid-column:1/-1; text-align:center; padding:2rem;">
+                    <i class="fas fa-spinner fa-spin"></i> İlanlar yükleniyor&hellip;
+                </p>
             </div>
 
-            <!-- Pagination -->
-            <div class="pagination">
-                <button class="page-btn">
-                    <i class="fas fa-chevron-left"></i>
-                </button>
-                <button class="page-btn active">1</button>
-                <button class="page-btn">2</button>
-                <button class="page-btn">3</button>
-                <button class="page-btn">4</button>
-                <button class="page-btn">
-                    <i class="fas fa-chevron-right"></i>
-                </button>
+            <!-- Sayfalama JS ile üretilir -->
+            <div class="pagination" id="sayfalama" hidden>
             </div>
         </div>
     </section>
@@ -435,12 +487,6 @@
                         <img src="images/logo.png" alt="Express Emlak" class="footer-logo-img">
                     </div>
                     <p>Güvenilir emlak hizmetleri ile hayalinizdeki evi bulmanızda yanınızdayız.</p>
-                    <div class="social-links">
-                        <a href="#"><i class="fab fa-facebook"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-linkedin"></i></a>
-                    </div>
                 </div>
                 <div class="footer-section">
                     <h3>Hızlı Bağlantılar</h3>
@@ -468,172 +514,6 @@
     </footer>
 
     <script src="script.js"></script>
-    <script type="module">
-        // Firebase SDK import
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getFirestore, collection, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-        // Firebase yapılandırması
-        const firebaseConfig = {
-            apiKey: "AIzaSyCtA0h7ZHuuMInAQGoKcfTtthnImZ_Xk_E",
-            authDomain: "expressemlak-f85d3.firebaseapp.com",
-            projectId: "expressemlak-f85d3",
-            storageBucket: "expressemlak-f85d3.firebasestorage.app",
-            appId: "1:328195558403:web:0ba4504f713f6299c0d236"
-        };
-
-        // Firebase başlatma
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-        // İlanları Firebase'den çek
-        const q = query(collection(db, "ilanlar"), orderBy("tarih", "desc"));
-        onSnapshot(q, (snapshot) => {
-            const propertiesList = document.getElementById('propertiesList');
-            const resultsCount = document.querySelector('.results-count strong');
-            
-            // İlan sayısını güncelle
-            resultsCount.textContent = snapshot.size;
-            
-            // İlanları temizle
-            propertiesList.innerHTML = '';
-            
-            // Her bir ilanı ekle
-            snapshot.forEach((doc) => {
-                const data = doc.data();
-                const card = document.createElement('div');
-                card.className = 'property-card';
-                card.dataset.price = data.fiyat || 0;
-                card.dataset.date = data.tarih?.toDate?.()?.toISOString?.() || new Date().toISOString();
-                
-                // Ana fotoğrafı al (ilk fotoğraf)
-                const mainPhoto = data.photoUrls?.[0] || 'images/placeholder.jpg';
-                
-                card.innerHTML = `
-                    <a href="ilan_detayi.html?id=${doc.id}" style="text-decoration: none; color: inherit;">
-                        <div class="property-image">
-                            <img src="${mainPhoto}" alt="${data.isim}">
-                            <div class="property-badge">${data.ilanTipi === 'kiralik' ? 'Kiralık' : 'Satılık'}</div>
-                        </div>
-                        <div class="property-content">
-                            <div class="property-price">₺${data.fiyat?.toLocaleString('tr-TR') || 'Fiyat Belirtilmemiş'}</div>
-                            <h3 class="property-title">${data.isim}</h3>
-                            <p class="property-location"><i class="fas fa-map-marker-alt"></i> ${data.lokasyon || 'Konya'}</p>
-                            <div class="property-features">
-                                <span><i class="fas fa-home"></i> ${data.odaSayisi || 'Belirtilmemiş'}</span>
-                                <span><i class="fas fa-expand-arrows-alt"></i> ${data.metrekare || '0'} m²</span>
-                                <span><i class="fas fa-building"></i> ${data.binaYasi || '0'} Yaş</span>
-                                <span><i class="fas fa-layer-group"></i> ${data.bulunduguKat || '0'}. Kat</span>
-                            </div>
-                        </div>
-                    </a>
-                `;
-                
-                propertiesList.appendChild(card);
-            });
-            
-            if (snapshot.empty) {
-                propertiesList.innerHTML = '<p class="no-results">Henüz ilan bulunmuyor.</p>';
-            }
-        });
-
-        // Sort properties functionality
-        function sortProperties() {
-            const sortValue = document.getElementById('sortSelect').value;
-            const propertiesList = document.getElementById('propertiesList');
-            const cards = Array.from(propertiesList.querySelectorAll('.property-card'));
-            
-            cards.sort((a, b) => {
-                let aValue, bValue;
-                
-                switch (sortValue) {
-                    case 'price-asc':
-                        aValue = parseInt(a.dataset.price);
-                        bValue = parseInt(b.dataset.price);
-                        return aValue - bValue;
-                    case 'price-desc':
-                        aValue = parseInt(a.dataset.price);
-                        bValue = parseInt(b.dataset.price);
-                        return bValue - aValue;
-                    case 'area-asc':
-                        aValue = parseInt(a.dataset.area);
-                        bValue = parseInt(b.dataset.area);
-                        return aValue - bValue;
-                    case 'area-desc':
-                        aValue = parseInt(a.dataset.area);
-                        bValue = parseInt(b.dataset.area);
-                        return bValue - aValue;
-                    case 'date-desc':
-                        aValue = new Date(a.dataset.date);
-                        bValue = new Date(b.dataset.date);
-                        return bValue - aValue;
-                    case 'date-asc':
-                        aValue = new Date(a.dataset.date);
-                        bValue = new Date(b.dataset.date);
-                        return aValue - bValue;
-                    default:
-                        return 0;
-                }
-            });
-            
-            // Clear and re-append sorted cards
-            propertiesList.innerHTML = '';
-            cards.forEach(card => propertiesList.appendChild(card));
-        }
-
-        // View toggle functionality
-        const viewBtns = document.querySelectorAll('.view-btn');
-        const propertiesList = document.getElementById('propertiesList');
-
-        viewBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                viewBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                
-                const view = btn.dataset.view;
-                if (view === 'list') {
-                    propertiesList.className = 'properties-list list-view';
-                    // Convert to list view cards
-                    const cards = propertiesList.querySelectorAll('.property-card');
-                    cards.forEach(card => {
-                        if (!card.classList.contains('property-card-list')) {
-                            card.classList.add('property-card-list');
-                            // Add actions div
-                            const content = card.querySelector('.property-content');
-                            const actions = document.createElement('div');
-                            actions.className = 'property-actions';
-                            actions.innerHTML = `
-                                <a href="ilan_detayi.html?id=${doc.id}" class="btn-secondary">Detayları Gör</a>
-                                <a href="tel:+905350608283" class="btn-secondary">Hemen Ara</a>
-                            `;
-                            content.appendChild(actions);
-                        }
-                    });
-                } else {
-                    propertiesList.className = 'properties-list grid-view';
-                    // Convert back to grid view
-                    const cards = propertiesList.querySelectorAll('.property-card');
-                    cards.forEach(card => {
-                        card.classList.remove('property-card-list');
-                        const actions = card.querySelector('.property-actions');
-                        if (actions) {
-                            actions.remove();
-                        }
-                    });
-                }
-            });
-        });
-
-        // Pagination functionality
-        const pageButtons = document.querySelectorAll('.page-btn');
-        pageButtons.forEach(btn => {
-            btn.addEventListener('click', () => {
-                if (!btn.textContent.includes('chevron')) {
-                    pageButtons.forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                }
-            });
-        });
-    </script>
+    <script type="module" src="assets/js/ilanlar.js"></script>
 </body>
 </html>

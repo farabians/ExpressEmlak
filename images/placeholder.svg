@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" role="img" aria-label="Fotoğraf yok">
+  <rect width="400" height="300" fill="#eceef1"/>
+  <g fill="none" stroke="#b9bec6" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M140 152 200 108 260 152"/>
+    <path d="M156 148v44h88v-44"/>
+  </g>
+  <text x="200" y="224" text-anchor="middle"
+        font-family="Poppins, Segoe UI, Arial, sans-serif" font-size="19" fill="#9aa0a6">
+    Fotoğraf yok
+  </text>
+</svg>

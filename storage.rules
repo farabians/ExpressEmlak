@@ -1,0 +1,48 @@
+rules_version = '2';
+
+// Express Emlak - Cloud Storage güvenlik kuralları
+//
+// ÖNEMLİ: Bu dosya sürüm kontrolü içindir. Değişiklikten sonra
+// Firebase Console > Storage > Rules ekranına yapıştırıp "Yayınla" demek gerekir.
+//
+// Boyut ve tür sınırları admin panelindeki istemci tarafı kontrollerle
+// (assets/js/media-upload.js: 5 MB foto / 50 MB video) aynı olacak şekilde tutulur.
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function isAuthorized() {
+      return request.auth != null && request.auth.token.email in [
+        'osmangundemir1@gmail.com',
+        'expressinsaatgayrimenkul@gmail.com',
+        'ab.sametdundar@gmail.com',
+        'ipekcimipek@gmail.com'
+      ];
+    }
+
+    // Fotoğraflar: Max 5MB ve sadece (JPG, PNG, WEBP)
+    match /ilanlar/fotolar/{fileName} {
+      allow read: if true;
+      allow write: if isAuthorized()
+                   && request.resource.size < 5 * 1024 * 1024
+                   && request.resource.contentType.matches('image/(jpeg|png|webp)');
+      allow delete: if isAuthorized();
+    }
+
+    // Videolar: Max 50MB ve sadece (MP4, WEBM, MOV)
+    match /ilanlar/videolar/{fileName} {
+      allow read: if true;
+      allow write: if isAuthorized()
+                   && request.resource.size < 50 * 1024 * 1024
+                   && request.resource.contentType.matches('video/(mp4|webm|quicktime)');
+      allow delete: if isAuthorized();
+    }
+
+    // Diğer tüm yollar için genel kural (sadece yetkili mailler)
+    match /{allPaths=**} {
+      allow read: if true;
+      allow write: if isAuthorized();
+      allow delete: if isAuthorized();
+    }
+  }
+}
