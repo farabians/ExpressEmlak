@@ -12,6 +12,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
 
   <link rel="stylesheet" href="assets/css/base.css">
   <link rel="stylesheet" href="assets/css/ilan-detay.css">
@@ -22,13 +23,14 @@
   <header class="ee-header">
     <div class="ee-header-inner">
       <a href="index.html" aria-label="Express Emlak ana sayfa">
-        <img src="images/logo.png" alt="Express Emlak" class="ee-logo-img">
+        <img src="images/logo_dark.png" alt="Express Emlak" class="ee-logo-img">
       </a>
       <nav class="ee-nav" aria-label="Ana menü">
         <a href="index.html">Ana Sayfa</a>
         <a href="ilanlar.html" class="active">İlanlar</a>
         <a href="express-konut.html">Express Konut</a>
         <a href="iletisim.html">İletişim</a>
+        <a href="favoriler.html" class="ee-nav-fav" aria-label="Favorilerim"><i class="fas fa-star"></i></a>
       </nav>
       <button class="ee-menu-btn" aria-label="Menüyü aç" aria-expanded="false">
         <i class="fas fa-bars"></i>
@@ -93,6 +95,9 @@
               <i class="fas fa-chevron-right"></i>
             </button>
             <span class="galeri-counter" id="galeriCounter"></span>
+            <button type="button" class="galeri-video-btn" id="galeriVideoBtn" hidden>
+              <i class="fas fa-circle-play"></i> Videoyu İzle
+            </button>
           </div>
           <div class="galeri-thumbs" id="galeriThumbs"></div>
 
@@ -114,7 +119,7 @@
         <div class="detay-right">
           <section class="detay-card satici-box" aria-label="İletişim bilgileri">
             <div class="satici-brand">
-              <img src="images/logo.png" alt="">
+              <img src="images/logo_dark.png" alt="">
               <div class="satici-name" id="saticiName">Express Emlak</div>
             </div>
             <div class="satici-since" id="saticiSince"></div>
@@ -158,8 +163,6 @@
                 aria-controls="panel-detay" aria-selected="true" tabindex="0">İlan Detayları</button>
         <button type="button" class="detay-tab" role="tab" id="konumTab"
                 aria-controls="panel-konum" aria-selected="false" tabindex="-1">Konumu ve Bölge Bilgisi</button>
-        <button type="button" class="detay-tab" role="tab" id="videoTab" hidden
-                aria-controls="panel-video" aria-selected="false" tabindex="-1">Video</button>
       </div>
 
       <!-- Sekme 1: İlan detayları -->
@@ -207,18 +210,6 @@
         </details>
       </div>
 
-      <!-- Sekme 3: Video -->
-      <div class="detay-panel" id="panel-video" role="tabpanel" aria-labelledby="videoTab" tabindex="0" hidden>
-        <details class="detay-section" open>
-          <summary>İlan Videosu</summary>
-          <div class="video-box">
-            <video id="ilanVideo" controls preload="metadata">
-              Tarayıcınız video oynatmayı desteklemiyor.
-            </video>
-          </div>
-        </details>
-      </div>
-
       <!-- Benzer ilanlar -->
       <h2 class="benzer-baslik" id="benzerBaslik" hidden>Benzer İlanlar</h2>
       <div class="benzer-grid" id="benzerGrid"></div>
@@ -230,7 +221,7 @@
   <footer class="ee-footer">
     <div class="ee-footer-inner">
       <div>
-        <img src="images/logo.png" alt="Express Emlak" class="ee-footer-logo">
+        <img src="images/logo_dark.png" alt="Express Emlak" class="ee-footer-logo">
         <p>Güvenilir gayrimenkul danışmanlığı. Satılık ve kiralık ilanlarımızı inceleyin.</p>
       </div>
       <div>

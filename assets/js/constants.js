@@ -91,11 +91,16 @@ export const FEATURE_GROUPS = [
   {
     key: "icOzellikler",
     title: "İç Özellikler",
-    items: ["ADSL", "Ahşap Doğrama", "Akıllı Ev", "Alarm (Hırsız)", "Alarm (Yangın)", "Alaturka Tuvalet",
+    // ADSL bilerek silinmedi: eski ilanların icOzellikler dizisinde zaten bu
+    // string saklanmış olabilir, seçenekten kaldırmak yalnızca düzenlemede
+    // checkbox'ı bulunamaz hale getirir (görüntülemede sorun çıkmaz). Fiber
+    // İnternet ile yan yana duruyor; kullanıcı hangisi uyuyorsa onu işaretler.
+    items: ["ADSL", "Fiber İnternet", "Ahşap Doğrama", "Akıllı Ev", "Akıllı Kilit",
+      "Alarm (Hırsız)", "Alarm (Yangın)", "Alaturka Tuvalet",
       "Alüminyum Doğrama", "Ankastre Fırın", "Barbekü", "Beyaz Eşya", "Boyalı", "Bulaşık Makinesi",
       "Buzdolabı", "Çamaşır Kurutma Makinesi", "Çamaşır Makinesi", "Çamaşır Odası", "Çelik Kapı",
-      "Duşakabin", "Duvar Kağıdı", "Ebeveyn Banyosu", "Fırın", "Giyinme Odası", "Gömme Dolap",
-      "Hilton Banyo", "Intercom Sistemi", "Jakuzi", "Kartonpiyer", "Kiler", "Klima", "Küvet",
+      "Duşakabin", "Duvar Kağıdı", "Ebeveyn Banyosu", "Fırın", "Giyinme Odası", "Görüntülü Diyafon",
+      "Gömme Dolap", "Hilton Banyo", "Intercom Sistemi", "Jakuzi", "Kartonpiyer", "Kiler", "Klima", "Küvet",
       "Laminat Zemin", "Marley", "Mobilya", "Mutfak (Ankastre)", "Mutfak (Laminat)", "Mutfak Doğalgazı",
       "Panjur / Jaluzi", "Parke Zemin", "PVC Doğrama", "Seramik Zemin", "Set Üstü Ocak", "Shower Enclosure",
       "Spot Aydınlatma", "Şömine", "Teras", "Termosifon", "Vestiyer", "Wc", "Yüzme Havuzu"]
@@ -106,7 +111,8 @@ export const FEATURE_GROUPS = [
     // Asansör ve Otopark bilerek burada yok: onlar Konut Bilgileri bölümünde
     // ayrı select alanı olarak giriliyor (bkz. SELECT_OPTIONS.asansor / .otopark).
     items: ["24 Saat Güvenlik", "Araç Şarj İstasyonu", "Buhar Odası", "Çocuk Oyun Parkı",
-      "Hidrofor", "Isı Yalıtımı", "Jeneratör", "Kablo TV", "Kamera Sistemi", "Kapalı Garaj",
+      "Güneş Paneli", "Hidrofor", "Isı Yalıtımı", "IP Kamera Sistemi", "Jeneratör", "Kablo TV",
+      "Kamera Sistemi", "Kapalı Garaj",
       "Kapıcı", "Kreş", "Müstakil Havuzlu", "Oyun Parkı", "Sauna", "Ses Yalıtımı",
       "Siding", "Spor Alanı", "Su Deposu", "Tenis Kortu", "Yangın Merdiveni", "Yüzme Havuzu (Açık)",
       "Yüzme Havuzu (Kapalı)"]

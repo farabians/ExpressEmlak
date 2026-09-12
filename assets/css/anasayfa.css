@@ -1,0 +1,401 @@
+/* ==========================================================================
+   Ana sayfa - base.css üzerine kurulu, açık tema.
+   ========================================================================== */
+
+/* ---------- Hero / slider ---------- */
+.hero {
+  position: relative;
+  height: calc(100vh - var(--header-h));
+  overflow: hidden;
+  background: black;
+}
+
+.fullscreen-slider {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  transition: transform 0.7s ease-in-out;
+}
+
+.slider-item {
+  position: relative;
+  min-width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.slider-bg { position: absolute; inset: 0; z-index: 1; }
+.slider-bg img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  filter: brightness(0.6);
+  transition: transform 1s ease;
+}
+.slider-item.active .slider-bg img { transform: scale(1.05); }
+
+.slider-content {
+  position: relative;
+  z-index: 2;
+  width: 70%;
+  max-width: 900px;
+  padding: 1.5rem;
+  color: white;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.7s ease-out;
+}
+.slider-item.active .slider-content { opacity: 1; transform: translateY(0); }
+
+.slider-details h2 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  line-height: 1.3;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.slider-price {
+  font-size: 2rem;
+  color: var(--primary);
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+.slider-features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  justify-content: center;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.slider-feature {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+  background: rgba(0,0,0,0.3);
+  padding: 0.7rem 1rem;
+  border-radius: 25px;
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: #fff;
+}
+.slider-feature i { font-size: 1.1rem; color: var(--primary); }
+
+.cta-buttons { display: flex; gap: 1rem; justify-content: center; margin-top: 1rem; }
+
+.btn-primary {
+  background: var(--primary);
+  color: var(--dark);
+  padding: 0.8rem 1.5rem;
+  border-radius: 25px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.3s;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 15px rgba(229, 169, 70, 0.3);
+}
+.btn-primary:hover { background: var(--primary-dark); color: var(--dark); transform: translateY(-2px); text-decoration: none; }
+
+.btn-secondary.hero-btn,
+.hero .btn-secondary {
+  background: transparent;
+  color: white;
+  padding: 0.8rem 1.5rem;
+  border-radius: 25px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.3s;
+  border: 2px solid rgba(255,255,255,0.8);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  backdrop-filter: blur(5px);
+}
+.hero .btn-secondary:hover { background: white; color: var(--dark); transform: translateY(-2px); }
+
+.view-all-btn { text-align: center; margin-top: 2rem; }
+.view-all-btn .btn-primary { padding: 0.7rem 1.5rem; }
+
+.slider-controls {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  z-index: 3;
+}
+
+.slider-btn {
+  width: 50px; height: 50px;
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+}
+.slider-btn:hover { background: var(--primary); border-color: var(--primary); transform: scale(1.1); }
+
+.slider-info { text-align: center; color: white; }
+.slide-counter { font-size: 1.2rem; font-weight: 600; color: var(--primary); }
+
+/* Tam ekran toggle (Madde 2) - TV/kiosk kullanımı için, slider'ı korur. */
+.fullscreen-toggle {
+  position: absolute;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 4;
+  width: 46px; height: 46px;
+  padding: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  backdrop-filter: blur(10px);
+}
+.fullscreen-toggle:hover { background: var(--primary); border-color: var(--primary); color: var(--dark); }
+
+@media (max-width: 1200px) {
+  .slider-content { width: 90%; padding: 1.2rem; }
+  .slider-features { grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); }
+  .slider-details h2 { font-size: 1.8rem; }
+  .slider-price { font-size: 1.7rem; }
+}
+
+@media (max-width: 1024px) {
+  .slider-content { width: 85%; padding: 1.2rem; }
+  .slider-details h2 { font-size: 2rem; }
+  .slider-price { font-size: 1.8rem; }
+}
+
+@media (max-width: 768px) {
+  .hero { min-height: 500px; }
+  .slider-content { width: 90%; padding: 1rem; gap: 1.5rem; }
+  .slider-details h2 { font-size: 1.6rem; margin-bottom: 0.8rem; }
+  .slider-price { font-size: 1.5rem; margin-bottom: 1rem; }
+  .slider-features { grid-template-columns: repeat(2, 1fr); gap: 0.8rem; max-width: 320px; margin: 0 auto 1.5rem; }
+  .slider-feature { font-size: 0.85rem; padding: 0.5rem 0.8rem; }
+  .slider-feature i { font-size: 1rem; }
+  .cta-buttons { flex-direction: column; gap: 0.8rem; max-width: 280px; margin: 0 auto; }
+  .btn-primary, .hero .btn-secondary { width: 100%; justify-content: center; padding: 0.8rem 1rem; font-size: 0.9rem; }
+  .slider-controls { bottom: 1.5rem; gap: 1.5rem; }
+  .slider-btn { width: 40px; height: 40px; font-size: 0.9rem; }
+  .slide-counter { font-size: 0.9rem; }
+  .fullscreen-toggle { bottom: 1.5rem; right: 1.2rem; width: 40px; height: 40px; }
+}
+
+@media (max-width: 480px) {
+  .hero { min-height: 450px; }
+  .slider-content { width: 95%; padding: 0.8rem; gap: 1rem; }
+  .slider-details h2 { font-size: 1.4rem; line-height: 1.2; margin-bottom: 0.6rem; }
+  .slider-price { font-size: 1.3rem; margin-bottom: 0.8rem; }
+  .slider-features { grid-template-columns: 1fr; gap: 0.6rem; max-width: 250px; }
+  .slider-feature { justify-content: center; font-size: 0.8rem; padding: 0.4rem 0.6rem; }
+  .slider-feature i { font-size: 0.9rem; }
+  .cta-buttons { gap: 0.6rem; max-width: 260px; }
+  .btn-primary, .hero .btn-secondary { padding: 0.7rem 0.8rem; font-size: 0.8rem; }
+  .slider-controls { bottom: 1rem; gap: 1rem; }
+  .slider-btn { width: 35px; height: 35px; font-size: 0.8rem; }
+  .slide-counter { font-size: 0.8rem; }
+}
+
+@media (max-width: 375px) {
+  .hero { min-height: 400px; }
+  .slider-details h2 { font-size: 1.2rem; }
+  .slider-price { font-size: 1.1rem; }
+  .slider-features { max-width: 220px; }
+  .cta-buttons { max-width: 240px; }
+}
+
+/* ---------- Services ---------- */
+.services { padding: 6rem 0; background: var(--surface-alt); }
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.service-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 2rem 1.5rem;
+  border-radius: 15px;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+  min-height: 280px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.service-card:hover { transform: translateY(-10px); box-shadow: var(--shadow-lg); }
+
+.service-icon {
+  width: 70px; height: 70px;
+  background: linear-gradient(135deg, var(--primary), #f4c15d);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 1.2rem;
+  font-size: 1.8rem;
+  color: var(--dark);
+}
+.service-card h3 { font-size: 1.2rem; font-weight: 600; color: var(--dark); margin-bottom: 0.8rem; }
+.service-card p { color: var(--text-muted); line-height: 1.5; font-size: 0.95rem; }
+
+/* ---------- Featured properties ---------- */
+.featured-properties { padding: 6rem 0; }
+.properties-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+/* ---------- Express Konut teaser ---------- */
+.ek-teaser {
+  padding: 6rem 0;
+  background: linear-gradient(135deg, var(--dark) 0%, #2d2d2d 100%);
+  color: #fff;
+}
+.ek-teaser-header h2 { color: #fff; }
+.ek-teaser-header p { color: #d8dade; }
+
+.express-konut-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+  margin-top: 3rem;
+}
+
+.express-konut-features h3 { color: var(--primary); font-size: 2rem; margin-bottom: 2rem; }
+
+.ek-feature-list { display: flex; flex-direction: column; gap: 1.5rem; }
+.express-konut-feature { display: flex; align-items: center; gap: 1rem; }
+.express-konut-icon {
+  width: 60px; height: 60px;
+  background: var(--primary);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.express-konut-icon i { font-size: 1.5rem; color: var(--dark); }
+.express-konut-feature h4 { color: var(--primary); margin-bottom: 0.5rem; }
+.express-konut-feature p { color: #d8dade; }
+
+.express-konut-plans {
+  background: rgba(255,255,255,0.1);
+  padding: 2rem;
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+  text-align: center;
+}
+.express-konut-plans h3 { color: var(--primary); margin-bottom: 2rem; }
+
+.plans-preview {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+.plan-preview { background: var(--primary); padding: 1rem; border-radius: 10px; color: var(--dark); }
+.plan-preview .plan-preview-no { font-size: 1.5rem; font-weight: 700; }
+.plan-preview .plan-preview-tutar { font-size: 0.9rem; }
+
+.ek-detay-btn {
+  background: var(--primary);
+  color: var(--dark);
+  padding: 1rem 2rem;
+  border-radius: 50px;
+  text-decoration: none;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: var(--transition);
+}
+.ek-detay-btn:hover { background: var(--primary-dark); color: var(--dark); transform: translateY(-2px); text-decoration: none; }
+
+@media (max-width: 1024px) {
+  .express-konut-grid { gap: 3rem; }
+  .express-konut-features h3 { font-size: 1.8rem; }
+}
+
+@media (max-width: 768px) {
+  .express-konut-grid { grid-template-columns: 1fr; gap: 2rem; }
+  .express-konut-features h3 { font-size: 1.5rem; }
+  .express-konut-plans { padding: 1.5rem; }
+  .plans-preview { grid-template-columns: repeat(2, 1fr); gap: 0.8rem; }
+}
+
+@media (max-width: 480px) {
+  .express-konut-feature { flex-direction: column; text-align: center; gap: 0.8rem; }
+  .express-konut-icon { width: 50px; height: 50px; }
+  .express-konut-icon i { font-size: 1.2rem; }
+  .express-konut-features h3 { font-size: 1.3rem; }
+  .express-konut-plans h3 { font-size: 1.2rem; margin-bottom: 1.5rem; }
+  .plans-preview { grid-template-columns: 1fr; gap: 0.6rem; }
+  .ek-detay-btn { padding: 0.8rem 1.5rem; font-size: 0.9rem; }
+}
+
+@media (max-width: 375px) {
+  .express-konut-features h3 { font-size: 1.2rem; }
+  .express-konut-plans { padding: 1rem; }
+  .express-konut-feature h4 { font-size: 1rem; }
+  .express-konut-feature p { font-size: 0.9rem; }
+}
+
+/* ---------- Stats ---------- */
+.stats { background: var(--dark); padding: 4rem 0; }
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 2rem;
+  text-align: center;
+}
+.stat-item { color: #fff; }
+.stat-number { font-size: 3rem; font-weight: 700; color: var(--primary); margin-bottom: 0.5rem; }
+.stat-label { font-size: 1.1rem; font-weight: 500; color: #d8dade; }
+
+@media (max-width: 768px) {
+  .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+  .stat-number { font-size: 2rem; }
+}
+@media (max-width: 480px) {
+  .stats-grid { grid-template-columns: 1fr; gap: 0.8rem; }
+}
+
+/* ---------- Genel ---------- */
+.muted { color: var(--text-muted); }

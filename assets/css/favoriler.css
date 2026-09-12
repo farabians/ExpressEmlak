@@ -1,0 +1,32 @@
+/* ==========================================================================
+   Favoriler sayfası - base.css üzerine kurulu, açık tema.
+   ========================================================================== */
+
+.fav-hero {
+  padding: 36px 0 8px;
+  text-align: center;
+}
+.fav-hero h1 { font-size: 1.9rem; color: var(--dark); margin-bottom: 6px; }
+.fav-hero h1 i { color: var(--primary); }
+.fav-hero p { color: var(--text-muted); }
+
+.fav-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  padding: 24px 0 48px;
+}
+
+.fav-bos {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-muted);
+}
+.fav-bos i { font-size: 3rem; color: var(--text-faint); margin-bottom: 16px; }
+.fav-bos h2 { font-size: 1.3rem; color: var(--dark); margin-bottom: 8px; }
+.fav-bos p { margin-bottom: 20px; }
+
+@media (max-width: 480px) {
+  .fav-grid { padding: 16px 0 32px; gap: 16px; }
+  .fav-bos { padding: 40px 16px; }
+}

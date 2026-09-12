@@ -131,13 +131,34 @@
 
 .galeri-counter {
   position: absolute;
-  bottom: 12px; right: 12px;
+  bottom: 12px; left: 12px;
   background: rgba(20, 22, 26, 0.65);
   color: #fff;
   font-size: 12px;
   padding: 4px 10px;
   border-radius: 999px;
 }
+
+/* Video artık ayrı sekme değil - galerinin sağ-altında kalıcı buton
+   (yalnızca videoUrl varsa görünür, bkz. ilan-detay.js setupGaleri). */
+.galeri-video-btn {
+  position: absolute;
+  bottom: 12px; right: 12px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: rgba(229, 169, 70, 0.92);
+  color: var(--dark);
+  border: none;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background var(--transition);
+}
+.galeri-video-btn i { font-size: 15px; }
+.galeri-video-btn:hover { background: var(--primary); }
 
 .galeri-thumbs {
   display: grid;
@@ -180,6 +201,13 @@
 }
 .lightbox-close:hover { background: var(--primary); color: var(--dark); }
 .lightbox .galeri-nav { background: rgba(255, 255, 255, 0.12); }
+
+.lightbox-video video {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  background: #000;
+}
 
 /* ---------- Özellik tablosu (orta kolon) ---------- */
 .detay-specs { padding: 20px; }
@@ -401,10 +429,6 @@
 .harita-note i { color: var(--primary); }
 
 .harita-actions { padding: 14px 20px; display: flex; gap: 10px; flex-wrap: wrap; }
-
-/* ---------- Video ---------- */
-.video-box { background: #14161a; display: grid; place-items: center; }
-.video-box video { width: 100%; max-height: 520px; }
 
 /* ---------- Benzer ilanlar ---------- */
 .benzer-baslik {

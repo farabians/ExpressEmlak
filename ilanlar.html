@@ -6,514 +6,173 @@
     <title>İlanlar - Express Emlak</title>
     <meta name="description" content="Express Emlak’ın güncel satılık ve kiralık ilanlarını inceleyin; kategori, ilçe ve fiyata göre filtreleyin.">
     <link rel="icon" type="image/png" href="images/favicon.png">
-    <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <style>
-        .breadcrumb {
-            display: flex;
-            justify-content: center;
-            gap: 0.5rem;
-            align-items: center;
-            color: var(--light-color);
-        }
-        
-        .breadcrumb a {
-            color: var(--primary-color);
-            text-decoration: none;
-        }
-        
-        .filters-section {
-            padding: 120px 0 3rem;
-        }
-        
-        .filters-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-        
-        .filter-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-        
-        .filter-label {
-            font-weight: 600;
-            color: var(--dark-color);
-        }
-        
-        .price-range {
-            display: flex;
-            gap: 0.5rem;
-        }
-        
-        .listings-container {
-            padding: 4rem 0;
-        }
-        
-        .listings-controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-        
-        .results-count {
-            color: var(--gray);
-        }
-        
-        .sort-controls {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-        }
-        
-        .view-toggle {
-            display: flex;
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-        
-        .view-btn {
-            background: none;
-            border: none;
-            padding: 0.5rem 1rem;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-        
-        .view-btn.active {
-            background: var(--primary-color);
-            color: var(--white);
-        }
-        
-        .properties-list {
-            display: grid;
-            gap: 2rem;
-        }
-        
-        .grid-view {
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        }
-        
-        .list-view {
-            grid-template-columns: 1fr;
-        }
-        
-        /* Kart govdesi tumuyle bir <a> icinde: tum yuzey tiklanabilir olsun
-           ama metin rengi ve alt cizgi devralinmasin. */
-        .property-card-link {
-            display: block;
-            text-decoration: none;
-            color: inherit;
-        }
-        .property-card-link:hover { text-decoration: none; }
 
-        .property-card-list {
-            display: flex;
-            background: var(--white);
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: var(--shadow);
-            transition: var(--transition);
-            align-items: stretch;
-        }
-
-        .property-card-list:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-        }
-
-        /* Liste gorunumunde govde + aksiyonlar yan yana */
-        .property-card-list > .property-card-link {
-            flex: 1;
-            display: flex;
-            min-width: 0;
-        }
-
-        .property-card-list .property-image {
-            width: 300px;
-            height: 200px;
-            flex-shrink: 0;
-        }
-
-        .property-card-list .property-content {
-            flex: 1;
-            padding: 1.5rem;
-            min-width: 0;
-        }
-
-        .property-card-list .property-actions {
-            padding: 1.5rem;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-        
-        .property-details {
-            flex: 1;
-        }
-        
-        .property-actions {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            margin-left: 1rem;
-        }
-        
-        .btn-secondary {
-            background: var(--border-color);
-            color: var(--dark-color);
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: var(--transition);
-        }
-        
-        .btn-secondary:hover {
-            background: var(--primary-color);
-            color: var(--white);
-        }
-        
-        .pagination {
-            display: flex;
-            justify-content: center;
-            gap: 0.5rem;
-            margin-top: 3rem;
-        }
-        
-        .page-btn {
-            padding: 0.8rem 1rem;
-            border: 2px solid var(--border-color);
-            background: var(--white);
-            color: var(--dark-color);
-            cursor: pointer;
-            border-radius: 8px;
-            transition: var(--transition);
-        }
-        
-        .page-btn:hover,
-        .page-btn.active {
-            background: var(--primary-color);
-            color: var(--white);
-            border-color: var(--primary-color);
-        }
-        
-        @media (max-width: 768px) {
-            .filters-container {
-                grid-template-columns: 1fr;
-            }
-            
-            .listings-controls {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 1rem;
-            }
-            
-            .sort-controls {
-                flex-direction: column;
-                gap: 1rem;
-            }
-            
-            .view-toggle {
-                order: -1;
-                align-self: center;
-            }
-            
-            .property-card-list,
-            .property-card-list > .property-card-link {
-                flex-direction: column;
-            }
-
-            .property-card-list .property-image {
-                width: 100%;
-                height: 200px;
-            }
-            
-            .property-card-list .property-content {
-                flex-direction: column;
-                padding: 1rem;
-            }
-            
-            .property-actions {
-                flex-direction: row;
-                margin-left: 0;
-                margin-top: 1rem;
-                gap: 0.5rem;
-            }
-            
-            .property-actions .btn-secondary {
-                flex: 1;
-                text-align: center;
-                padding: 0.6rem 0.8rem;
-                font-size: 0.85rem;
-            }
-            
-            .pagination {
-                gap: 0.3rem;
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-            
-            .page-btn {
-                padding: 0.6rem 0.8rem;
-                font-size: 0.85rem;
-                min-width: 40px;
-            }
-            
-            .filters-section {
-                padding: 100px 0 2rem;
-            }
-            
-            .listings-container {
-                padding: 2rem 0;
-            }
-            
-            .properties-list.grid-view {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
-                padding: 0 10px;
-            }
-            
-            .property-card {
-                max-width: 100%;
-                margin: 0 auto;
-            }
-            
-            .property-content {
-                padding: 1rem;
-            }
-            
-            .property-features {
-                gap: 0.8rem;
-                flex-wrap: wrap;
-            }
-            
-            .property-features span {
-                font-size: 0.8rem;
-                min-width: auto;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .filters-section {
-                padding: 90px 0 1.5rem;
-            }
-            
-            .sort-controls select {
-                width: 100%;
-                font-size: 0.9rem;
-            }
-            
-            .view-toggle {
-                width: 100px;
-                margin: 0 auto;
-            }
-            
-            .properties-list.grid-view {
-                padding: 0 5px;
-                gap: 1rem;
-            }
-            
-            .property-card {
-                border-radius: 12px;
-            }
-            
-            .property-price {
-                font-size: 1.3rem;
-            }
-            
-            .property-title {
-                font-size: 1.1rem;
-                line-height: 1.3;
-            }
-            
-            .property-location {
-                font-size: 0.85rem;
-            }
-            
-            .property-features {
-                gap: 0.6rem;
-            }
-            
-            .property-features span {
-                font-size: 0.75rem;
-                padding: 0.3rem 0.5rem;
-            }
-            
-            .pagination {
-                margin-top: 2rem;
-            }
-            
-            .page-btn {
-                padding: 0.5rem 0.6rem;
-                font-size: 0.8rem;
-                min-width: 35px;
-            }
-            
-            .listings-controls {
-                gap: 0.8rem;
-            }
-            
-            .results-count {
-                font-size: 0.9rem;
-                text-align: center;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="assets/css/base.css">
+    <link rel="stylesheet" href="assets/css/ilanlar.css">
 </head>
 <body>
     <!-- Header -->
-    <header class="header">
-        <div class="container">
-            <div class="nav-wrapper">
-                <a href="index.html" class="logo" aria-label="Express Emlak ana sayfa">
-                    <img src="images/logo.png" alt="Express Emlak" class="logo-img">
-                </a>
-                <nav class="nav">
-                    <a href="index.html" class="nav-link">Ana Sayfa</a>
-                    <a href="ilanlar.html" class="nav-link active">İlanlar</a>
-                    <a href="express-konut.html" class="nav-link">Express Konut</a>
-                    <a href="iletisim.html" class="nav-link">İletişim</a>
-                </nav>
-                <div class="mobile-menu-btn">
-                    <i class="fas fa-bars"></i>
-                </div>
-            </div>
+    <header class="ee-header">
+        <div class="ee-header-inner">
+            <a href="index.html" aria-label="Express Emlak ana sayfa">
+                <img src="images/logo_dark.png" alt="Express Emlak" class="ee-logo-img">
+            </a>
+            <nav class="ee-nav" aria-label="Ana menü">
+                <a href="index.html">Ana Sayfa</a>
+                <a href="ilanlar.html" class="active">İlanlar</a>
+                <a href="express-konut.html">Express Konut</a>
+                <a href="iletisim.html">İletişim</a>
+                <a href="favoriler.html" class="ee-nav-fav" aria-label="Favorilerim"><i class="fas fa-star"></i></a>
+            </nav>
+            <button class="ee-menu-btn" aria-label="Menüyü aç" aria-expanded="false">
+                <i class="fas fa-bars"></i>
+            </button>
         </div>
     </header>
 
-    <!-- Filters Section -->
-    <section class="filters-section" id="ilanlarBaslangic">
-        <div class="container">
-            <div class="section-header" style="margin-bottom:1.5rem;">
-                <h2>İlanlar</h2>
-                <p>Aradığınız gayrimenkulü kategori, ilçe ve fiyata göre filtreleyin</p>
-            </div>
+    <main class="ee-page" id="ilanlarBaslangic">
+        <section class="ilanlar-hero">
+            <h1>İlanlar</h1>
+            <p>Aradığınız gayrimenkulü kategori, ilçe ve fiyata göre filtreleyin</p>
+        </section>
 
-            <div class="filters-container">
-                <div class="filter-group">
-                    <label class="filter-label" for="fKategori">Kategori</label>
-                    <select class="input-field" id="fKategori"></select>
-                </div>
-                <div class="filter-group">
-                    <label class="filter-label" for="fTip">İlan Tipi</label>
-                    <select class="input-field" id="fTip">
-                        <option value="">Satılık ve Kiralık</option>
-                        <option value="satilik">Satılık</option>
-                        <option value="kiralik">Kiralık</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label class="filter-label" for="fIlce">İlçe</label>
-                    <select class="input-field" id="fIlce"></select>
-                </div>
-                <div class="filter-group">
-                    <label class="filter-label" for="fOda">Oda Sayısı</label>
-                    <select class="input-field" id="fOda"></select>
-                </div>
-                <div class="filter-group">
-                    <label class="filter-label" for="fMin">Fiyat Aralığı (TL)</label>
-                    <div class="price-range">
-                        <input class="input-field" id="fMin" type="number" min="0" step="50000" placeholder="En az" aria-label="En az fiyat">
-                        <input class="input-field" id="fMax" type="number" min="0" step="50000" placeholder="En çok" aria-label="En çok fiyat">
-                    </div>
-                </div>
-                <div class="filter-group">
-                    <label class="filter-label">&nbsp;</label>
-                    <button type="button" class="btn-secondary" id="filtreTemizle">
-                        <i class="fas fa-rotate-left"></i> Filtreleri Temizle
+        <div class="ilanlar-layout">
+            <!-- Sol sidebar: detaylı filtre -->
+            <aside class="ilanlar-sidebar" id="ilanlarSidebar">
+                <div class="sidebar-baslik">
+                    <h2>Filtreler</h2>
+                    <button type="button" class="sidebar-toggle" id="sidebarToggle" aria-expanded="false" aria-controls="sidebarBody">
+                        <i class="fas fa-sliders"></i> Filtreler
                     </button>
                 </div>
-            </div>
-        </div>
-    </section>
 
-    <!-- Listings Container -->
-    <section class="listings-container">
-        <div class="container">
-            <div class="listings-controls">
-                <div class="results-count">
-                    <strong id="sonucSayisi">&hellip;</strong> ilan bulundu
-                </div>
-                <div class="sort-controls">
-                    <label class="sr-only" for="sortSelect">Sıralama</label>
-                    <select class="input-field" id="sortSelect">
-                        <option value="date-desc">Tarih (Yeniden Eskiye)</option>
-                        <option value="date-asc">Tarih (Eskiden Yeniye)</option>
-                        <option value="price-asc">Fiyat (Düşükten Yükseğe)</option>
-                        <option value="price-desc">Fiyat (Yüksekten Düşüğe)</option>
-                        <option value="area-asc">M² (Küçükten Büyüğe)</option>
-                        <option value="area-desc">M² (Büyükten Küçüğe)</option>
-                    </select>
-                    <div class="view-toggle">
-                        <button type="button" class="view-btn active" data-view="grid" aria-pressed="true" aria-label="Izgara görünümü">
-                            <i class="fas fa-table-cells-large"></i>
-                        </button>
-                        <button type="button" class="view-btn" data-view="list" aria-pressed="false" aria-label="Liste görünümü">
-                            <i class="fas fa-list"></i>
+                <div class="sidebar-body" id="sidebarBody">
+                    <div class="filter-group">
+                        <label class="filter-label" for="fKategori">Kategori</label>
+                        <select id="fKategori"></select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label" for="fAltKategori">Alt Kategori</label>
+                        <select id="fAltKategori" disabled></select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label" for="fTip">İlan Tipi</label>
+                        <select id="fTip">
+                            <option value="">Satılık ve Kiralık</option>
+                            <option value="satilik">Satılık</option>
+                            <option value="kiralik">Kiralık</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label" for="fIlce">İlçe</label>
+                        <select id="fIlce"></select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label" for="fOda">Oda Sayısı</label>
+                        <select id="fOda"></select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label" for="fBinaYasi">Bina Yaşı</label>
+                        <select id="fBinaYasi"></select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label" for="fIsitma">Isıtma</label>
+                        <select id="fIsitma"></select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label" for="fMin">Fiyat Aralığı (TL)</label>
+                        <div class="price-range">
+                            <input id="fMin" type="number" min="0" step="50000" placeholder="En az" aria-label="En az fiyat">
+                            <input id="fMax" type="number" min="0" step="50000" placeholder="En çok" aria-label="En çok fiyat">
+                        </div>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label" for="fMinM2">m² Aralığı</label>
+                        <div class="m2-range">
+                            <input id="fMinM2" type="number" min="0" step="10" placeholder="En az" aria-label="En az m²">
+                            <input id="fMaxM2" type="number" min="0" step="10" placeholder="En çok" aria-label="En çok m²">
+                        </div>
+                    </div>
+                    <div class="filter-group">
+                        <button type="button" class="btn-secondary" id="filtreTemizle">
+                            <i class="fas fa-rotate-left"></i> Filtreleri Temizle
                         </button>
                     </div>
                 </div>
-            </div>
+            </aside>
 
-            <div class="properties-list grid-view" id="propertiesList">
-                <p class="muted" style="grid-column:1/-1; text-align:center; padding:2rem;">
-                    <i class="fas fa-spinner fa-spin"></i> İlanlar yükleniyor&hellip;
-                </p>
-            </div>
+            <!-- Sağ: ilan listesi -->
+            <div class="ilanlar-liste-alan">
+                <div class="listings-controls">
+                    <div class="results-count">
+                        <strong id="sonucSayisi">&hellip;</strong> ilan bulundu
+                    </div>
+                    <div class="sort-controls">
+                        <label class="sr-only" for="sortSelect">Sıralama</label>
+                        <select id="sortSelect">
+                            <option value="date-desc">Tarih (Yeniden Eskiye)</option>
+                            <option value="date-asc">Tarih (Eskiden Yeniye)</option>
+                            <option value="price-asc">Fiyat (Düşükten Yükseğe)</option>
+                            <option value="price-desc">Fiyat (Yüksekten Düşüğe)</option>
+                            <option value="area-asc">M² (Küçükten Büyüğe)</option>
+                            <option value="area-desc">M² (Büyükten Küçüğe)</option>
+                        </select>
+                        <div class="view-toggle">
+                            <button type="button" class="view-btn active" data-view="grid" aria-pressed="true" aria-label="Izgara görünümü">
+                                <i class="fas fa-table-cells-large"></i>
+                            </button>
+                            <button type="button" class="view-btn" data-view="list" aria-pressed="false" aria-label="Liste görünümü">
+                                <i class="fas fa-list"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
 
-            <!-- Sayfalama JS ile üretilir -->
-            <div class="pagination" id="sayfalama" hidden>
+                <div class="properties-list grid-view" id="propertiesList">
+                    <p class="muted" style="grid-column:1/-1; text-align:center; padding:2rem;">
+                        <i class="fas fa-spinner fa-spin"></i> İlanlar yükleniyor&hellip;
+                    </p>
+                </div>
+
+                <!-- Sayfalama JS ile üretilir -->
+                <div class="pagination" id="sayfalama" hidden></div>
             </div>
         </div>
-    </section>
+    </main>
 
     <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <div class="footer-logo">
-                        <img src="images/logo.png" alt="Express Emlak" class="footer-logo-img">
-                    </div>
-                    <p>Güvenilir emlak hizmetleri ile hayalinizdeki evi bulmanızda yanınızdayız.</p>
-                </div>
-                <div class="footer-section">
-                    <h3>Hızlı Bağlantılar</h3>
-                    <ul>
-                        <li><a href="index.html">Ana Sayfa</a></li>
-                        <li><a href="ilanlar.html">İlanlar</a></li>
-                        <li><a href="express-konut.html">Express Konut</a></li>
-                        <li><a href="iletisim.html">İletişim</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h3>İletişim</h3>
-                    <div class="contact-info">
-                        <p><i class="fas fa-phone"></i> +90 535 060 82 83  Muhammet Dündar</p>
-                        <p><i class="fas fa-phone"></i> +90 544 471 22 73  Mehmet Üzüm</p>
-                        <p><i class="fas fa-envelope"></i> expressinsaatgayrimenkul@gmail.com</p>
-                        <p><i class="fas fa-map-marker-alt"></i> Aymanas, Alparslan Türkeş Caddesi No:6/D, 42010 Meram/Konya</p>
-                    </div>
-                </div>
+    <footer class="ee-footer">
+        <div class="ee-footer-inner">
+            <div>
+                <img src="images/logo_dark.png" alt="Express Emlak" class="ee-footer-logo">
+                <p>Güvenilir emlak hizmetleri ile hayalinizdeki evi bulmanızda yanınızdayız.</p>
             </div>
-            <div class="footer-bottom">
-                <p>&copy; 2025 Express Emlak. Tüm hakları saklıdır.</p>
+            <div>
+                <h4>Sayfalar</h4>
+                <ul class="ee-footer-links">
+                    <li><a href="index.html">Ana Sayfa</a></li>
+                    <li><a href="ilanlar.html">İlanlar</a></li>
+                    <li><a href="express-konut.html">Express Konut</a></li>
+                    <li><a href="iletisim.html">İletişim</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4>İletişim</h4>
+                <ul class="ee-footer-links">
+                    <li><a href="tel:+905350608283"><i class="fas fa-phone"></i> 0 (535) 060 82 83</a></li>
+                    <li><a href="tel:+905444712273"><i class="fas fa-phone"></i> 0 (544) 471 22 73</a></li>
+                    <li><a href="mailto:expressinsaatgayrimenkul@gmail.com"><i class="fas fa-envelope"></i> E-posta gönder</a></li>
+                </ul>
             </div>
         </div>
+        <div class="ee-footer-bottom">© 2026 Express Emlak. Tüm hakları saklıdır.</div>
     </footer>
 
-    <script src="script.js"></script>
+    <script type="module" src="assets/js/header.js"></script>
     <script type="module" src="assets/js/ilanlar.js"></script>
 </body>
 </html>

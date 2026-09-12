@@ -41,6 +41,16 @@ service cloud.firestore {
       allow create, update, delete: if isAllowedUploader();
     }
 
+    // Yetki kontrolü: admin.js girişten hemen sonra buraya zararsız bir
+    // yazma dener. Üretimde ALLOWED_EMAILS gizlendiği (bkz. admin-config.js)
+    // için arayüz her giriş yapan kullanıcıyı geçici olarak "yetkili" sayar;
+    // bu kural gerçek sunucu tarafı kontrolü sağlar, kullanıcı formu
+    // doldurmadan yetkisiz olduğunu öğrenir. Kimse okumaz, veri önemsizdir.
+    match /yetkiKontrol/{uid} {
+      allow read: if false;
+      allow write: if isAllowedUploader();
+    }
+
     // Yukarıda açıkça izin verilmeyen her yol kapalı.
     match /{document=**} {
       allow read, write: if false;

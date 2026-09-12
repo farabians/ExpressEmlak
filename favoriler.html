@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Favorilerim - Express Emlak</title>
+    <meta name="description" content="Favorilerinize eklediğiniz ilanları buradan görüntüleyin.">
+    <link rel="icon" type="image/png" href="images/favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <link rel="stylesheet" href="assets/css/base.css">
+    <link rel="stylesheet" href="assets/css/favoriler.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="ee-header">
+        <div class="ee-header-inner">
+            <a href="index.html" aria-label="Express Emlak ana sayfa">
+                <img src="images/logo_dark.png" alt="Express Emlak" class="ee-logo-img">
+            </a>
+            <nav class="ee-nav" aria-label="Ana menü">
+                <a href="index.html">Ana Sayfa</a>
+                <a href="ilanlar.html">İlanlar</a>
+                <a href="express-konut.html">Express Konut</a>
+                <a href="iletisim.html">İletişim</a>
+                <a href="favoriler.html" class="ee-nav-fav active" aria-label="Favorilerim"><i class="fas fa-star"></i></a>
+            </nav>
+            <button class="ee-menu-btn" aria-label="Menüyü aç" aria-expanded="false">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <main class="ee-page">
+        <section class="fav-hero">
+            <h1><i class="fas fa-star"></i> Favorilerim</h1>
+            <p>Beğendiğiniz ilanlar tarayıcınızda saklanır</p>
+        </section>
+
+        <div class="ee-container">
+            <div class="fav-grid" id="favoriGrid"></div>
+
+            <div class="fav-bos" id="favoriBos" hidden>
+                <i class="far fa-star"></i>
+                <h2>Henüz favori ilanınız yok</h2>
+                <p>İlan detay sayfasındaki "Favorilerime Ekle" butonuyla buraya ekleyebilirsiniz.</p>
+                <a href="ilanlar.html" class="ee-btn">
+                    <i class="fas fa-list"></i> İlanlara Göz At
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="ee-footer">
+        <div class="ee-footer-inner">
+            <div>
+                <img src="images/logo_dark.png" alt="Express Emlak" class="ee-footer-logo">
+                <p>Güvenilir emlak hizmetleri ile hayalinizdeki evi bulmanızda yanınızdayız.</p>
+            </div>
+            <div>
+                <h4>Sayfalar</h4>
+                <ul class="ee-footer-links">
+                    <li><a href="index.html">Ana Sayfa</a></li>
+                    <li><a href="ilanlar.html">İlanlar</a></li>
+                    <li><a href="express-konut.html">Express Konut</a></li>
+                    <li><a href="iletisim.html">İletişim</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4>İletişim</h4>
+                <ul class="ee-footer-links">
+                    <li><a href="tel:+905350608283"><i class="fas fa-phone"></i> 0 (535) 060 82 83</a></li>
+                    <li><a href="tel:+905444712273"><i class="fas fa-phone"></i> 0 (544) 471 22 73</a></li>
+                    <li><a href="mailto:expressinsaatgayrimenkul@gmail.com"><i class="fas fa-envelope"></i> E-posta gönder</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="ee-footer-bottom">© 2026 Express Emlak. Tüm hakları saklıdır.</div>
+    </footer>
+
+    <script type="module" src="assets/js/header.js"></script>
+    <script type="module" src="assets/js/favoriler.js"></script>
+</body>
+</html>

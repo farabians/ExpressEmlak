@@ -43,6 +43,14 @@ export function escapeMultiline(value) {
   return escapeHtml(value).replace(/\r?\n/g, "<br>");
 }
 
+// aciklama artık zengin metin HTML'i olarak saklanıyor (Faz 15). Etiketleri
+// karakter sayarak kesmek (slice) tag ortasında kesilmeye yol açar ve HTML'i
+// düz metin gösterilmesi gereken yerlerde (liste önizlemesi, meta description)
+// çiğ basar. Önce tag'leri boşluğa çevirip fazla boşlukları sadeleştiriyoruz.
+export function htmlToPlainText(html) {
+  return String(html || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+}
+
 export function buildOptions(values, placeholder = "Seçiniz") {
   return [`<option value="">${placeholder}</option>`]
     .concat(values.map((v) => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`))

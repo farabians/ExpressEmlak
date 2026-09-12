@@ -43,6 +43,11 @@ a:hover { text-decoration: underline; }
 
 .hidden { display: none !important; }
 
+/* [hidden] attribute'u tarayıcının user-agent stylesheet'inde düşük öncelikli -
+   .btn gibi display:inline-flex tanımlayan bir sınıf onu kaskadda geçersiz
+   kılabilir (galeri video butonunda tam bu sorun yaşandı). Bu kural her zaman kazanır. */
+[hidden] { display: none !important; }
+
 .sr-only {
   position: absolute; width: 1px; height: 1px; padding: 0;
   overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
@@ -370,13 +375,88 @@ input[type="text"], input[type="number"], input[type="search"], select, textarea
 }
 textarea { max-width: 620px; resize: vertical; line-height: 1.6; }
 input.wide, textarea.wide { max-width: 620px; }
+
+/* ---------- Zengin metin editörü (açıklama alanı) ---------- */
+.rte-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  max-width: 620px;
+  padding: 6px;
+  background: var(--adm-input);
+  border: 1px solid var(--adm-border);
+  border-bottom: none;
+  border-radius: var(--adm-radius-sm) var(--adm-radius-sm) 0 0;
+}
+
+.rte-toolbar button {
+  width: 32px; height: 32px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--adm-radius-sm);
+  color: var(--adm-text);
+  cursor: pointer;
+  font-size: 13px;
+}
+.rte-toolbar button:hover { background: var(--adm-hover); border-color: var(--adm-border); }
+
+.rte-toolbar .rte-sep {
+  width: 1px; height: 22px;
+  background: var(--adm-border);
+  margin: 0 4px;
+}
+
+.rte-toolbar .rte-color {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 4px 6px;
+  color: var(--adm-muted);
+  font-size: 12px;
+  cursor: pointer;
+  border-radius: var(--adm-radius-sm);
+}
+.rte-toolbar .rte-color:hover { background: var(--adm-hover); }
+.rte-toolbar .rte-color input[type="color"] {
+  width: 22px; height: 22px;
+  padding: 0;
+  border: 1px solid var(--adm-border);
+  border-radius: 4px;
+  background: none;
+  cursor: pointer;
+}
+
+.rte-toolbar select {
+  max-width: 110px;
+  padding: 5px 8px;
+  font-size: 12px;
+}
+
+.rte-editor {
+  max-width: 620px;
+  min-height: 160px;
+  padding: 10px 12px;
+  background: var(--adm-input);
+  border: 1px solid var(--adm-border);
+  border-radius: 0 0 var(--adm-radius-sm) var(--adm-radius-sm);
+  color: var(--adm-text);
+  line-height: 1.6;
+  overflow-y: auto;
+}
+.rte-editor:focus { outline: none; border-color: var(--adm-primary); }
+.rte-editor:empty::before {
+  content: attr(data-placeholder);
+  color: var(--adm-faint);
+}
+.rte-editor p { margin-bottom: 0.6em; }
+.rte-editor p:last-child { margin-bottom: 0; }
 input:focus, select:focus, textarea:focus { border-color: var(--adm-primary); }
 input::placeholder, textarea::placeholder { color: var(--adm-faint); }
 select { appearance: none; background-image: none; cursor: pointer; }
 
 /* Doğrulama hatası */
 .field-error { font-size: 12px; color: var(--adm-danger); }
-input.has-error, select.has-error, textarea.has-error { border-color: var(--adm-danger); }
+input.has-error, select.has-error, textarea.has-error, .rte-editor.has-error { border-color: var(--adm-danger); }
 
 .input-row { display: flex; gap: 16px; flex-wrap: wrap; }
 .input-col { display: flex; flex-direction: column; gap: 7px; min-width: 210px; flex: 1; }
@@ -471,6 +551,115 @@ input.has-error, select.has-error, textarea.has-error { border-color: var(--adm-
 }
 .check-label input { width: 16px; height: 16px; margin: 0; flex-shrink: 0; cursor: pointer; accent-color: var(--adm-primary); }
 .check-label:hover { color: #fff; }
+
+/* ---------- Üst sekmeler (İlanlar / Express Konut) ---------- */
+.adm-tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid var(--adm-border);
+  margin-bottom: 24px;
+}
+
+.adm-tab {
+  padding: 12px 20px;
+  border: none;
+  background: none;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--adm-muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: color 0.2s, border-color 0.2s;
+}
+.adm-tab:hover { color: var(--adm-text); }
+.adm-tab.is-active { color: var(--adm-primary); border-bottom-color: var(--adm-primary); font-weight: 600; }
+
+/* ---------- Express Konut: ikon+başlık+metin liste editörü ---------- */
+.konut-liste { display: flex; flex-direction: column; gap: 12px; }
+
+.konut-satir {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  padding: 12px;
+  background: var(--adm-col);
+  border: 1px solid var(--adm-border-soft);
+  border-radius: var(--adm-radius-sm);
+  flex-wrap: wrap;
+}
+
+.konut-satir-alan { display: flex; flex-direction: column; gap: 6px; font-size: 12px; color: var(--adm-muted); }
+.konut-satir-alan input[type="text"],
+.konut-satir-alan input[type="number"] { max-width: none; width: 100%; }
+.konut-satir-ikon { flex: 0 0 140px; }
+.konut-satir-genis { flex: 1 1 200px; min-width: 160px; }
+.konut-satir-sil { flex-shrink: 0; }
+
+/* ---------- İkon görsel seçici (Win+. tarzı popup) ---------- */
+.icon-picker-anchor { position: relative; }
+
+.icon-picker-input { cursor: pointer; background-image: none; }
+
+.icon-picker-popup {
+  position: absolute;
+  top: calc(100% + 5px);
+  left: 0;
+  z-index: 30;
+  width: 260px;
+  max-height: 240px;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  padding: 8px;
+  background: var(--adm-col);
+  border: 1px solid var(--adm-border);
+  border-radius: var(--adm-radius-sm);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.4);
+}
+
+.icon-picker-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 4px;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: var(--adm-radius-sm);
+  color: var(--adm-text);
+  cursor: pointer;
+  font-size: 10px;
+  text-align: center;
+  line-height: 1.2;
+}
+.icon-picker-item i { font-size: 16px; color: var(--adm-primary); }
+.icon-picker-item span { word-break: break-word; color: var(--adm-faint); }
+.icon-picker-item:hover, .icon-picker-item.is-active { background: var(--adm-hover); border-color: var(--adm-border); }
+.icon-picker-item.is-selected { border-color: var(--adm-primary); background: var(--adm-primary-soft); }
+
+/* ---------- Express Konut: ödeme planı editörü ---------- */
+.konut-plan-liste { display: flex; flex-direction: column; gap: 12px; }
+
+.konut-plan-satir {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  padding: 14px;
+  background: var(--adm-col);
+  border: 1px solid var(--adm-border-soft);
+  border-radius: var(--adm-radius-sm);
+  flex-wrap: wrap;
+  transition: border-color 0.2s;
+}
+.konut-plan-satir.has-error { border-color: var(--adm-danger); }
+.konut-plan-satir .konut-satir-alan { flex: 1 1 120px; min-width: 100px; }
+.konut-satir-onecikan { flex: 0 0 auto; padding-bottom: 8px; }
 
 /* ---------- Akordiyon (Detaylı Bilgi) ---------- */
 .accordion-item { border-top: 1px solid var(--adm-border); }
@@ -664,6 +853,33 @@ input.has-error, select.has-error, textarea.has-error { border-color: var(--adm-
   .ilan { grid-template-columns: 1fr; }
   .ilan-thumb { width: 100%; }
   .ilan-actions { flex-direction: row; }
+
+  /* Kategori seçici: 3 sabit-genişlik kolon (215px×3 = 645px) telefon
+     genişliğinde taşıyor - kolonlar daralıp ekrana sığdırılıyor, yatay
+     kaydırma hâlâ mevcut kalıyor (üç seviyeyi aynı anda görmek gerekiyor)
+     ama her kolon artık ekranın büyük bölümünü kullanıyor. */
+  .category-col { flex: 0 0 78vw; max-width: 260px; }
+
+  /* Plan satırı ve konut satırı: rastgele flex-wrap yerine 2 kolonlu sabit
+     grid - aksi halde min-width:100px alanlar telefon genişliğinde 2'şerli
+     gruplara kırılıp satır sırası öngörülemez hale geliyordu. */
+  .konut-plan-satir, .konut-satir {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: stretch;
+  }
+  .konut-plan-satir .konut-satir-alan,
+  .konut-satir .konut-satir-alan { flex: none; min-width: 0; }
+  .konut-satir-genis { grid-column: 1 / -1; }
+  .konut-satir-onecikan, .konut-satir-sil { grid-column: 1 / -1; }
+}
+
+@media (max-width: 480px) {
+  .konut-plan-satir, .konut-satir { grid-template-columns: 1fr; }
+  .konut-satir-genis { grid-column: auto; }
+  .category-col { flex: 0 0 88vw; max-width: none; }
+  .icon-picker-popup { width: 220px; grid-template-columns: repeat(2, 1fr); }
+  .konut-satir-ikon { flex: 0 0 auto; }
 }
 
 @media (prefers-reduced-motion: reduce) {

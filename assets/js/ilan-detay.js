@@ -4,19 +4,29 @@ import { collection, doc, getDoc, getDocs, limit, query, where } from "https://w
 import { db, CONTACT } from "./firebase-config.js";
 import { FEATURE_GROUPS, SPEC_ROWS, displayName } from "./constants.js";
 import { FOTO_YOK, anaFoto } from "./ilan-kart.js";
-import { $, $$, escapeHtml, escapeMultiline, formatDate, formatPrice, hasValue, ilanNo, priceLabel } from "./utils.js";
+import { $, $$, escapeHtml, escapeMultiline, formatDate, formatPrice, hasValue, htmlToPlainText, ilanNo, priceLabel } from "./utils.js";
+import { favorideMi, favoriToggle } from "./favoriler-store.js";
+import { temizleAciklamaHtml } from "./rich-text.js";
 
 const ilanId = new URLSearchParams(location.search).get("id");
 
 /* ---------------------------------------------------------------- Galeri */
 
-function setupGaleri(photoUrls, ilanBasligi) {
+function setupGaleri(photoUrls, ilanBasligi, videoUrl) {
   const stage = $("#galeriStage");
   const thumbs = $("#galeriThumbs");
   const counter = $("#galeriCounter");
   const moreBtn = $("#galeriMore");
+  const videoBtn = $("#galeriVideoBtn");
   const urls = photoUrls && photoUrls.length ? photoUrls : [FOTO_YOK];
   let index = 0;
+
+  // Video artık ayrı bir sekme değil, galerinin sağ-altında kalıcı bir buton -
+  // fotoğraflara bakarken video her zaman bir tık uzakta.
+  if (videoUrl) {
+    videoBtn.hidden = false;
+    videoBtn.addEventListener("click", () => openVideoLightbox(videoUrl));
+  }
 
   const mainImg = document.createElement("img");
   mainImg.alt = ilanBasligi;
@@ -111,6 +121,40 @@ function openLightbox(urls, startIndex, alt) {
   if (urls.length < 2) { $(".prev", box).hidden = true; $(".next", box).hidden = true; }
 
   render();
+  document.body.appendChild(box);
+  document.body.style.overflow = "hidden";
+  $(".lightbox-close", box).focus();
+}
+
+// Foto lightbox'ından ayrı: <img> yerine <video controls autoplay> gösterir,
+// önceki/sonraki oku yok (tek video). Aç/kapa/Escape/dışa-tıkla davranışı ortak.
+function openVideoLightbox(videoUrl) {
+  const box = document.createElement("div");
+  box.className = "lightbox lightbox-video";
+  box.setAttribute("role", "dialog");
+  box.setAttribute("aria-modal", "true");
+  box.setAttribute("aria-label", "İlan videosu");
+  box.innerHTML = `
+    <button type="button" class="lightbox-close" aria-label="Kapat"><i class="fas fa-times"></i></button>
+    <video controls autoplay playsinline></video>
+  `;
+
+  const video = $("video", box);
+  video.src = videoUrl;
+
+  const close = () => {
+    video.pause();
+    box.remove();
+    document.removeEventListener("keydown", onKey);
+    document.body.style.overflow = "";
+  };
+
+  function onKey(e) { if (e.key === "Escape") close(); }
+
+  $(".lightbox-close", box).addEventListener("click", close);
+  box.addEventListener("click", (e) => { if (e.target === box) close(); });
+  document.addEventListener("keydown", onKey);
+
   document.body.appendChild(box);
   document.body.style.overflow = "hidden";
   $(".lightbox-close", box).focus();
@@ -314,24 +358,19 @@ function setupActions(d) {
 
   // Favoriler tarayıcıda tutuluyor; sunucu tarafı üyelik sistemi yok.
   const favBtn = $("#btnFavori");
-  const KEY = "ee_favoriler";
-  const read = () => { try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch { return []; } };
 
-  function paint(list) {
-    const on = list.includes(ilanId);
+  function paint(on) {
     favBtn.classList.toggle("is-active", on);
     favBtn.setAttribute("aria-pressed", String(on));
     $("span", favBtn).textContent = on ? "Favorilerimde" : "Favorilerime Ekle";
     $("i", favBtn).className = on ? "fas fa-star" : "far fa-star";
   }
 
-  paint(read());
+  paint(favorideMi(ilanId));
 
   favBtn.addEventListener("click", () => {
-    let list = read();
-    list = list.includes(ilanId) ? list.filter((x) => x !== ilanId) : list.concat(ilanId);
-    try { localStorage.setItem(KEY, JSON.stringify(list)); } catch { /* özel sekmede yazılamaz */ }
-    paint(list);
+    const list = favoriToggle(ilanId);
+    paint(list.includes(ilanId));
   });
 }
 
@@ -437,7 +476,7 @@ async function init() {
   const d = snap.data();
 
   document.title = `${d.isim || "İlan"} - Express Emlak`;
-  const desc = (d.aciklama || "").replace(/\s+/g, " ").slice(0, 155);
+  const desc = htmlToPlainText(d.aciklama).slice(0, 155);
   if (desc) $('meta[name="description"]').content = desc;
 
   // Breadcrumb
@@ -458,21 +497,20 @@ async function init() {
   const badges = [d.ilanTipi, d.altKategori].map(displayName).filter(Boolean);
   $("#specBadges").innerHTML = badges.map((b) => `<span class="spec-badge">${escapeHtml(b)}</span>`).join("");
 
+  // Eski kayıtlar düz metin (\n ile); yeni kayıtlar zengin metin editöründen
+  // gelen HTML. Tag içermeyen içerik düz metin sayılıp escapeMultiline ile
+  // satır sonları korunur; tag içeren içerik ikinci savunma katmanı olarak
+  // DOMPurify'dan geçirilir (admin tarafında zaten temizlenmiş olsa da).
   $("#aciklamaBody").innerHTML = d.aciklama
-    ? escapeMultiline(d.aciklama)
+    ? (/<[a-z][\s\S]*>/i.test(d.aciklama) ? temizleAciklamaHtml(d.aciklama) : escapeMultiline(d.aciklama))
     : '<span style="color:var(--text-faint)">Bu ilan için açıklama girilmemiş.</span>';
 
-  setupGaleri(d.photoUrls, d.isim || "İlan fotoğrafı");
+  setupGaleri(d.photoUrls, d.isim || "İlan fotoğrafı", d.videoUrl);
   renderSpecs(d);
   renderFeatures(d);
   renderKonum(d);
   renderSatici(d);
   setupActions(d);
-
-  if (d.videoUrl) {
-    $("#videoTab").hidden = false;
-    $("#ilanVideo").src = d.videoUrl;
-  }
 
   $("#loadingState").hidden = true;
   $("#detayContent").hidden = false;

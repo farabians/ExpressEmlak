@@ -1,0 +1,203 @@
+/* ==========================================================================
+   İlanlar sayfası - base.css üzerine kurulu, açık tema.
+   Sol sidebar filtre + sağ ilan listesi (sahibinden tarzı).
+   ========================================================================== */
+
+.ilanlar-hero {
+  padding: 32px 0 8px;
+  text-align: center;
+}
+.ilanlar-hero h1 { font-size: 1.9rem; color: var(--dark); margin-bottom: 6px; }
+.ilanlar-hero p { color: var(--text-muted); }
+
+.ilanlar-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 28px;
+  align-items: start;
+  padding: 20px 20px 48px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+@media (max-width: 860px) {
+  .ilanlar-layout { grid-template-columns: 1fr; }
+}
+
+/* ---------- Sidebar ---------- */
+.ilanlar-sidebar {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  position: sticky;
+  top: calc(var(--header-h) + 16px);
+}
+
+@media (max-width: 860px) {
+  .ilanlar-sidebar { position: static; }
+}
+
+.sidebar-baslik {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.sidebar-baslik h2 { font-size: 1.05rem; color: var(--dark); }
+
+.sidebar-toggle {
+  display: none;
+  background: none;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  padding: 6px 10px;
+  color: var(--text);
+  cursor: pointer;
+}
+
+@media (max-width: 860px) {
+  .sidebar-toggle { display: inline-flex; align-items: center; gap: 6px; }
+  .sidebar-body { display: none; }
+  .ilanlar-sidebar.open .sidebar-body { display: block; }
+}
+
+.filter-group { margin-bottom: 16px; }
+.filter-group:last-child { margin-bottom: 0; }
+
+.filter-label {
+  display: block;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.filter-group select,
+.filter-group input {
+  width: 100%;
+  padding: 9px 10px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-size: 13px;
+  color: var(--text);
+  background: var(--surface);
+}
+.filter-group select:focus,
+.filter-group input:focus { outline: none; border-color: var(--primary); }
+.filter-group select:disabled { opacity: 0.55; cursor: not-allowed; }
+
+.price-range, .m2-range {
+  display: flex;
+  gap: 8px;
+}
+.price-range input, .m2-range input { min-width: 0; }
+
+.filter-group .btn-secondary {
+  width: 100%;
+  justify-content: center;
+}
+
+/* ---------- İlan listesi ---------- */
+.listings-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.results-count { color: var(--text-muted); font-size: 14px; }
+.results-count strong { color: var(--dark); }
+
+.sort-controls { display: flex; gap: 12px; align-items: center; }
+.sort-controls select {
+  padding: 8px 10px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-size: 13px;
+  color: var(--text);
+  background: var(--surface);
+}
+
+.view-toggle {
+  display: flex;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+.view-btn {
+  background: var(--surface);
+  border: none;
+  padding: 8px 14px;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: background var(--transition), color var(--transition);
+}
+.view-btn.active { background: var(--primary); color: var(--dark); }
+
+.properties-list { display: grid; gap: 24px; }
+.properties-list.grid-view { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+.properties-list.list-view { grid-template-columns: 1fr; }
+
+.no-results {
+  grid-column: 1/-1;
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-muted);
+}
+.no-results .btn-secondary { margin-top: 14px; }
+
+/* Liste görünümünde kart yatay uzanır */
+.list-view .property-card { max-width: none; }
+.list-view .property-card-link { display: flex; }
+.list-view .property-image { width: 280px; height: 180px; flex-shrink: 0; }
+.list-view .property-content { flex: 1; min-width: 0; }
+.list-view .property-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 1.3rem;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+@media (max-width: 700px) {
+  .list-view .property-card-link { flex-direction: column; }
+  .list-view .property-image { width: 100%; height: 200px; }
+  .list-view .property-actions { flex-direction: row; }
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 32px;
+  flex-wrap: wrap;
+}
+.page-btn {
+  padding: 8px 12px;
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  min-width: 38px;
+  transition: var(--transition);
+}
+.page-btn:hover:not(:disabled) { border-color: var(--primary); }
+.page-btn.active { background: var(--primary); color: var(--dark); border-color: var(--primary); }
+.page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+@media (max-width: 480px) {
+  .ilanlar-layout { padding: 12px 12px 32px; }
+  .ilanlar-sidebar { padding: 16px; }
+  .listings-controls { flex-direction: column; align-items: stretch; }
+  .sort-controls { flex-direction: column; align-items: stretch; }
+  .view-toggle { align-self: center; }
+}

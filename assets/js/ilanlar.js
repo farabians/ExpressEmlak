@@ -21,11 +21,16 @@ let gorunum = "grid";
 
 const filtre = {
   kategori: "",
+  altKategori: "",
   tip: "",        // "satilik" | "kiralik"
   ilce: "",
   oda: "",
   minFiyat: "",
   maxFiyat: "",
+  minM2: "",
+  maxM2: "",
+  binaYasi: "",
+  isitma: "",
   sirala: "date-desc"
 };
 
@@ -71,6 +76,7 @@ const tarihMs = (d) => {
 function filtrele(liste, f) {
   return liste.filter((d) => {
     if (f.kategori && slugify(d.kategori) !== slugify(f.kategori)) return false;
+    if (f.altKategori && (d.altKategori || "") !== f.altKategori) return false;
 
     if (f.tip) {
       const kiralik = kiralikMi(d);
@@ -80,12 +86,20 @@ function filtrele(liste, f) {
 
     if (f.ilce && (d.ilce || "") !== f.ilce) return false;
     if (f.oda && (d.odaSayisi || "") !== f.oda) return false;
+    if (f.binaYasi && (d.binaYasi || "") !== f.binaYasi) return false;
+    if (f.isitma && (d.isitma || "") !== f.isitma) return false;
 
     const fiyat = Number(d.fiyat);
     const min = sayi(f.minFiyat);
     const max = sayi(f.maxFiyat);
     if (min !== null && !(fiyat >= min)) return false;
     if (max !== null && !(fiyat <= max)) return false;
+
+    const m2 = metrekareDegeri(d);
+    const minM2 = sayi(f.minM2);
+    const maxM2 = sayi(f.maxM2);
+    if (minM2 !== null && !(m2 !== null && m2 >= minM2)) return false;
+    if (maxM2 !== null && !(m2 !== null && m2 <= maxM2)) return false;
 
     return true;
   });
@@ -185,11 +199,35 @@ function sayfalamaGoster(sayfaSayisi) {
 
 /* ------------------------------------------------------------ Filtre arayüzü */
 
+// Seçili kategorinin tüm tiplerindeki alt kategorileri tekrarsız birleştirir.
+// CATEGORY_TREE alt kategoriyi tipe göre ayırmıyor ("Satılık"/"Kiralık" aynı
+// alt tipleri paylaşıyor çoğu zaman), filtre için tip ayrımı gerekmiyor.
+function altKategorileriGetir(kategoriAdi) {
+  const tipler = CATEGORY_TREE[kategoriAdi];
+  if (!tipler) return [];
+  const hepsi = new Set();
+  Object.values(tipler).forEach((liste) => liste.forEach((v) => hepsi.add(v)));
+  return [...hepsi].sort((a, b) => a.localeCompare(b, "tr"));
+}
+
+function altKategoriSeceneginiGuncelle() {
+  const kategoriAdi = Object.keys(CATEGORY_TREE).find((k) => slugify(k) === slugify(filtre.kategori));
+  const secenekler = kategoriAdi ? altKategorileriGetir(kategoriAdi) : [];
+  const sec = $("#fAltKategori");
+  if (!sec) return;
+  sec.innerHTML = buildOptions(secenekler, "Tüm alt kategoriler");
+  sec.disabled = secenekler.length === 0;
+  sec.value = secenekler.includes(filtre.altKategori) ? filtre.altKategori : "";
+  filtre.altKategori = sec.value;
+}
+
 function filtreleriKur() {
   // Kategori: sabit ağaçtan
   $("#fKategori").innerHTML = buildOptions(Object.keys(CATEGORY_TREE), "Tüm kategoriler");
   // Oda sayısı: panelin kullandığı aynı liste
   $("#fOda").innerHTML = buildOptions(SELECT_OPTIONS.odaSayisi, "Tüm oda sayıları");
+  $("#fBinaYasi").innerHTML = buildOptions(SELECT_OPTIONS.binaYasi, "Tüm bina yaşları");
+  $("#fIsitma").innerHTML = buildOptions(SELECT_OPTIONS.isitma, "Tüm ısıtma tipleri");
 
   // Alanları mevcut filtre durumuyla doldur
   $("#fKategori").value = filtre.kategori;
@@ -197,7 +235,12 @@ function filtreleriKur() {
   $("#fOda").value = filtre.oda;
   $("#fMin").value = filtre.minFiyat;
   $("#fMax").value = filtre.maxFiyat;
+  $("#fMinM2").value = filtre.minM2;
+  $("#fMaxM2").value = filtre.maxM2;
+  $("#fBinaYasi").value = filtre.binaYasi;
+  $("#fIsitma").value = filtre.isitma;
   $("#sortSelect").value = filtre.sirala;
+  altKategoriSeceneginiGuncelle();
 
   const bagla = (sel, alan) => $(sel).addEventListener("change", () => {
     filtre[alan] = $(sel).value;
@@ -206,15 +249,28 @@ function filtreleriKur() {
     uygula();
   });
 
-  bagla("#fKategori", "kategori");
+  $("#fKategori").addEventListener("change", () => {
+    filtre.kategori = $("#fKategori").value;
+    filtre.altKategori = "";
+    altKategoriSeceneginiGuncelle();
+    sayfa = 0;
+    filtreyiUrlyeYaz();
+    uygula();
+  });
+  bagla("#fAltKategori", "altKategori");
   bagla("#fTip", "tip");
   bagla("#fIlce", "ilce");
   bagla("#fOda", "oda");
+  bagla("#fBinaYasi", "binaYasi");
+  bagla("#fIsitma", "isitma");
   bagla("#sortSelect", "sirala");
 
-  // Fiyat alanları yazarken değil, çıkışta/enter'da uygulanır
-  ["#fMin", "#fMax"].forEach((sel) => {
-    const alan = sel === "#fMin" ? "minFiyat" : "maxFiyat";
+  // Fiyat/m² alanları yazarken değil, çıkışta/enter'da uygulanır
+  const araliklar = [
+    ["#fMin", "minFiyat"], ["#fMax", "maxFiyat"],
+    ["#fMinM2", "minM2"], ["#fMaxM2", "maxM2"]
+  ];
+  araliklar.forEach(([sel, alan]) => {
     const el = $(sel);
     const uyg = () => {
       filtre[alan] = el.value;
@@ -231,15 +287,22 @@ function filtreleriKur() {
 
 function temizle() {
   Object.assign(filtre, {
-    kategori: "", tip: "", ilce: "", oda: "", minFiyat: "", maxFiyat: "", sirala: "date-desc"
+    kategori: "", altKategori: "", tip: "", ilce: "", oda: "",
+    minFiyat: "", maxFiyat: "", minM2: "", maxM2: "", binaYasi: "", isitma: "",
+    sirala: "date-desc"
   });
   sayfa = 0;
   $("#fKategori").value = "";
+  altKategoriSeceneginiGuncelle();
   $("#fTip").value = "";
   $("#fIlce").value = "";
   $("#fOda").value = "";
   $("#fMin").value = "";
   $("#fMax").value = "";
+  $("#fMinM2").value = "";
+  $("#fMaxM2").value = "";
+  $("#fBinaYasi").value = "";
+  $("#fIsitma").value = "";
   $("#sortSelect").value = "date-desc";
   filtreyiUrlyeYaz();
   uygula();
@@ -279,12 +342,25 @@ function gorunumuKur() {
   });
 }
 
+/* --------------------------------------------------------- Sidebar (mobil) */
+
+function sidebarToggleKur() {
+  const toggle = $("#sidebarToggle");
+  const sidebar = $("#ilanlarSidebar");
+  if (!toggle || !sidebar) return;
+  toggle.addEventListener("click", () => {
+    const acik = sidebar.classList.toggle("open");
+    toggle.setAttribute("aria-expanded", String(acik));
+  });
+}
+
 /* ---------------------------------------------------------------- Başlangıç */
 
 function baslat() {
   filtreyiUrldenOku();
   filtreleriKur();
   gorunumuKur();
+  sidebarToggleKur();
 
   onSnapshot(
     query(collection(db, "ilanlar"), orderBy("tarih", "desc")),

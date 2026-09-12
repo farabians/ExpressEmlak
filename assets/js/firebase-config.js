@@ -22,9 +22,10 @@ export const CONTACT = {
   name: "Express Emlak",
   since: "Ağustos 2023",
   phones: [
-    { label: "Cep", number: "0 (535) 060 82 83", tel: "+905350608283" },
-    { label: "Cep 2", number: "0 (544) 471 22 73", tel: "+905444712273" }
+    { label: "Cep", person: "Muhammet Dündar", number: "0 (535) 060 82 83", tel: "+905350608283" },
+    { label: "Cep 2", person: "Mehmet Üzüm", number: "0 (544) 471 22 73", tel: "+905444712273" }
   ],
   whatsapp: "905350608283",
-  email: "expressinsaatgayrimenkul@gmail.com"
+  email: "expressinsaatgayrimenkul@gmail.com",
+  address: "Aymanas Mahallesi, Alparslan Türkeş Caddesi No:6/D, 42010 Meram/Konya"
 };

@@ -11,6 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
 
   <link rel="stylesheet" href="assets/css/admin.css">
 </head>
@@ -42,6 +43,20 @@
 
   <!-- ===== Panel ===== -->
   <div class="adm-container" id="panelContent" hidden>
+
+    <!-- Sekmeler -->
+    <div class="adm-tabs" role="tablist" aria-label="Panel bölümleri">
+      <button type="button" class="adm-tab is-active" id="tabBtnIlanlar"
+              role="tab" aria-selected="true" aria-controls="tabIlanlar">
+        <i class="fas fa-house"></i> İlanlar
+      </button>
+      <button type="button" class="adm-tab" id="tabBtnKonut"
+              role="tab" aria-selected="false" aria-controls="tabKonut">
+        <i class="fas fa-building-columns"></i> Express Konut
+      </button>
+    </div>
+
+    <div id="tabIlanlar" role="tabpanel" aria-labelledby="tabBtnIlanlar">
 
     <!-- Adım göstergesi -->
     <div class="stepper" aria-label="İlan verme adımları">
@@ -107,12 +122,37 @@
             </div>
 
             <div class="form-group align-top">
-              <label class="main-label" for="aciklama">
+              <label class="main-label" for="aciklamaEditor">
                 Açıklama <span class="req">*</span>
                 <span class="hint">İlanın öne çıkan yönlerini yazın.</span>
               </label>
               <div class="form-control-wrap">
-                <textarea id="aciklama" rows="7" placeholder="İlanınızın detaylarını yazınız..."></textarea>
+                <div class="rte-toolbar" id="aciklamaToolbar" role="toolbar" aria-label="Metin biçimlendirme">
+                  <button type="button" data-cmd="bold" title="Kalın" aria-label="Kalın"><i class="fas fa-bold"></i></button>
+                  <button type="button" data-cmd="italic" title="İtalik" aria-label="İtalik"><i class="fas fa-italic"></i></button>
+                  <span class="rte-sep"></span>
+                  <label class="rte-color" title="Metin rengi">
+                    <i class="fas fa-font"></i>
+                    <input type="color" data-cmd="color" value="#23262b">
+                  </label>
+                  <label class="rte-color" title="Vurgu (arka plan) rengi">
+                    <i class="fas fa-highlighter"></i>
+                    <input type="color" data-cmd="highlight" value="#fff2b2">
+                  </label>
+                  <select data-cmd="font-size" title="Font boyutu" aria-label="Font boyutu">
+                    <option value="">Boyut</option>
+                    <option value="13px">Küçük</option>
+                    <option value="16px">Normal</option>
+                    <option value="20px">Büyük</option>
+                    <option value="26px">Çok Büyük</option>
+                  </select>
+                  <span class="rte-sep"></span>
+                  <button type="button" data-cmd="align-left" title="Sola hizala" aria-label="Sola hizala"><i class="fas fa-align-left"></i></button>
+                  <button type="button" data-cmd="align-center" title="Ortala" aria-label="Ortala"><i class="fas fa-align-center"></i></button>
+                  <button type="button" data-cmd="align-right" title="Sağa hizala" aria-label="Sağa hizala"><i class="fas fa-align-right"></i></button>
+                </div>
+                <div class="rte-editor" id="aciklamaEditor" contenteditable="true"
+                     data-placeholder="İlanınızın detaylarını yazınız..." role="textbox" aria-multiline="true"></div>
               </div>
             </div>
 
@@ -436,8 +476,100 @@
     </div>
     <div id="ilanListesi"></div>
 
+    </div>
+    <!-- /tabIlanlar -->
+
+    <!-- ===== Express Konut sekmesi ===== -->
+    <div id="tabKonut" role="tabpanel" aria-labelledby="tabBtnKonut" hidden>
+
+      <div class="panel">
+        <div class="panel-header">
+          <h2>Express Konut Ayarları</h2>
+          <span class="adm-user" id="konutGuncelBilgi"></span>
+        </div>
+        <div class="panel-body">
+          <p class="adm-user" style="margin-bottom:18px">
+            Buradaki değerler <code>express-konut.html</code> ve ana sayfadaki Express Konut
+            tanıtım bölümünde canlı olarak gösterilir.
+          </p>
+
+          <div class="form-group">
+            <label class="main-label" for="konutHeroBaslik">Ana Başlık</label>
+            <div class="form-control-wrap"><input type="text" id="konutHeroBaslik" class="wide" maxlength="120"></div>
+          </div>
+          <div class="form-group">
+            <label class="main-label" for="konutHeroAltBaslik">Alt Başlık</label>
+            <div class="form-control-wrap"><input type="text" id="konutHeroAltBaslik" class="wide" maxlength="160"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Öne çıkan özellikler (hero) -->
+      <div class="panel">
+        <div class="panel-header">
+          <h2>Öne Çıkan Özellikler</h2>
+          <button type="button" class="btn btn-outline btn-sm" data-liste-ekle="heroOzellikler">
+            <i class="fas fa-plus"></i> Özellik Ekle
+          </button>
+        </div>
+        <div class="panel-body">
+          <div id="konutHeroListe" class="konut-liste"></div>
+        </div>
+      </div>
+
+      <!-- Avantajlar -->
+      <div class="panel">
+        <div class="panel-header">
+          <h2>Neden Express Konut? (Avantajlar)</h2>
+          <button type="button" class="btn btn-outline btn-sm" data-liste-ekle="avantajlar">
+            <i class="fas fa-plus"></i> Avantaj Ekle
+          </button>
+        </div>
+        <div class="panel-body">
+          <div id="konutAvantajListe" class="konut-liste"></div>
+        </div>
+      </div>
+
+      <!-- Ödeme planları -->
+      <div class="panel">
+        <div class="panel-header">
+          <h2>Ödeme Planları</h2>
+          <button type="button" class="btn btn-outline btn-sm" id="konutPlanEkle">
+            <i class="fas fa-plus"></i> Plan Ekle
+          </button>
+        </div>
+        <div class="panel-body">
+          <div id="konutPlanListe" class="konut-plan-liste"></div>
+        </div>
+      </div>
+
+      <!-- Nasıl Çalışır adımları -->
+      <div class="panel">
+        <div class="panel-header">
+          <h2>Nasıl Çalışır? Adımları</h2>
+          <button type="button" class="btn btn-outline btn-sm" data-liste-ekle="adimlar">
+            <i class="fas fa-plus"></i> Adım Ekle
+          </button>
+        </div>
+        <div class="panel-body">
+          <div id="konutAdimListe" class="konut-liste"></div>
+        </div>
+      </div>
+
+      <div class="form-msg" id="konutMsg" role="status" aria-live="polite"></div>
+
+      <div class="form-footer">
+        <button type="button" class="btn" id="konutKaydetBtn">
+          <i class="fas fa-floppy-disk"></i> Değişiklikleri Kaydet
+        </button>
+      </div>
+
+    </div>
+    <!-- /tabKonut -->
+
   </div>
 
   <script type="module" src="assets/js/admin.js"></script>
+  <script type="module" src="assets/js/admin-konut.js"></script>
 </body>
 </html>

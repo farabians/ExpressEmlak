@@ -6,651 +6,188 @@
     <title>İletişim - Express Emlak</title>
     <meta name="description" content="Express Emlak iletişim bilgileri: telefon, WhatsApp, e-posta ve Meram/Konya ofis adresi.">
     <link rel="icon" type="image/png" href="images/favicon.png">
-    <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <style>
-        .contact-info-section {
-            padding: 120px 0 4rem;
-            background: var(--light-color);
-        }
-        
-        .contact-info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-bottom: 3rem;
-        }
-        
-        .contact-info-card {
-            background: var(--white);
-            padding: 2rem;
-            border-radius: 15px;
-            text-align: center;
-            box-shadow: var(--shadow);
-            transition: var(--transition);
-        }
-        
-        .contact-info-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
-        }
-        
-        .contact-icon {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, var(--primary-color), #f4c15d);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1.5rem;
-            font-size: 2rem;
-            color: var(--white);
-        }
-        
-        .contact-info-card h3 {
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: var(--dark-color);
-            margin-bottom: 1rem;
-        }
-        
-        .contact-info-card p {
-            color: var(--gray);
-            line-height: 1.6;
-        }
-        
-        .contact-form-section {
-            padding: 4rem 0;
-        }
-        
-        .contact-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4rem;
-            align-items: start;
-        }
-        
-        .contact-form {
-            background: var(--white);
-            padding: 2.5rem;
-            border-radius: 15px;
-            box-shadow: var(--shadow);
-        }
-        
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-        
-        .form-label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            color: var(--dark-color);
-        }
-        
-        .form-input {
-            width: 100%;
-            padding: 0.8rem;
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: var(--transition);
-        }
-        
-        .form-input:focus {
-            outline: none;
-            border-color: var(--primary-color);
-        }
-        
-        .form-textarea {
-            min-height: 120px;
-            resize: vertical;
-        }
-        
-        .form-submit {
-            background: var(--primary-color);
-            color: var(--white);
-            border: none;
-            padding: 1rem 2rem;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            width: 100%;
-            font-size: 1rem;
-            transition: var(--transition);
-        }
-        
-        .form-submit:hover {
-            background: #d4941f;
-            transform: translateY(-2px);
-        }
-        
-        .contact-details {
-            background: var(--dark-color);
-            color: var(--white);
-            padding: 2.5rem;
-            border-radius: 15px;
-            height: fit-content;
-        }
-        
-        .contact-details h3 {
-            color: var(--primary-color);
-            font-size: 1.5rem;
-            margin-bottom: 2rem;
-        }
-        
-        .detail-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-        
-        .detail-icon {
-            width: 40px;
-            height: 40px;
-            background: var(--primary-color);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-        
-        .detail-content h4 {
-            color: var(--primary-color);
-            margin-bottom: 0.5rem;
-        }
-        
-        .map-section {
-            padding: 0;
-        }
-        
-        .map-container {
-            height: 400px;
-            background: #f0f0f0;
-            border-radius: 15px;
-            overflow: hidden;
-            position: relative;
-        }
-        
-        .map-placeholder {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(45deg, #e0e0e0, #f0f0f0);
-            color: var(--gray);
-            font-size: 1.2rem;
-        }
-        
-        .office-hours {
-            background: var(--light-color);
-            padding: 3rem 0;
-        }
-        
-        .hours-container {
-            max-width: 800px;
-            margin: 0 auto;
-            text-align: center;
-        }
-        
-        .hours-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            margin-top: 2rem;
-        }
-        
-        .hours-card {
-            background: var(--white);
-            padding: 2rem;
-            border-radius: 15px;
-            box-shadow: var(--shadow);
-        }
-        
-        .hours-card h4 {
-            color: var(--primary-color);
-            font-size: 1.2rem;
-            margin-bottom: 1rem;
-        }
-        
-        .hours-list {
-            list-style: none;
-            color: var(--gray);
-        }
-        
-        .hours-list li {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 0.5rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid var(--border-color);
-        }
-        
-        .hours-list li:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-        }
-        
-        /* Enhanced Responsive Styles for Contact Page */
-        @media (max-width: 1024px) {
-            .contact-info-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 1.5rem;
-            }
-            
-            .contact-container {
-                gap: 2rem;
-            }
-        }
 
-        @media (max-width: 768px) {
-            .contact-info-section {
-                padding: 100px 0 3rem;
-            }
-            
-            .contact-info-grid {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
-                padding: 0 1rem;
-            }
-            
-            .contact-info-card {
-                padding: 1.5rem;
-            }
-            
-            .contact-icon {
-                width: 60px;
-                height: 60px;
-                font-size: 1.5rem;
-                margin-bottom: 1rem;
-            }
-            
-            .contact-info-card h3 {
-                font-size: 1.2rem;
-                margin-bottom: 0.8rem;
-            }
-            
-            .contact-info-card p {
-                font-size: 0.9rem;
-            }
-            
-            .contact-container {
-                grid-template-columns: 1fr;
-                gap: 2rem;
-                padding: 0 1rem;
-            }
-            
-            .contact-form,
-            .contact-details {
-                padding: 1.5rem;
-                border-radius: 12px;
-            }
-            
-            .contact-form h2,
-            .contact-details h3 {
-                font-size: 1.3rem;
-                margin-bottom: 1rem;
-            }
-            
-            .form-group {
-                margin-bottom: 1rem;
-            }
-            
-            .form-input,
-            .form-textarea {
-                padding: 0.7rem;
-                font-size: 0.9rem;
-            }
-            
-            .btn-primary {
-                width: 100%;
-                padding: 0.8rem;
-                font-size: 0.9rem;
-            }
-            
-            .hours-grid {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-            }
-            
-            .hours-item {
-                padding: 0.8rem;
-                text-align: center;
-            }
-            
-            .map-container {
-                height: 250px;
-                border-radius: 12px;
-            }
-            
-            .section-padding {
-                padding: 3rem 0;
-            }
-            
-            .section-header h2 {
-                font-size: 2rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .contact-info-section {
-                padding: 90px 0 2rem;
-            }
-            
-            .contact-info-grid {
-                padding: 0 0.5rem;
-                gap: 1rem;
-            }
-            
-            .contact-info-card {
-                padding: 1.2rem;
-            }
-            
-            .contact-icon {
-                width: 50px;
-                height: 50px;
-                font-size: 1.3rem;
-            }
-            
-            .contact-info-card h3 {
-                font-size: 1.1rem;
-            }
-            
-            .contact-info-card p {
-                font-size: 0.85rem;
-                line-height: 1.4;
-            }
-            
-            .contact-container {
-                padding: 0 0.5rem;
-                gap: 1.5rem;
-            }
-            
-            .contact-form,
-            .contact-details {
-                padding: 1.2rem;
-            }
-            
-            .contact-form h2 {
-                font-size: 1.2rem;
-                text-align: center;
-                margin-bottom: 1.5rem;
-            }
-            
-            .contact-details h3 {
-                font-size: 1.1rem;
-                margin-bottom: 1rem;
-            }
-            
-            .form-input,
-            .form-textarea {
-                padding: 0.6rem;
-                font-size: 0.85rem;
-            }
-            
-            .form-textarea {
-                min-height: 100px;
-            }
-            
-            .btn-primary {
-                padding: 0.7rem;
-                font-size: 0.85rem;
-            }
-            
-            .hours-item {
-                padding: 0.6rem;
-                font-size: 0.85rem;
-            }
-            
-            .map-container {
-                height: 200px;
-                margin: 0 0.5rem;
-            }
-            
-            .section-padding {
-                padding: 2.5rem 0;
-            }
-            
-            .section-header {
-                margin-bottom: 2rem;
-            }
-            
-            .section-header h2 {
-                font-size: 1.8rem;
-                margin-bottom: 0.5rem;
-            }
-            
-            .section-header p {
-                font-size: 0.9rem;
-            }
-            
-            .contact-details .contact-item {
-                margin-bottom: 1rem;
-                padding: 0.8rem;
-                background: #f8f9fa;
-                border-radius: 8px;
-            }
-            
-            .contact-details .contact-item i {
-                font-size: 1rem;
-                margin-right: 0.5rem;
-            }
-            
-            .contact-details .contact-item span {
-                font-size: 0.85rem;
-                display: block;
-                margin-top: 0.2rem;
-            }
-        }
-
-        @media (max-width: 375px) {
-            .contact-info-section {
-                padding: 85px 0 1.5rem;
-            }
-            
-            .contact-form h2 {
-                font-size: 1.1rem;
-            }
-            
-            .contact-details h3 {
-                font-size: 1rem;
-            }
-            
-            .section-header h2 {
-                font-size: 1.6rem;
-            }
-            
-            .map-container {
-                height: 180px;
-                margin: 0 0.2rem;
-            }
-        }
-
-        /* Landscape orientation for mobile */
-        @media (max-width: 768px) and (orientation: landscape) {
-            .contact-info-section {
-                padding: 80px 0 2rem;
-            }
-            
-            .contact-info-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .map-container {
-                height: 200px;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="assets/css/base.css">
+    <link rel="stylesheet" href="assets/css/iletisim.css">
 </head>
 <body>
-    <!-- Header -->
-    <header class="header">
-        <div class="container">
-            <div class="nav-wrapper">
-                <a href="index.html" class="logo" aria-label="Express Emlak ana sayfa">
-                    <img src="images/logo.png" alt="Express Emlak" class="logo-img">
-                </a>
-                <nav class="nav">
-                    <a href="index.html" class="nav-link">Ana Sayfa</a>
-                    <a href="ilanlar.html" class="nav-link">İlanlar</a>
-                    <a href="express-konut.html" class="nav-link">Express Konut</a>
-                    <a href="iletisim.html" class="nav-link active">İletişim</a>
-                </nav>
-                <div class="mobile-menu-btn">
-                    <i class="fas fa-bars"></i>
-                </div>
-            </div>
+    <!-- ===== Header ===== -->
+    <header class="ee-header">
+        <div class="ee-header-inner">
+            <a href="index.html" aria-label="Express Emlak ana sayfa">
+                <img src="images/logo_dark.png" alt="Express Emlak" class="ee-logo-img">
+            </a>
+            <nav class="ee-nav" aria-label="Ana menü">
+                <a href="index.html">Ana Sayfa</a>
+                <a href="ilanlar.html">İlanlar</a>
+                <a href="express-konut.html">Express Konut</a>
+                <a href="iletisim.html" class="active">İletişim</a>
+                <a href="favoriler.html" class="ee-nav-fav" aria-label="Favorilerim"><i class="fas fa-star"></i></a>
+            </nav>
+            <button class="ee-menu-btn" aria-label="Menüyü aç" aria-expanded="false">
+                <i class="fas fa-bars"></i>
+            </button>
         </div>
     </header>
 
-    <!-- Contact Info Section -->
-    <section class="contact-info-section">
-        <div class="container">
-            <div class="section-header">
-                <h2>İletişim Bilgileri</h2>
+    <main class="ee-page">
+        <!-- ===== Bilgi kartları ===== -->
+        <section class="ilt-hero">
+            <div class="ilt-container">
+                <h1>İletişim Bilgileri</h1>
                 <p>Size en iyi şekilde hizmet verebilmek için buradayız</p>
             </div>
-            
-            <div class="contact-info-grid">
-                <div class="contact-info-card">
-                    <div class="contact-icon">
-                        <i class="fas fa-phone"></i>
-                    </div>
+        </section>
+
+        <div class="ilt-container">
+            <div class="ilt-info-grid">
+                <div class="ilt-info-card">
+                    <div class="ilt-info-icon"><i class="fas fa-phone"></i></div>
                     <h3>Telefon</h3>
-                    <p>Muhammet Dündar</p>
-                    <p>+90 535 060 82 83</p>
-                    <p>Mehmet Üzüm</p>
-                    <p>+90 544 471 22 73</p>
+                    <div id="iltTelefonlar"></div>
                 </div>
-            
-                
-                <div class="contact-info-card">
-                    <div class="contact-icon">
-                        <i class="fas fa-envelope"></i>
-                    </div>
+
+                <div class="ilt-info-card">
+                    <div class="ilt-info-icon"><i class="fas fa-envelope"></i></div>
                     <h3>E-posta</h3>
-                    <p>expressinsaatgayrimenkul@gmail.com</p>
+                    <p id="iltEposta"></p>
                 </div>
-                
-                <div class="contact-info-card">
-                    <div class="contact-icon">
-                        <i class="fas fa-map-marker-alt"></i>
-                    </div>
+
+                <div class="ilt-info-card">
+                    <div class="ilt-info-icon"><i class="fas fa-map-marker-alt"></i></div>
                     <h3>Adres</h3>
-                    <p>Aymanas Mahallesi<br>
-                    Alparslan Türkeş Caddesi No:6/D<br>
-                    42010 Meram/Konya</p>
+                    <p id="iltAdres"></p>
                 </div>
-                
-                
             </div>
         </div>
-    </section>
 
-    <!-- Contact Form Section -->
-    <section class="contact-form-section">
-        <div class="container">
-            <div class="contact-container">
-                <div class="contact-form">
-                    <h3>Bize Ulaşın</h3>
-                    <p style="margin-bottom: 2rem; color: var(--gray);">Sorularınız için formu doldurun, size en kısa sürede dönüş yapalım.</p>
-                    
-                    <form id="contactForm">
-                        <div class="form-group">
-                            <label class="form-label">Ad Soyad *</label>
-                            <input type="text" class="form-input" required>
+        <!-- ===== Form + Detaylar ===== -->
+        <section class="ilt-form-section">
+            <div class="ilt-container">
+                <div class="ilt-form-grid">
+                    <div class="ilt-form">
+                        <h2>Bize Ulaşın</h2>
+                        <p>Formu doldurup gönderin, WhatsApp üzerinden size en kısa sürede dönüş yapalım.</p>
+
+                        <form id="contactForm">
+                            <div class="ilt-field">
+                                <label for="iltAd">Ad Soyad *</label>
+                                <input type="text" id="iltAd" name="ad" autocomplete="name" required>
+                            </div>
+
+                            <div class="ilt-field">
+                                <label for="iltTelefon">Telefon *</label>
+                                <input type="tel" id="iltTelefon" name="telefon" autocomplete="tel" inputmode="tel" required>
+                            </div>
+
+                            <div class="ilt-field">
+                                <label for="iltKonu">Konu</label>
+                                <select id="iltKonu" name="konu">
+                                    <option value="Genel Bilgi">Genel Bilgi</option>
+                                    <option value="Satılık Emlak">Satılık Emlak</option>
+                                    <option value="Kiralık Emlak">Kiralık Emlak</option>
+                                    <option value="Yatırım Danışmanlığı">Yatırım Danışmanlığı</option>
+                                    <option value="Değerleme">Değerleme</option>
+                                    <option value="Diğer">Diğer</option>
+                                </select>
+                            </div>
+
+                            <div class="ilt-field">
+                                <label for="iltMesaj">Mesaj *</label>
+                                <textarea id="iltMesaj" name="mesaj" required placeholder="Mesajınızı buraya yazın..."></textarea>
+                            </div>
+
+                            <button type="submit" class="ee-btn ilt-submit">
+                                <i class="fab fa-whatsapp"></i>
+                                WhatsApp ile Gönder
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="ilt-details">
+                        <h3>İletişim Detayları</h3>
+
+                        <div class="ilt-detail-item">
+                            <div class="ilt-detail-icon"><i class="fas fa-phone"></i></div>
+                            <div class="ilt-detail-content">
+                                <h4>Telefon</h4>
+                                <a href="#" data-ilt-tel="0"></a><br>
+                                <a href="#" data-ilt-tel="1"></a>
+                            </div>
                         </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label">E-posta *</label>
-                            <input type="email" class="form-input" required>
+
+                        <div class="ilt-detail-item">
+                            <div class="ilt-detail-icon"><i class="fab fa-whatsapp"></i></div>
+                            <div class="ilt-detail-content">
+                                <h4>WhatsApp</h4>
+                                <a href="#" id="iltWhatsapp" target="_blank" rel="noopener">Mesaj gönder</a>
+                            </div>
                         </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label">Telefon *</label>
-                            <input type="tel" class="form-input" required>
+
+                        <div class="ilt-detail-item">
+                            <div class="ilt-detail-icon"><i class="fas fa-envelope"></i></div>
+                            <div class="ilt-detail-content">
+                                <h4>E-posta</h4>
+                                <a href="#" id="iltEpostaLink"></a>
+                            </div>
                         </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label">Konu</label>
-                            <select class="form-input">
-                                <option>Genel Bilgi</option>
-                                <option>Satılık Emlak</option>
-                                <option>Kiralık Emlak</option>
-                                <option>Yatırım Danışmanlığı</option>
-                                <option>Değerleme</option>
-                                <option>Diğer</option>
-                            </select>
+
+                        <div class="ilt-detail-item">
+                            <div class="ilt-detail-icon"><i class="fas fa-map-marker-alt"></i></div>
+                            <div class="ilt-detail-content">
+                                <h4>Adres</h4>
+                                <p>Aymanas Mahallesi<br>Alparslan Türkeş Caddesi No:6/D<br>42010 Meram/Konya</p>
+                            </div>
                         </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label">Mesaj *</label>
-                            <textarea class="form-input form-textarea" required placeholder="Mesajınızı buraya yazın..."></textarea>
-                        </div>
-                        
-                        <button type="submit" class="form-submit">
-                            <i class="fas fa-paper-plane"></i>
-                            Mesaj Gönder
-                        </button>
-                    </form>
+                    </div>
                 </div>
-                
-                
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Map Section -->
-    <section class="map-section">
-        <div class="container">
-            <div class="section-header">
-                <h2>Ofisimizi Ziyaret Edin</h2>
-                <p>Merkezi konumumuzda sizleri bekliyoruz</p>
-            </div>
-            
-            <div class="map-container">
-                <iframe 
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3179.5234567890123!2d32.5082574!3d37.8395041!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14d085d90cf80901%3A0x138c1d0137363336!2sExpress%20emlak!5e0!3m2!1str!2str!4v1640995200000!5m2!1str!2str"
-                    width="100%" 
-                    height="400" 
-                    style="border:0; border-radius: 15px;" 
-                    allowfullscreen="" 
-                    loading="lazy" 
-                    referrerpolicy="no-referrer-when-downgrade">
-                </iframe>
-            </div>
-        </div>
-    </section>
+        <!-- ===== Harita ===== -->
+        <section class="ilt-map-section">
+            <div class="ilt-container">
+                <div class="ee-section-header">
+                    <h2>Ofisimizi Ziyaret Edin</h2>
+                    <p>Merkezi konumumuzda sizleri bekliyoruz</p>
+                </div>
 
-    <!-- Office Hours -->
-    <section class="office-hours">
-        <div class="container">
-            <div class="hours-container">
-                <div class="section-header">
+                <div class="ilt-map-frame">
+                    <iframe
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3179.5234567890123!2d32.5082574!3d37.8395041!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14d085d90cf80901%3A0x138c1d0137363336!2sExpress%20emlak!5e0!3m2!1str!2str!4v1640995200000!5m2!1str!2str"
+                        allowfullscreen=""
+                        loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== Çalışma Saatleri ===== -->
+        <section class="ilt-hours-section">
+            <div class="ilt-container">
+                <div class="ee-section-header">
                     <h2>Çalışma Saatlerimiz</h2>
                     <p>Ofisimizde sizi ağırlamaktan memnuniyet duyarız</p>
                 </div>
 
-                <div class="hours-grid">
-                    <div class="hours-card">
+                <div class="ilt-hours-grid">
+                    <div class="ilt-hours-card">
                         <h4><i class="fas fa-clock"></i> Ofis Saatleri</h4>
-                        <ul class="hours-list">
+                        <ul class="ilt-hours-list">
                             <li><span>Pazartesi - Cuma</span> <strong>09:00 - 18:00</strong></li>
                             <li><span>Cumartesi</span> <strong>10:00 - 16:00</strong></li>
                             <li><span>Pazar</span> <strong>Kapalı</strong></li>
                         </ul>
                     </div>
 
-                    <div class="hours-card">
+                    <div class="ilt-hours-card">
                         <h4><i class="fas fa-headset"></i> Telefonla Ulaşın</h4>
-                        <ul class="hours-list">
+                        <ul class="ilt-hours-list">
                             <li><span>Muhammet Dündar</span> <a href="tel:+905350608283">0 535 060 82 83</a></li>
                             <li><span>Mehmet Üzüm</span> <a href="tel:+905444712273">0 544 471 22 73</a></li>
                             <li><span>WhatsApp</span> <a href="https://wa.me/905350608283" target="_blank" rel="noopener">Mesaj gönder</a></li>
@@ -658,100 +195,38 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
+    </main>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <div class="footer-logo">
-                        <img src="images/logo.png" alt="Express Emlak" class="footer-logo-img">
-                    </div>
-                    <p>Konya'da köklü tecrübemizle güvenilir emlak hizmetleri sunuyoruz. Hayalinizdeki evi bulmanızda yanınızdayız.</p>
-                </div>
-                <div class="footer-section">
-                    <h3>Hızlı Bağlantılar</h3>
-                    <ul>
-                        <li><a href="index.html">Ana Sayfa</a></li>
-                        <li><a href="ilanlar.html">İlanlar</a></li>
-                        <li><a href="express-konut.html">Express Konut</a></li>
-                        <li><a href="iletisim.html">İletişim</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h3>İletişim</h3>
-                    <div class="contact-info">
-                        <p><i class="fas fa-phone"></i> +90 535 060 82 83  Muhammet Dündar</p>
-                        <p><i class="fas fa-phone"></i> +90 544 471 22 73  Mehmet Üzüm</p>
-                        <p><i class="fas fa-envelope"></i> expressinsaatgayrimenkul@gmail.com</p>
-                        <p><i class="fas fa-map-marker-alt"></i> Aymanas, Alparslan Türkeş Caddesi No:6/D, 42010 Meram/Konya</p>
-                    </div>
-                </div>
+    <!-- ===== Footer ===== -->
+    <footer class="ee-footer">
+        <div class="ee-footer-inner">
+            <div>
+                <img src="images/logo_dark.png" alt="Express Emlak" class="ee-footer-logo">
+                <p>Konya'da köklü tecrübemizle güvenilir emlak hizmetleri sunuyoruz. Hayalinizdeki evi bulmanızda yanınızdayız.</p>
             </div>
-            <div class="footer-bottom">
-                <p>&copy; 2025 Express Emlak. Tüm hakları saklıdır.</p>
+            <div>
+                <h4>Sayfalar</h4>
+                <ul class="ee-footer-links">
+                    <li><a href="index.html">Ana Sayfa</a></li>
+                    <li><a href="ilanlar.html">İlanlar</a></li>
+                    <li><a href="express-konut.html">Express Konut</a></li>
+                    <li><a href="iletisim.html">İletişim</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4>İletişim</h4>
+                <ul class="ee-footer-links">
+                    <li><a href="tel:+905350608283"><i class="fas fa-phone"></i> 0 (535) 060 82 83</a></li>
+                    <li><a href="tel:+905444712273"><i class="fas fa-phone"></i> 0 (544) 471 22 73</a></li>
+                    <li><a href="mailto:expressinsaatgayrimenkul@gmail.com"><i class="fas fa-envelope"></i> E-posta gönder</a></li>
+                </ul>
             </div>
         </div>
+        <div class="ee-footer-bottom">© 2026 Express Emlak. Tüm hakları saklıdır.</div>
     </footer>
 
-    <script src="script.js"></script>
-    <script>
-        // Contact form submission
-        document.getElementById('contactForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // Show loading state
-            const submitBtn = this.querySelector('.form-submit');
-            const originalText = submitBtn.innerHTML;
-            submitBtn.innerHTML = '<div class="loading"></div> Gönderiliyor...';
-            submitBtn.disabled = true;
-            
-            // Simulate form submission
-            setTimeout(() => {
-                submitBtn.innerHTML = originalText;
-                submitBtn.disabled = false;
-                
-                // Show success message
-                showNotification('Mesajınız başarıyla gönderildi! En kısa sürede size dönüş yapacağız.', 'success');
-                
-                // Reset form
-                this.reset();
-            }, 2000);
-        });
-        
-        // Show notification function (if not already defined)
-        if (typeof showNotification === 'undefined') {
-            function showNotification(message, type = 'info') {
-                const notification = document.createElement('div');
-                notification.style.cssText = `
-                    position: fixed;
-                    top: 100px;
-                    right: 20px;
-                    background: ${type === 'success' ? '#28a745' : '#17a2b8'};
-                    color: white;
-                    padding: 1rem 1.5rem;
-                    border-radius: 8px;
-                    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-                    z-index: 10000;
-                    max-width: 350px;
-                    animation: slideInRight 0.3s ease;
-                `;
-                notification.textContent = message;
-                
-                document.body.appendChild(notification);
-                
-                setTimeout(() => {
-                    notification.style.animation = 'slideOutRight 0.3s ease';
-                    setTimeout(() => {
-                        if (notification.parentNode) {
-                            notification.parentNode.removeChild(notification);
-                        }
-                    }, 300);
-                }, 5000);
-            }
-        }
-    </script>
+    <script type="module" src="assets/js/header.js"></script>
+    <script type="module" src="assets/js/iletisim.js"></script>
 </body>
 </html>

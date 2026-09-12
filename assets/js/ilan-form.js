@@ -111,11 +111,14 @@ const checked = (groupKey) => {
  * Gizli (disabled) alanlar otomatik olarak null döner, bu yüzden
  * kategoriye ait olmayan veri kaydedilmez.
  */
-export function collectFormData({ kategori, ilanTipi, altKategori }) {
+export function collectFormData({ kategori, ilanTipi, altKategori, aciklama }) {
   const data = {
     // Zorunlu temel alanlar
     isim: val("isim"),
-    aciklama: val("aciklama"),
+    // aciklama artık contenteditable bir editörden (zengin metin HTML'i) geliyor,
+    // <textarea>.value üzerinden okunamaz - çağıran taraf (admin.js) DOMPurify'dan
+    // geçirdiği HTML'i burada geçirir. Geriye dönük uyumluluk için verilmezse boş kalır.
+    aciklama: aciklama ?? null,
     fiyat: num("fiyat"),
 
     // Kategori
@@ -216,7 +219,9 @@ export function validate(data, photoCount) {
 
   const required = [
     ["isim", data.isim, "İlan başlığı gerekli."],
-    ["aciklama", data.aciklama, "Açıklama gerekli."],
+    // aciklama artık contenteditable bir <div> (id="aciklamaEditor") - <textarea>
+    // değil, bu yüzden ayrı id eşlemesi gerekiyor.
+    ["aciklamaEditor", data.aciklama, "Açıklama gerekli."],
     ["fiyat", data.fiyat, "Geçerli bir fiyat girin."],
     ["il", data.il, "İl seçin."],
     ["ilce", data.ilce, "İlçe seçin."]

@@ -176,7 +176,11 @@ export class MapPicker {
       } else {
         this.marker.setLatLng([latR, lngR]);
       }
-      if (pan) this.map.setView([latR, lngR], Math.max(this.map.getZoom(), 15));
+      // 18: OSM'de bina dış hatları belirmeye başlıyor (soluk da olsa) - Google
+      // Maps'in net dolgulu render'ına asla eşit olmaz, bu ücretsiz tile
+      // sunucusunun doğal sınırı. Yetersiz kalırsa CARTO Voyager (API key ile)
+      // sıradaki adım.
+      if (pan) this.map.setView([latR, lngR], Math.max(this.map.getZoom(), 18));
     }
 
     this.el.clearBtn.hidden = false;
@@ -272,7 +276,7 @@ export class MapPicker {
 
       if (this.ready) {
         // Adres merkezine git ama işaret koymadan - kullanıcı tam noktayı seçsin
-        this.map.setView([lat, lng], mahalle ? 16 : (ilce ? 13 : 10));
+        this.map.setView([lat, lng], mahalle ? 18 : (ilce ? 14 : 10));
         this.invalidate();
         this.el.note.classList.remove("is-set");
         this.el.note.textContent = `${sorgu.replace(", Türkiye", "")} bölgesi gösteriliyor — tam konumu işaretlemek için haritaya tıklayın.`;

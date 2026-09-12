@@ -1,7 +1,7 @@
 // İlan yönetim panelinin ana akışı: giriş -> kategori -> form -> yükleme -> liste.
 import { getAuth, GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut }
   from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { addDoc, collection, deleteDoc, doc, onSnapshot, orderBy, query, serverTimestamp }
+import { addDoc, collection, deleteDoc, doc, onSnapshot, orderBy, query, serverTimestamp, setDoc }
   from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { deleteObject, getDownloadURL, getStorage, ref, uploadBytesResumable }
   from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
@@ -15,7 +15,8 @@ import { PhotoPicker, ProgressBar, VideoPicker } from "./media-upload.js";
 import { MapPicker } from "./map-picker.js";
 import { buildFeatureAccordion, clearErrors, collectFormData, fillSelects, showFieldsFor, stripEmpty, validate }
   from "./ilan-form.js";
-import { $, escapeHtml, formatDate, ilanNo, priceLabel } from "./utils.js";
+import { createRichTextEditor, temizleAciklamaHtml } from "./rich-text.js";
+import { $, escapeHtml, formatDate, htmlToPlainText, ilanNo, priceLabel } from "./utils.js";
 
 const auth = getAuth(app);
 const storage = getStorage(app);
@@ -39,6 +40,45 @@ function panelGorebilir(user) {
   if (!Array.isArray(ALLOWED_EMAILS)) return true;
   return ALLOWED_EMAILS.includes(user.email);
 }
+
+/**
+ * ALLOWED_EMAILS üretimde null olduğu için panelGorebilir() her giriş yapan
+ * kullanıcıya "yetkili" der - gerçek red yalnızca formu doldurup gönderdiğinde
+ * Firestore'dan gelirdi. Bu fonksiyon girişten hemen sonra zararsız bir yazma
+ * deneyerek (firestore.rules'daki yetkiKontrol/{uid}, isAllowedUploader()'a
+ * tabi) gerçek yetkiyi erkenden ortaya çıkarır - kullanıcı formu hiç
+ * doldurmadan öğrenir. Dev ortamında (ALLOWED_EMAILS dolu dizi) hiç
+ * çağrılmasına gerek yok, panelGorebilir() zaten orada doğru sonucu veriyor.
+ */
+async function yetkiyiDogrula(user) {
+  try {
+    await setDoc(doc(db, "yetkiKontrol", user.uid), { t: serverTimestamp() });
+    return true;
+  } catch (err) {
+    if (err.code === "permission-denied") return false;
+    // Ağ hatası vb. - yetkisiz olduğunu KANITLAMADI, arayüzü kilitleme.
+    console.error("Yetki probu başarısız (ağ?):", err);
+    return true;
+  }
+}
+
+/* ------------------------------------------------------------- Sekmeler */
+
+// Üst seviye İlanlar/Express Konut sekmesi. Kasıtlı olarak setStep()'ten
+// bağımsız: bu geçiş yalnızca hidden toggle'lıyor, ilan formunun 2 adımlı
+// akışına dokunmuyor - Konut sekmesindeki bir hata ilan yayınlamayı bozamaz.
+function sekmeSec(hedef) {
+  const ilanlar = hedef === "ilanlar";
+  $("#tabIlanlar").hidden = !ilanlar;
+  $("#tabKonut").hidden = ilanlar;
+  $("#tabBtnIlanlar").classList.toggle("is-active", ilanlar);
+  $("#tabBtnKonut").classList.toggle("is-active", !ilanlar);
+  $("#tabBtnIlanlar").setAttribute("aria-selected", String(ilanlar));
+  $("#tabBtnKonut").setAttribute("aria-selected", String(!ilanlar));
+}
+
+$("#tabBtnIlanlar").addEventListener("click", () => sekmeSec("ilanlar"));
+$("#tabBtnKonut").addEventListener("click", () => sekmeSec("konut"));
 
 /* ------------------------------------------------------------ Adımlar */
 
@@ -85,6 +125,8 @@ fillSelects();
 buildFeatureAccordion($("#detayliBilgi"));
 initLocationSelects({ il: $("#il"), ilce: $("#ilce"), mahalle: $("#mahalle") });
 
+const aciklamaEditor = createRichTextEditor($("#aciklamaEditor"), $("#aciklamaToolbar"));
+
 const mapPicker = new MapPicker({
   canvas: $("#mapPicker"),
   latInput: $("#enlem"),
@@ -129,10 +171,7 @@ $("#loginBtn").addEventListener("click", async () => {
 
 $("#logoutBtn").addEventListener("click", () => signOut(auth));
 
-onAuthStateChanged(auth, (user) => {
-  currentUser = user;
-  const yetkili = panelGorebilir(user);
-
+function goster(user, yetkili) {
   $("#userEmail").textContent = user ? user.email : "";
   $("#loginBtn").hidden = !!user;
   $("#logoutBtn").hidden = !user;
@@ -145,6 +184,21 @@ onAuthStateChanged(auth, (user) => {
     $("#loginTitle").textContent = "Bu hesap yetkili değil";
     $("#loginText").textContent = `${user.email} ile giriş yapıldı ancak ilan yükleme yetkisi yok. Yetkili bir hesapla giriş yapın.`;
     $("#loginBtn2").hidden = true;
+  }
+}
+
+onAuthStateChanged(auth, async (user) => {
+  currentUser = user;
+  let yetkili = panelGorebilir(user);
+  goster(user, yetkili);
+
+  // Yalnızca "ALLOWED_EMAILS gizli, herkese izin ver" hızlı-yolunda çalıştır -
+  // dev ortamında panelGorebilir() zaten doğru sonucu veriyor, gereksiz
+  // yazma trafiği yapmaya gerek yok.
+  if (user && yetkili && !Array.isArray(ALLOWED_EMAILS)) {
+    yetkili = await yetkiyiDogrula(user);
+    // Kullanıcı bu bekleme sırasında çıkış yapmış/değişmiş olabilir.
+    if (currentUser === user) goster(user, yetkili);
   }
 });
 
@@ -223,7 +277,8 @@ $("#ilanForm").addEventListener("submit", async (e) => {
   const data = collectFormData({
     kategori: slugify(selectedPath[0]),
     ilanTipi: selectedPath[1],
-    altKategori: selectedPath[2]
+    altKategori: selectedPath[2],
+    aciklama: aciklamaEditor.isEmpty() ? null : temizleAciklamaHtml(aciklamaEditor.getHtml())
   });
 
   const check = validate(data, photos.count);
@@ -297,6 +352,7 @@ $("#ilanForm").addEventListener("submit", async (e) => {
 
 function resetForm() {
   $("#ilanForm").reset();
+  aciklamaEditor.setHtml(""); // contenteditable form elemanı değil, reset() etkilemez
   clearErrors();
   photos.clear();
   video.clear();
@@ -356,7 +412,7 @@ onSnapshot(query(collection(db, "ilanlar"), orderBy("tarih", "desc")), (snap) =>
           ${escapeHtml([d.sokak, d.acikAdres].filter(Boolean).join(" "))}
           ${d.enlem && d.boylam ? ' &middot; <i class="fas fa-map-pin" title="Haritada işaretli"></i> konum işaretli' : ""}
         </div>` : ""}
-        <div class="ilan-desc">${escapeHtml((d.aciklama || "").slice(0, 160))}</div>
+        <div class="ilan-desc">${escapeHtml(htmlToPlainText(d.aciklama).slice(0, 160))}</div>
       </div>
       <div class="ilan-actions">
         <a class="btn btn-outline btn-sm" href="ilan_detayi.html?id=${encodeURIComponent(snapDoc.id)}" target="_blank" rel="noopener">

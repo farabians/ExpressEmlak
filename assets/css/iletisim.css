@@ -1,0 +1,183 @@
+/* ==========================================================================
+   İletişim sayfası - base.css üzerine kurulu, açık tema.
+   ========================================================================== */
+
+.ilt-hero {
+  padding: 36px 0 8px;
+  text-align: center;
+}
+.ilt-hero h1 { font-size: 2rem; color: var(--dark); margin-bottom: 8px; }
+.ilt-hero p { color: var(--text-muted); }
+
+.ilt-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* ---- Bilgi kartları ---- */
+.ilt-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+  margin: 32px 0 48px;
+}
+
+.ilt-info-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px 24px;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+.ilt-info-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+
+.ilt-info-icon {
+  width: 64px; height: 64px;
+  margin: 0 auto 16px;
+  border-radius: 50%;
+  background: var(--primary-soft);
+  color: var(--primary-dark);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.6rem;
+}
+
+.ilt-info-card h3 { font-size: 1.15rem; color: var(--dark); margin-bottom: 10px; }
+.ilt-info-card p { color: var(--text-muted); line-height: 1.6; margin: 0; }
+
+/* ---- Form + detaylar ---- */
+.ilt-form-section { padding: 0 0 48px; }
+
+.ilt-form-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 40px;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .ilt-form-grid { grid-template-columns: 1fr; }
+}
+
+.ilt-form {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 32px;
+  box-shadow: var(--shadow-sm);
+}
+.ilt-form h2 { font-size: 1.3rem; color: var(--dark); margin-bottom: 6px; }
+.ilt-form > p { color: var(--text-muted); margin-bottom: 24px; }
+
+.ilt-field { margin-bottom: 18px; }
+.ilt-field label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--text);
+}
+.ilt-field input,
+.ilt-field select,
+.ilt-field textarea {
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-size: 14px;
+  color: var(--text);
+  background: var(--surface);
+  transition: border-color var(--transition);
+}
+.ilt-field input:focus,
+.ilt-field select:focus,
+.ilt-field textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+.ilt-field textarea { min-height: 130px; resize: vertical; }
+
+.ilt-submit {
+  width: 100%;
+  justify-content: center;
+  font-size: 1rem;
+  padding: 13px 22px;
+}
+
+.ilt-details {
+  background: var(--dark);
+  color: #d8dade;
+  border-radius: var(--radius);
+  padding: 32px;
+  height: fit-content;
+}
+.ilt-details h3 { color: var(--primary); font-size: 1.25rem; margin-bottom: 22px; }
+
+.ilt-detail-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+.ilt-detail-item:last-child { margin-bottom: 0; }
+
+.ilt-detail-icon {
+  width: 40px; height: 40px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--primary);
+  color: var(--dark);
+  display: flex; align-items: center; justify-content: center;
+}
+
+.ilt-detail-content h4 { color: var(--primary); font-size: 14px; margin-bottom: 4px; }
+.ilt-detail-content p, .ilt-detail-content a { color: #d8dade; font-size: 14px; line-height: 1.5; }
+.ilt-detail-content a:hover { color: var(--primary); }
+
+/* ---- Harita ---- */
+.ilt-map-section { padding: 0 0 48px; }
+.ilt-map-frame {
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border);
+}
+.ilt-map-frame iframe { display: block; width: 100%; height: 400px; border: 0; }
+
+/* ---- Çalışma saatleri ---- */
+.ilt-hours-section {
+  background: var(--surface-alt);
+  border-top: 1px solid var(--border);
+  padding: 40px 0 48px;
+}
+.ilt-hours-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+  margin-top: 24px;
+}
+.ilt-hours-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+}
+.ilt-hours-card h4 { color: var(--primary-dark); margin-bottom: 14px; font-size: 1.05rem; }
+.ilt-hours-list { list-style: none; }
+.ilt-hours-list li {
+  display: flex; justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 14px;
+}
+.ilt-hours-list li:last-child { border-bottom: none; }
+.ilt-hours-list a { color: var(--info); }
+
+@media (max-width: 480px) {
+  .ilt-info-card, .ilt-form, .ilt-details, .ilt-hours-card { padding: 20px; }
+  .ilt-map-frame iframe { height: 260px; }
+}

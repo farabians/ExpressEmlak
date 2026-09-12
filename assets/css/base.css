@@ -54,6 +54,12 @@ img { max-width: 100%; display: block; }
 a { color: var(--info); text-decoration: none; }
 a:hover { text-decoration: underline; }
 
+/* [hidden] tarayıcının user-agent stylesheet'inde düşük öncelikli - bir sınıf
+   (.ee-btn, .property-card vb.) aynı elemente display:flex/grid/block tanımlarsa
+   kaskadda hidden'ı geçersiz kılabilir (galeri video butonunda böyle oldu:
+   video olmayan ilanlarda buton görünür kalıyordu). Bu kural her zaman kazanır. */
+[hidden] { display: none !important; }
+
 /* Klavye kullanıcıları için görünür odak */
 :focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
 
@@ -63,9 +69,12 @@ a:hover { text-decoration: underline; }
 }
 
 /* ---------- Header (sitenin geri kalanıyla aynı) ---------- */
+/* Faz 12: koyu temadan açık/beyaz temaya taşındı - admin.html bu dosyayı
+   kullanmıyor (kendi ayrı admin.css'i var, koyu kalıyor - kullanıcı kararı). */
 .ee-header {
-  background: rgba(26, 26, 26, 0.96);
+  background: rgba(255, 255, 255, 0.96);
   backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
   position: fixed;
   top: 0; left: 0; right: 0;
   z-index: 1000;
@@ -86,17 +95,24 @@ a:hover { text-decoration: underline; }
 
 .ee-nav { display: flex; gap: 2rem; align-items: center; }
 .ee-nav a {
-  color: #fff;
+  color: var(--text);
   font-weight: 500;
   font-size: 1rem;
   transition: color var(--transition);
 }
-.ee-nav a:hover, .ee-nav a.active { color: var(--primary); text-decoration: none; }
+.ee-nav a:hover, .ee-nav a.active { color: var(--primary-dark); text-decoration: none; }
+
+.ee-nav-fav {
+  font-size: 1.15rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
 
 .ee-menu-btn {
   display: none;
   background: none; border: none;
-  color: #fff; font-size: 1.4rem; cursor: pointer; padding: 4px 8px;
+  color: var(--text); font-size: 1.4rem; cursor: pointer; padding: 4px 8px;
 }
 
 /* Mobil açılır menü */
@@ -105,7 +121,8 @@ a:hover { text-decoration: underline; }
   flex-direction: column;
   position: absolute;
   top: 100%; left: 0; right: 0;
-  background: rgba(26, 26, 26, 0.98);
+  background: rgba(255, 255, 255, 0.98);
+  border-bottom: 1px solid var(--border);
   padding: 1rem 20px 1.25rem;
   gap: 1rem;
 }
@@ -120,9 +137,11 @@ a:hover { text-decoration: underline; }
 .ee-page { padding-top: var(--header-h); }
 
 /* ---------- Footer ---------- */
+/* Faz 12: header ile birlikte açık temaya taşındı - tam tutarlılık. */
 .ee-footer {
-  background: var(--dark);
-  color: #c8ccd2;
+  background: var(--surface-alt);
+  color: var(--text-muted);
+  border-top: 1px solid var(--border);
   margin-top: 50px;
   padding: 40px 0 0;
 }
@@ -137,28 +156,113 @@ a:hover { text-decoration: underline; }
 }
 
 .ee-footer h4 {
-  color: #fff;
+  color: var(--dark);
   font-size: 15px;
   margin-bottom: 14px;
   font-weight: 600;
 }
 
-.ee-footer a { color: #c8ccd2; }
-.ee-footer a:hover { color: var(--primary); text-decoration: none; }
+.ee-footer a { color: var(--text-muted); }
+.ee-footer a:hover { color: var(--primary-dark); text-decoration: none; }
 
 .ee-footer-links { list-style: none; display: grid; gap: 8px; font-size: 13px; }
 .ee-footer-logo { height: 46px; margin-bottom: 12px; }
-.ee-footer p { font-size: 13px; color: #9aa0a6; }
+.ee-footer p { font-size: 13px; color: var(--text-faint); }
 
 .ee-footer-bottom {
   max-width: 1200px;
   margin: 30px auto 0;
   padding: 18px 20px;
-  border-top: 1px solid #2e3238;
+  border-top: 1px solid var(--border);
   font-size: 12px;
-  color: #8b9098;
+  color: var(--text-faint);
   text-align: center;
 }
+
+/* ---------- Paylaşılan sayfa yapı taşları ---------- */
+.ee-container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+.ee-section-header { text-align: center; margin-bottom: 32px; }
+.ee-section-header h2 { font-size: 1.8rem; color: var(--dark); margin-bottom: 8px; }
+.ee-section-header p { color: var(--text-muted); }
+
+/* ---------- İlan kartı (assets/js/ilan-kart.js render'ı) ---------- */
+/* index.html ve ilanlar.html tarafından paylaşılıyor - tek kanonik sınıf seti. */
+.property-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition), box-shadow var(--transition);
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+}
+.property-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
+.property-card-link { display: block; color: inherit; }
+.property-card-link:hover { text-decoration: none; }
+
+.property-image {
+  position: relative;
+  height: 230px;
+  overflow: hidden;
+  background: var(--surface-alt);
+}
+.property-image img { width: 100%; height: 100%; object-fit: cover; }
+
+.property-badge {
+  position: absolute;
+  top: 1rem; left: 1rem;
+  background: var(--primary);
+  color: var(--dark);
+  padding: 0.4rem 0.9rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.property-content { padding: 1.3rem; }
+.property-price { font-size: 1.3rem; font-weight: 700; color: var(--primary-dark); margin-bottom: 0.4rem; }
+.property-title { font-size: 1.05rem; font-weight: 600; color: var(--dark); margin-bottom: 0.5rem; }
+.property-location {
+  color: var(--text-muted);
+  margin-bottom: 0.8rem;
+  display: flex; align-items: center; gap: 0.4rem;
+  font-size: 0.9rem;
+}
+.property-features {
+  display: flex; flex-wrap: wrap;
+  gap: 0.8rem;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+.property-features span { display: flex; align-items: center; gap: 0.3rem; }
+
+.property-card-list { display: flex; flex-direction: column; }
+.property-card-list .property-image { height: 200px; }
+.property-actions {
+  display: flex; gap: 10px;
+  padding: 0 1.3rem 1.3rem;
+}
+
+/* renderKart() liste görünümündeki aksiyon linkleri - .ee-btn ailesinin
+   outline varyantı, anchor olarak kullanılabilsin diye ayrı sınıf. */
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 9px 18px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text);
+  font-weight: 600;
+  font-size: 0.85rem;
+  transition: background var(--transition), border-color var(--transition);
+}
+.btn-secondary:hover { background: rgba(0, 0, 0, 0.04); border-color: var(--text-muted); text-decoration: none; }
 
 /* ---------- Genel yardımcı sınıflar ---------- */
 .hidden { display: none !important; }
