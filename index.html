@@ -10,7 +10,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-
     <link rel="stylesheet" href="assets/css/base.css">
     <link rel="stylesheet" href="assets/css/anasayfa.css">
 </head>
@@ -34,137 +33,134 @@
         </div>
     </header>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="fullscreen-slider" id="propertySlider">
-            <!-- İlanlar buraya dinamik olarak eklenecek -->
-        </div>
-
-        <!-- Slider Kontrolleri -->
-        <div class="slider-controls">
-            <button id="prevSlide" class="slider-btn" aria-label="Önceki ilan"><i class="fas fa-chevron-left"></i></button>
-            <div class="slider-info">
-                <div class="slide-counter">
-                    <span id="currentSlideNum">1</span>/<span id="totalSlides">5</span>
-                </div>
+    <main class="ee-page">
+        <!-- Hero Section (Slider Korundu) -->
+        <section class="hero">
+            <div class="fullscreen-slider" id="propertySlider">
+                <!-- İlanlar buraya dinamik olarak eklenecek -->
             </div>
-            <button id="nextSlide" class="slider-btn" aria-label="Sonraki ilan"><i class="fas fa-chevron-right"></i></button>
-        </div>
-
-        <!-- Ofiste sürekli dönen ekran için tam ekran modu -->
-        <button id="fullscreenToggle" class="slider-btn fullscreen-toggle" aria-label="Tam ekran yap">
-            <i class="fas fa-expand"></i>
-        </button>
-    </section>
-
-    <!-- Services Section -->
-    <section class="services">
-        <div class="ee-container">
-            <div class="ee-section-header">
-                <h2>Hizmetlerimiz</h2>
-                <p>Konya'da emlak alanında köklü tecrübemizle tüm ihtiyaçlarınız için yanınızdayız</p>
+            <div class="slider-controls">
+                <button id="prevSlide" class="slider-btn" aria-label="Önceki ilan"><i class="fas fa-chevron-left"></i></button>
+                <div class="slider-info">
+                    <div class="slide-counter">
+                        <span id="currentSlideNum">1</span>/<span id="totalSlides">5</span>
+                    </div>
+                </div>
+                <button id="nextSlide" class="slider-btn" aria-label="Sonraki ilan"><i class="fas fa-chevron-right"></i></button>
             </div>
-            <div class="services-grid">
-                <div class="service-card">
-                    <div class="service-icon">
-                        <i class="fas fa-home"></i>
+            <button id="fullscreenToggle" class="slider-btn fullscreen-toggle" aria-label="Tam ekran yap">
+                <i class="fas fa-expand"></i>
+            </button>
+        </section>
+
+        <!-- Minimalist İstatistik Şeridi -->
+        <div class="stats-ribbon">
+            <div class="ee-container">
+                <div class="stats-flex">
+                    <div class="stat-item">
+                        <span class="stat-num">250+</span>
+                        <span class="stat-text">Aktif İlan</span>
                     </div>
-                    <h3>Konut Satış</h3>
-                    <p>Konya'nın en prestijli semtlerinde hayalinizdeki evi bulmanız için geniş portföyümüz ile hizmetinizdeyiz.</p>
-                </div>
-                <div class="service-card">
-                    <div class="service-icon">
-                        <i class="fas fa-key"></i>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item">
+                        <span class="stat-num">15+</span>
+                        <span class="stat-text">Yıllık Tecrübe</span>
                     </div>
-                    <h3>Konut Kiralama</h3>
-                    <p>Meram, Selçuklu ve Karatay'da ihtiyacınıza uygun kiralık konutları en uygun fiyatlarla sunuyoruz.</p>
-                </div>
-                <div class="service-card">
-                    <div class="service-icon">
-                        <i class="fas fa-building"></i>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item">
+                        <span class="stat-num">%98</span>
+                        <span class="stat-text">Müşteri Memnuniyeti</span>
                     </div>
-                    <h3>Ticari Emlak</h3>
-                    <p>İş yeriniz için Konya'nın merkezi lokasyonlarında ideal noktaları profesyonel danışmanlık ile sunuyoruz.</p>
-                </div>
-                <div class="service-card">
-                    <div class="service-icon">
-                        <i class="fas fa-chart-line"></i>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item">
+                        <span class="stat-num">500+</span>
+                        <span class="stat-text">Mutlu Aile</span>
                     </div>
-                    <h3>Yatırım Danışmanlığı</h3>
-                    <p>Konya emlak piyasasındaki uzun yıllara dayanan tecrübemizle yatırımlarınızda doğru kararlar almanız için uzman desteği.</p>
                 </div>
             </div>
         </div>
-    </section>
 
-    <!-- Featured Properties -->
-    <section class="featured-properties">
-        <div class="ee-container">
-            <div class="ee-section-header">
-                <h2>Öne Çıkan İlanlar</h2>
-                <p>Konya'nın en prestijli semtlerinden seçilmiş özel emlak ilanlarımız</p>
-            </div>
-            <div class="properties-grid" id="featuredProperties">
-                <!-- Firebase'den gelen ilanlar buraya dinamik olarak eklenecek -->
-            </div>
-            <div class="view-all-btn">
-                <a href="ilanlar.html" class="btn-primary">Tüm İlanları Görüntüle</a>
-            </div>
-        </div>
-    </section>
-
-    <!-- Express Konut Section -->
-    <section class="ek-teaser">
-        <div class="ee-container">
-            <div class="ee-section-header ek-teaser-header">
-                <h2>Express Konut Projesi</h2>
-                <p>Konya'da Ev Sahibi Olmanın En Kolay ve Güvenli Yolu!</p>
-            </div>
-
-            <div class="express-konut-grid">
-                <div class="express-konut-features">
-                    <h3>Neden Express Konut?</h3>
-                    <div class="ek-feature-list" id="ekFeatureList">
-                        <!-- assets/js/anasayfa-konut.js tarafından doldurulur -->
+        <!-- Bento Grid Hizmetler -->
+        <section class="services-modern">
+            <div class="ee-container">
+                <div class="section-title-modern">
+                    <span class="subtitle">HİZMETLERİMİZ</span>
+                    <h2>Sadece Emlak Değil,<br>Yaşam Alanı Sunuyoruz.</h2>
+                </div>
+                
+                <div class="bento-grid">
+                    <div class="bento-card card-large">
+                        <div class="bento-icon"><i class="fas fa-home"></i></div>
+                        <h3>Konut Satış</h3>
+                        <p>Konya'nın en prestijli semtlerinde, yaşam tarzınıza en uygun evi bulmanız için geniş ve seçkin portföyümüzle yanınızdayız.</p>
+                    </div>
+                    
+                    <div class="bento-card">
+                        <div class="bento-icon"><i class="fas fa-key"></i></div>
+                        <h3>Kiralama</h3>
+                        <p>Meram, Selçuklu ve Karatay'da bütçenize uygun, güvenilir kiralık konut çözümleri.</p>
+                    </div>
+                    
+                    <div class="bento-card card-dark">
+                        <div class="bento-icon"><i class="fas fa-chart-line"></i></div>
+                        <h3>Yatırım Danışmanlığı</h3>
+                        <p>Doğru zamanda, doğru lokasyona yatırım yapmanız için piyasa analizi ve uzman desteği.</p>
+                    </div>
+                    
+                    <div class="bento-card card-wide">
+                        <div class="bento-icon"><i class="fas fa-building"></i></div>
+                        <div class="bento-content">
+                            <h3>Ticari Gayrimenkul</h3>
+                            <p>İşletmeniz için Konya'nın en yüksek potansiyelli merkezi lokasyonlarında profesyonel ticari emlak ve arsa alternatifleri sunuyoruz.</p>
+                        </div>
                     </div>
                 </div>
-                <div class="express-konut-plans">
-                    <h3 id="ekPlanBaslik">Ödeme Planları</h3>
-                    <div class="plans-preview" id="ekPlansPreview">
-                        <!-- assets/js/anasayfa-konut.js tarafından doldurulur -->
-                    </div>
-                    <a href="express-konut.html" class="ek-detay-btn">
-                        <i class="fas fa-arrow-right"></i>
-                        Detaylı Bilgi Al
-                    </a>
-                </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Stats Section -->
-    <section class="stats">
-        <div class="ee-container">
-            <div class="stats-grid">
-                <div class="stat-item">
-                    <div class="stat-number">250+</div>
-                    <div class="stat-label">Aktif İlan</div>
+        <!-- Öne Çıkan İlanlar -->
+        <section class="featured-modern">
+            <div class="ee-container">
+                <div class="section-title-modern flex-title">
+                    <div>
+                        <span class="subtitle">VİTRİN</span>
+                        <h2>Öne Çıkan İlanlar</h2>
+                    </div>
+                    <a href="ilanlar.html" class="ee-btn ee-btn-ghost">Tümünü İncele <i class="fas fa-arrow-right"></i></a>
                 </div>
-                <div class="stat-item">
-                    <div class="stat-number">500+</div>
-                    <div class="stat-label">Mutlu Müşteri</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">15+</div>
-                    <div class="stat-label">Yıllık Tecrübe</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">98%</div>
-                    <div class="stat-label">Müşteri Memnuniyeti</div>
+                <div class="properties-grid" id="featuredProperties">
+                    <!-- JS'den gelen .property-card elemanları buraya eklenecek -->
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
+
+        <!-- Express Konut (Premium) -->
+        <section class="ek-premium">
+            <div class="ee-container">
+                <div class="ek-premium-wrapper">
+                    <div class="ek-content">
+                        <span class="ek-badge">ÖZEL PROJE</span>
+                        <h2>Express Konut</h2>
+                        <p class="ek-desc">Konya'da ev sahibi olmanın en şeffaf ve güvenli yolu. Geleceğinize yatırım yaparken ayrıcalıklı hissedeceğiniz yepyeni bir standart.</p>
+                        
+                        <div class="ek-feature-list" id="ekFeatureList">
+                            <!-- assets/js/anasayfa-konut.js tarafından doldurulur -->
+                        </div>
+                        
+                        <div class="ek-action">
+                            <a href="express-konut.html" class="ee-btn">Projeyi Keşfet</a>
+                        </div>
+                    </div>
+                    <div class="ek-plans-card">
+                        <h3 id="ekPlanBaslik">Örnek Ödeme Planları</h3>
+                        <div class="plans-preview-modern" id="ekPlansPreview">
+                            <!-- assets/js/anasayfa-konut.js tarafından doldurulur -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
 
     <!-- Footer -->
     <footer class="ee-footer">

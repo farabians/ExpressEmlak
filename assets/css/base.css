@@ -94,13 +94,38 @@ a:hover { text-decoration: underline; }
 .ee-logo-img { height: 50px; width: auto; }
 
 .ee-nav { display: flex; gap: 2rem; align-items: center; }
+
+/* Menü linkleri ve animasyon özellikleri */
 .ee-nav a {
   color: var(--text);
   font-weight: 500;
   font-size: 1rem;
+  position: relative;
+  padding: 0.5rem 0;
   transition: color var(--transition);
 }
-.ee-nav a:hover, .ee-nav a.active { color: var(--primary-dark); text-decoration: none; }
+
+/* Alt çizgi efekti (başlangıçta gizli) */
+.ee-nav a::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: var(--primary);
+  transition: width 0.3s ease;
+}
+
+.ee-nav a:hover, .ee-nav a.active { 
+  color: var(--primary-dark); 
+  text-decoration: none; 
+}
+
+/* Hover olduğunda veya aktif sayfada çizgiyi tam genişliğe çıkar */
+.ee-nav a:hover::after, .ee-nav a.active::after {
+  width: 100%;
+}
 
 .ee-nav-fav {
   font-size: 1.15rem;
