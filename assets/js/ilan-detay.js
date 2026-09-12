@@ -14,6 +14,7 @@ function setupGaleri(photoUrls, ilanBasligi) {
   const stage = $("#galeriStage");
   const thumbs = $("#galeriThumbs");
   const counter = $("#galeriCounter");
+  const moreBtn = $("#galeriMore");
   const urls = photoUrls && photoUrls.length ? photoUrls : [FOTO_YOK];
   let index = 0;
 
@@ -41,7 +42,29 @@ function setupGaleri(photoUrls, ilanBasligi) {
     btn.addEventListener("click", () => show(i));
     thumbs.appendChild(btn);
   });
+  // İlk 5 fotoğrafı göster, kalanları gizle
+  if (urls.length > 5) {
+    thumbs.classList.add("is-collapsed");
+    moreBtn.hidden = false;
 
+    moreBtn.innerHTML =
+      `<i class="fas fa-chevron-down"></i>
+       ${urls.length - 5} fotoğraf daha göster`;
+
+    moreBtn.onclick = () => {
+      const collapsed = thumbs.classList.toggle("is-collapsed");
+
+      moreBtn.classList.toggle("is-open", !collapsed);
+
+      moreBtn.innerHTML = collapsed
+        ? `<i class="fas fa-chevron-down"></i>
+           ${urls.length - 5} fotoğraf daha göster`
+        : `<i class="fas fa-chevron-up"></i>
+           Fotoğrafları gizle`;
+    };
+  } else {
+    moreBtn.hidden = true;
+  }
   const single = urls.length < 2;
   $("#galeriPrev").hidden = single;
   $("#galeriNext").hidden = single;
