@@ -367,7 +367,8 @@ function setupActions(d) {
   function paint(on) {
     favBtn.classList.toggle("is-active", on);
     favBtn.setAttribute("aria-pressed", String(on));
-    $("span", favBtn).textContent = on ? "Favorilerimde" : "Favorilerime Ekle";
+    $(".full", favBtn).textContent = on ? "Favorilerimde" : "Favorilerime Ekle";
+    $(".short", favBtn).textContent = on ? "Favorimde" : "Fav. Ekle";
     $("i", favBtn).className = on ? "fas fa-star" : "far fa-star";
   }
 

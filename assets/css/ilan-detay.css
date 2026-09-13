@@ -61,6 +61,8 @@
 
 .detay-head-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
 
+#btnFavori .short { display: none; }
+
 .detay-goruntulenme {
   display: inline-flex;
   align-items: center;
@@ -567,7 +569,10 @@
   .detay-grid, .detay-right { grid-template-columns: 1fr; }
   .detay-head { flex-direction: column; align-items: flex-start; padding: 16px; }
   .detay-title { font-size: 19px; }
-  .detay-head-actions { width: 100%; overflow-x: auto; }
+  .detay-head-actions { width: 100%; overflow-x: visible; }
+  .detay-action { flex: 1 1 0; justify-content: center; padding-left: 8px; padding-right: 8px; }
+  #btnFavori .full { display: none; }
+  #btnFavori .short { display: inline; }
   .galeri-thumbs { grid-template-columns: repeat(4, 1fr); }
   .spec-row { grid-template-columns: 1fr; gap: 2px; padding: 8px 0; }
   .detay-tab { padding: 11px 15px; font-size: 13px; }
