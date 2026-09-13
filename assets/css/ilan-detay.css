@@ -12,10 +12,18 @@
 }
 
 /* ---------- Breadcrumb ---------- */
+.detay-breadcrumb-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
 .detay-breadcrumb {
   font-size: 12.5px;
   color: var(--text-muted);
-  margin-bottom: 14px;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -51,7 +59,17 @@
   color: var(--dark);
 }
 
-.detay-head-actions { display: flex; gap: 8px; flex-shrink: 0; }
+.detay-head-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+
+.detay-goruntulenme {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  color: var(--text-faint);
+  flex-shrink: 0;
+}
+.detay-goruntulenme i { font-size: 14px; }
 
 .detay-action {
   display: inline-flex;
@@ -387,6 +405,25 @@
 
 .detay-aciklama { font-size: 14px; line-height: 1.8; color: var(--text); overflow-wrap: anywhere; }
 
+/* Zengin metin editöründen gelen içerik (bkz. rich-text.js).
+   base.css'teki "* { margin: 0 }" sıfırlaması paragrafları da sıfırladığı için
+   satırlar birbirine yapışıyordu - açıklama içindeki <p>'lere aralık veriyoruz. */
+.detay-aciklama p { margin: 0 0 0.75em; }
+.detay-aciklama p:last-child { margin-bottom: 0; }
+
+/* Vurgu (background-color) ve büyütülmüş font birlikte kullanıldığında arka
+   plan metnin yalnızca bir kısmını boyuyordu: birimsiz line-height (1.8)
+   kapsayıcının 14px'ine göre hesaplanıp ~25px'lik bir satır kutusu üretiyor,
+   26px'lik span ise bu kutudan taşıyordu. inline-block + kendi font boyutuna
+   oranlı line-height, arka planın metnin tamamını kaplamasını sağlar.
+   Dikey padding yerine line-height kullanıldı: padding satır kutusunu
+   büyütmeden taşar ve üst üste binen satırlarda çakışır. */
+.detay-aciklama span[style*="font-size"] {
+  display: inline-block;
+  line-height: 1.35;
+  vertical-align: baseline;
+}
+
 /* ---------- Özellik listeleri (yeşil tikli) ---------- */
 .ozellik-group + .ozellik-group { margin-top: 22px; }
 .ozellik-group h4 {
@@ -514,18 +551,153 @@
   .harita-box { height: 320px; }
 }
 
-/* Yazdırma: sadece ilan bilgisi kağıda gitsin */
+/* ---------- Yazdırma antedi / alt bilgisi (yalnızca kağıtta görünür) ---------- */
+.print-letterhead, .print-footer { display: none; }
+
+/* ==========================================================================
+   Yazdırma: A4'e özel, sade bir "ilan bilgi formu" düzeni.
+   Ekrandaki etkileşimli kabuk (nav, sekmeler, galeri şeridi, paylaşım,
+   harita, benzer ilanlar) tamamen gizlenir; kalan veri tek sütunlu,
+   belge gibi akan bir sayfaya yeniden döşenir.
+   ========================================================================== */
 @media print {
-  .ee-header, .ee-footer, .detay-head-actions, .detay-tabs,
-  .galeri-nav, .galeri-thumbs, .benzer-baslik, .benzer-grid, .harita-actions { display: none !important; }
-  body { background: #fff; }
-  .ee-page { padding-top: 0; }
-  .detay-panel[hidden] { display: block !important; }
-  .detay-card, .detay-section, .detay-head { box-shadow: none; border-color: #ccc; break-inside: avoid; }
-  .detay-grid { grid-template-columns: 1fr 1fr; }
+  @page { size: A4; margin: 12mm; }
+
+  body { background: #fff; font-size: 10.5pt; color: #1a1a1a; }
+  a { color: inherit; text-decoration: none; }
+
+  /* Etkileşimli / ekrana özel her şeyi kaldır */
+  .ee-header, .ee-footer, .detay-breadcrumb-row,
+  .detay-head-actions, .detay-goruntulenme, .detay-tabs,
+  .galeri-nav, .galeri-more, .galeri-video-btn, .galeri-counter,
+  .detay-right, .guvenlik-box, .benzer-baslik, .benzer-grid,
+  #panel-konum, .detay-section > summary::after { display: none !important; }
+
+  .ee-page { padding-top: 0 !important; }
+  .detay-wrap { max-width: none; margin: 0; padding: 0; }
+
+  /* Antet: logo + form başlığı + tarih */
+  .print-letterhead {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-bottom: 10px;
+    margin-bottom: 14px;
+    border-bottom: 2px solid #1a1a1a;
+  }
+  .print-letterhead img { height: 30px; width: auto; }
+  .print-letterhead-meta { text-align: right; display: flex; flex-direction: column; gap: 2px; }
+  .print-letterhead-title { font-size: 12pt; font-weight: 700; }
+  .print-letterhead-date { font-size: 8.5pt; color: #555; }
+
+  /* Başlık satırı: sadece başlık, Yazdır/Paylaş/Favori butonları zaten
+     .detay-head-actions ile yukarıda gizlendi. */
+  .detay-head {
+    display: block; border: none; box-shadow: none; padding: 0;
+    margin-bottom: 10px;
+  }
+  .detay-title { font-size: 16pt; margin-bottom: 0; }
+
+  /* Sayfa 1: iki sütun - galeri | özellik tablosu. Satıcı kutusu kağıda
+     basılmıyor (iletişim bilgisi zaten sayfa altındaki antette var), böylece
+     fotoğraf ve özellikler tüm genişliği kullanabiliyor.
+     Not: Chrome'un yazdırma motoru CSS Grid + break-inside kombinasyonunu
+     güvenilir bölmüyor (uzun bir grid item sığmayınca tüm grid'i bir sonraki
+     sayfaya atabiliyor) - bu yüzden burada bilinçli olarak flex kullanılıyor. */
+  .detay-grid {
+    display: flex;
+    align-items: flex-start;
+    gap: 6mm;
+    margin-bottom: 0;
+  }
+  .detay-card { border: 1px solid #ccc; box-shadow: none; border-radius: 4px; }
+
+  /* Galeri: ana fotoğraf + altında küçük resim şeridi (sahibinden tarzı) */
+  .detay-grid > section:first-child { width: 95mm; flex: 0 0 95mm; break-inside: avoid; }
+  .galeri-stage { aspect-ratio: 4 / 3; height: auto; background: #eee; }
+  .galeri-stage img { width: 100%; height: 100%; object-fit: cover; }
+  .galeri-stage button { display: none !important; }
+
+  .galeri-thumbs:not([hidden]) {
+    display: grid !important;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 2px;
+    padding: 2px;
+    max-height: none;
+    overflow: visible;
+  }
+  .galeri-thumbs button:nth-child(n+11) { display: none; }
+  .galeri-thumbs button {
+    aspect-ratio: 4 / 3;
+    border: 1px solid #ddd;
+    padding: 0;
+    overflow: hidden;
+  }
+  .galeri-thumbs button.is-active { border-color: #1a1a1a; }
+  .galeri-thumbs img { width: 100%; height: 100%; object-fit: cover; }
+
+  /* Özellik tablosu: sağdaki satıcı kutusu yazdırmada tamamen kaldırıldığı
+     için kalan tüm genişliği alır - etiket/değer yan yana okunur boyutta. */
+  .detay-specs { flex: 1 1 auto; min-width: 0; padding: 12px 14px; }
+  .spec-price { font-size: 19pt; }
+  .spec-badges { margin: 8px 0 10px; }
+  .spec-badge { border: 1px solid #ccc; background: none; color: #1a1a1a; font-size: 8.5pt; }
+  .spec-location { border-bottom: 1px solid #ccc; font-size: 11pt; padding-bottom: 10px; }
+  .spec-row {
+    grid-template-columns: 40mm 1fr;
+    gap: 8px;
+    padding: 5px 0;
+    font-size: 10pt;
+    break-inside: avoid;
+  }
+  .spec-row dt { color: #666; }
+  .spec-row dd { font-weight: 600; }
+  .spec-row dd.accent { color: #1a1a1a; }
+
+  /* Sekme panelleri: açıklama ve özellik listeleri galeri/tablo bittiği yerden
+     devam eder - zorunlu sayfa kesmesi yok, yer kalmazsa doğal olarak taşar. */
+  .detay-panel[hidden] { display: none !important; }
+  #panel-detay {
+    display: block !important;
+    padding-top: 6mm;
+  }
+  /* Uzun açıklama sayfa sonunda bölünüp devam edebilmeli - break-inside:avoid
+     verilirse tüm blok bir sonraki sayfaya itilir ve ilk sayfanın altı boş kalır. */
+  .detay-section { border: none; box-shadow: none; margin-bottom: 10px; }
+  .detay-section > summary {
+    background: none; border-bottom: 1px solid #1a1a1a; padding: 0 0 4px;
+    font-size: 11pt; text-transform: uppercase; letter-spacing: 0.4px;
+    break-after: avoid;
+  }
+  .detay-section-body { padding: 8px 0 0; }
+  .detay-aciklama { font-size: 10.5pt; line-height: 1.5; }
+  .detay-aciklama p { margin: 0 0 8px; }
+  .detay-aciklama p:empty,
+  .detay-aciklama p:has(> br:only-child) { display: none; }
+  .detay-aciklama div:empty { display: none; }
+
+  .ozellik-grid { grid-template-columns: repeat(2, 1fr); gap: 4px 12px; }
+  .ozellik-item { font-size: 10pt; }
+  .ozellik-item i { color: #1a1a1a; }
+
+  /* Alt bilgi: her sayfanın altında tekrarlanır */
+  .print-footer {
+    display: flex !important;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 16px;
+    padding-top: 8px;
+    border-top: 1px solid #1a1a1a;
+    font-size: 8.5pt;
+    color: #444;
+    break-inside: avoid;
+  }
+  .print-footer-col { display: flex; flex-direction: column; gap: 2px; }
+  .print-footer-col strong { color: #1a1a1a; font-size: 9.5pt; }
 }
 /* ---------- Galeri fotoğraf genişletme ---------- */
-.galeri-thumbs.is-collapsed button:nth-child(n+6) {
+.galeri-thumbs.is-collapsed button:nth-child(n+11) {
   display: none;
 }
 

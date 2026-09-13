@@ -1,7 +1,7 @@
 // İlan formunun alan üretimi, toplanması ve doğrulanması.
 // HTML'de yüzlerce <option> tutmak yerine hepsi constants.js'ten üretilir.
 import { FEATURE_GROUPS, SELECT_OPTIONS, fieldsetFor } from "./constants.js";
-import { $, $$, buildOptions, escapeHtml } from "./utils.js";
+import { $, $$, buildOptions, escapeHtml, escapeMultiline } from "./utils.js";
 
 /* -------------------------------------------------- Select'leri doldur */
 
@@ -75,6 +75,111 @@ export function showFieldsFor(kategoriSlug) {
   return active;
 }
 
+/* -------------------------------------------- Formu mevcut veriyle doldur */
+
+// collectFormData()'nın tersi: bir Firestore kaydını forma yükler (düzenleme
+// akışı). id'ye değer atarken alan disabled/gizli olsa bile yazıyoruz -
+// showFieldsFor() zaten doğru fieldset'i admin.js tarafında ayrıca açacak,
+// buradaki sıralamaya bağımlı kalmamak için değer önce yazılıp sonra
+// showFieldsFor çağrılabilir ya da tam tersi, fark etmez.
+const setVal = (id, value) => {
+  const el = document.getElementById(id);
+  if (!el) return;
+  if (el.type === "checkbox") el.checked = !!value;
+  else el.value = value ?? "";
+};
+
+// Eski kayıtlar düz metin (\n ile), yeni kayıtlar zengin metin HTML'i.
+// Editöre yüklerken düz metin \n -> <br> dönüşümü yapılmazsa eski açıklamalar
+// tek satıra yapışmış görünür (Faz 15 notu).
+function aciklamayiHtmleCevir(aciklama) {
+  if (!aciklama) return "";
+  return /<[a-z][\s\S]*>/i.test(aciklama) ? aciklama : escapeMultiline(aciklama);
+}
+
+/**
+ * Bir ilan kaydını forma yükler. collectFormData()'nın alan eşlemesinin
+ * birebir tersidir - kategori dışındaki temel alanlar + o kategorinin
+ * fieldset'i + FEATURE_GROUPS checkbox'ları.
+ *
+ * @param {object} data  Firestore dokümanı (id hariç, ...docSnap.data())
+ * @returns {string} editöre yüklenmesi gereken açıklama HTML'i (çağıran taraf
+ *                    rich-text editörünü ayrı yönettiği için burada set edilmez)
+ */
+export function populateForm(data) {
+  setVal("isim", data.isim);
+  setVal("fiyat", data.fiyat);
+  // Checkbox alanın tersini tutuyor (goruntulenmeGizli) - alan hiç yoksa
+  // (eski kayıt) varsayılan "göster" olduğu için checkbox işaretli kalmalı.
+  setVal("goruntulenmeGoster", !data.goruntulenmeGizli);
+
+  setVal("il", data.il);
+  setVal("ilce", data.ilce);
+  setVal("mahalle", data.mahalle);
+  setVal("sokak", data.sokak);
+  setVal("acikAdres", data.acikAdres);
+  setVal("enlem", data.enlem);
+  setVal("boylam", data.boylam);
+
+  const group = fieldsetFor(data.kategori);
+
+  if (group === "konut") {
+    setVal("brutMetrekare", data.brutMetrekare);
+    setVal("netMetrekare", data.netMetrekare);
+    setVal("odaSayisi", data.odaSayisi);
+    setVal("binaYasi", data.binaYasi);
+    setVal("katSayisi", data.katSayisi);
+    setVal("bulunduguKat", data.bulunduguKat);
+    setVal("isitma", data.isitma);
+    setVal("banyoSayisi", data.banyoSayisi);
+    setVal("mutfak", data.mutfak);
+    setVal("balkon", data.balkon);
+    setVal("asansor", data.asansor);
+    setVal("otopark", data.otopark);
+    setVal("esyali", data.esyali);
+    setVal("kullanimDurumu", data.kullanimDurumu);
+    setVal("aidat", data.aidat);
+    setVal("depozito", data.depozito);
+    setVal("enerjiKimlikBelgesi", data.enerjiKimlikBelgesi);
+    setVal("tapuDurumu", data.tapuDurumu);
+    setVal("tasinmazNo", data.tasinmazNo);
+    setVal("kimden", data.kimden);
+  } else if (group === "isyeri") {
+    setVal("isyeriBrutMetrekare", data.brutMetrekare);
+    setVal("isyeriNetMetrekare", data.netMetrekare);
+    setVal("isyeriTipi", data.isyeriTipi);
+    setVal("isyeriBinaYasi", data.binaYasi);
+    setVal("isyeriKat", data.bulunduguKat);
+    setVal("isyeriIsitma", data.isitma);
+    setVal("isyeriKullanimDurumu", data.kullanimDurumu);
+    setVal("isyeriAidat", data.aidat);
+    setVal("isyeriDepozito", data.depozito);
+    setVal("isyeriTapuDurumu", data.tapuDurumu);
+    setVal("isyeriKimden", data.kimden);
+  } else if (group === "arsa") {
+    setVal("arsaTipi", data.arsaTipi);
+    setVal("arsaMetrekare", data.arsaMetrekare);
+    setVal("imarDurumu", data.imarDurumu);
+    setVal("arsaTapuDurumu", data.tapuDurumu);
+    setVal("arsaKimden", data.kimden);
+  }
+
+  // FEATURE_GROUPS onay kutuları: her grubun kayıttaki dizisindeki her değere
+  // karşılık gelen checkbox'ı bulup işaretler. CSS.escape ile değer güvenli
+  // hale getirilir (tırnak/özel karakter içeren etiketler için).
+  FEATURE_GROUPS.forEach((g) => {
+    const secili = new Set(data[g.key] || []);
+    $$(`input[name="${g.key}"]`).forEach((input) => {
+      input.checked = secili.has(input.value);
+    });
+    // Akordiyondaki "(N seçim)" sayacı da güncellensin.
+    const label = $(`[data-count-for="${g.key}"]`);
+    if (label) label.textContent = secili.size ? `(${secili.size} seçim)` : "(seçim yapılmadı)";
+  });
+
+  return aciklamayiHtmleCevir(data.aciklama);
+}
+
 /* --------------------------------------------------- Değerleri topla */
 
 const val = (id) => {
@@ -106,6 +211,34 @@ const checked = (groupKey) => {
   return items.length ? items : null;
 };
 
+// Her alan grubunun Firestore'a yazdığı anahtarlar. Kategori değiştirilerek
+// düzenlenen bir ilanda, artık geçerli olmayan gruba ait anahtarlar dokümandan
+// silinmeli (updateDoc merge çalışır; gönderilmeyen alan eski değeriyle kalır -
+// daireyken girilen "3+1" tarlaya çevrildikten sonra da görünüyordu).
+const GROUP_FIELDS = {
+  konut: ["brutMetrekare", "netMetrekare", "odaSayisi", "binaYasi", "katSayisi",
+          "bulunduguKat", "isitma", "banyoSayisi", "mutfak", "balkon", "asansor",
+          "otopark", "esyali", "kullanimDurumu", "aidat", "depozito",
+          "enerjiKimlikBelgesi", "tapuDurumu", "tasinmazNo", "kimden"],
+  isyeri: ["brutMetrekare", "netMetrekare", "isyeriTipi", "binaYasi", "bulunduguKat",
+           "isitma", "kullanimDurumu", "aidat", "depozito", "tapuDurumu", "kimden"],
+  arsa: ["arsaTipi", "arsaMetrekare", "imarDurumu", "tapuDurumu", "kimden"]
+};
+
+// Eski kayıtlarda iş yeri m² alanları ayrı adlarla saklanmıştı (ilan-detay.js
+// bunları hâlâ okuyor); kategori değişiminde bunlar da temizlenmeli.
+const LEGACY_FIELDS = ["isyeriBrutMetrekare", "isyeriNetMetrekare", "siteIcerisinde"];
+
+/**
+ * Verilen kategoride anlamı olmayan alan adlarını döndürür.
+ * admin.js bunları deleteField() ile dokümandan siler.
+ */
+export function obsoleteFieldsFor(kategori) {
+  const active = new Set(GROUP_FIELDS[fieldsetFor(kategori)] || []);
+  const all = new Set([...Object.values(GROUP_FIELDS).flat(), ...LEGACY_FIELDS]);
+  return [...all].filter((key) => !active.has(key));
+}
+
 /**
  * Formdaki tüm değerleri Firestore'a yazılacak nesneye çevirir.
  * Gizli (disabled) alanlar otomatik olarak null döner, bu yüzden
@@ -120,6 +253,10 @@ export function collectFormData({ kategori, ilanTipi, altKategori, aciklama }) {
     // geçirdiği HTML'i burada geçirir. Geriye dönük uyumluluk için verilmezse boş kalır.
     aciklama: aciklama ?? null,
     fiyat: num("fiyat"),
+    // Checkbox işaretliyken (varsayılan) görüntülenme sayısı gösterilir - Firestore'da
+    // tersini (goruntulenmeGizli) saklıyoruz ki alan hiç yazılmamış eski kayıtlarda da
+    // varsayılan "göster" davranışı korunsun (ilan-detay.js: !d.goruntulenmeGizli).
+    goruntulenmeGizli: document.getElementById("goruntulenmeGoster")?.checked === false,
 
     // Kategori
     kategori, ilanTipi, altKategori,

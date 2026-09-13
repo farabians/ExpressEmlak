@@ -70,13 +70,59 @@ function stilUygula(editor, sel, stiller) {
   }
 }
 
+// Bir <div>'i aynı içerik ve stille <p>'ye dönüştürür, seçimi korur.
+// Gerekçe: Chrome contenteditable'da Enter'a basınca <div> üretir, ama
+// temizleAciklamaHtml()'in ALLOWED_TAGS listesinde div YOK - kaydedilirken
+// div düşer ve üzerindeki text-align da onunla birlikte kaybolur. Editörde
+// doğru görünüp kaydedince hizalamanın yok olmasının sebebi buydu.
+function divToP(div) {
+  const p = document.createElement("p");
+  if (div.getAttribute("style")) p.setAttribute("style", div.getAttribute("style"));
+  while (div.firstChild) p.appendChild(div.firstChild);
+  div.replaceWith(p);
+  return p;
+}
+
+// Editördeki serbest (henüz bir bloğun içinde olmayan) içeriği tek bir <p>'ye
+// toplar ve hizalar. Serbest metnin yalnızca seçili kısmını sarmalamak işe
+// yaramaz: text-align blok seviyesi bir özellik, satırın geri kalanı dışarıda
+// kalırsa görsel olarak hiçbir şey ortalanmış görünmez.
+function tumIcerigiHizala(editor, align) {
+  // Zaten blok varsa (Chrome'un <div>'leri veya mevcut <p>'ler) hepsini hizala;
+  // yoksa serbest içeriği tek bir <p>'ye topla.
+  const bloklar = [...editor.children].filter((el) => el.tagName === "P" || el.tagName === "DIV");
+  if (bloklar.length) {
+    bloklar.forEach((el) => {
+      const hedef = el.tagName === "DIV" ? divToP(el) : el;
+      hedef.style.textAlign = align;
+    });
+    return;
+  }
+  if (!editor.firstChild) return; // tamamen boş editör - hizalanacak bir şey yok
+  const p = document.createElement("p");
+  p.style.textAlign = align;
+  while (editor.firstChild) p.appendChild(editor.firstChild);
+  editor.appendChild(p);
+}
+
 // Hizalama blok seviyesinde uygulanır: seçimi içeren en yakın <p>'ye
 // (yoksa oluşturulur) text-align stili eklenir.
 function hizalaUygula(editor, align) {
   const sel = window.getSelection();
-  if (!sel || sel.rangeCount === 0) return;
+
+  // Seçim yoksa ya da editörün dışındaysa sessizce vazgeçmiyoruz: kullanıcı
+  // yazıyı yazıp doğrudan toolbar'a tıkladığında (odak editörde kalmamış
+  // olabilir) hizalamanın çalışmasını bekler. Böyle durumlarda hizalamayı
+  // editörün tamamına uyguluyoruz.
+  if (!sel || sel.rangeCount === 0) {
+    tumIcerigiHizala(editor, align);
+    return;
+  }
   const range = sel.getRangeAt(0);
-  if (!editor.contains(range.commonAncestorContainer)) return;
+  if (!editor.contains(range.commonAncestorContainer)) {
+    tumIcerigiHizala(editor, align);
+    return;
+  }
 
   let node = range.commonAncestorContainer;
   if (node.nodeType === Node.TEXT_NODE) node = node.parentNode;
@@ -87,16 +133,115 @@ function hizalaUygula(editor, align) {
   }
 
   if (!blok || blok === editor) {
-    // Editörün doğrudan içindeki metni bir <p>'ye sar.
-    const p = document.createElement("p");
-    p.style.textAlign = align;
-    const frag = range.extractContents();
-    p.appendChild(frag);
-    range.insertNode(p);
+    tumIcerigiHizala(editor, align);
     return;
   }
 
+  // Chrome'un ürettiği <div> satırları kalıcı olamaz (sanitizasyonda düşer);
+  // hizalamadan önce <p>'ye çeviriyoruz.
+  if (blok.tagName === "DIV") blok = divToP(blok);
+
   blok.style.textAlign = align;
+}
+
+const RENK_PALETI = [
+  "#23262b", "#e5504a", "#e5a946", "#2f9e5c",
+  "#2f7de1", "#8b5cf6", "#ec4899", "#ffffff"
+];
+const VURGU_PALETI = [
+  "#fff2b2", "#ffd6a5", "#c8f0c8", "#bfe3ff",
+  "#e3d1ff", "#ffc8dd", "#d9d9d9", "transparent"
+];
+
+// Tarayıcının yerleşik <input type="color"> öğesi tıklanınca işletim sistemi
+// seviyesinde bir pencere açar; bu pencere odağı editörden tamamen koparır ve
+// kapandığında contenteditable içindeki seçim collapse olmuş olur - bu yüzden
+// "input" event'i geldiğinde stilUygula() uygulanacak bir seçim bulamaz ve
+// sessizce hiçbir şey yapmaz. Bunun yerine aynı pencere içinde kalan, seçimi
+// mousedown anında kaydedip geri yükleyen kendi popup'ımızı kullanıyoruz.
+function createColorPopup({ trigger, palette, onPick, label }) {
+  let savedRange = null;
+  let panel = null;
+
+  trigger.addEventListener("mousedown", (e) => {
+    e.preventDefault();
+    const sel = window.getSelection();
+    savedRange = sel && sel.rangeCount > 0 ? sel.getRangeAt(0).cloneRange() : null;
+  });
+
+  function kapat() {
+    panel?.remove();
+    panel = null;
+    document.removeEventListener("mousedown", disaridaTikla, true);
+    document.removeEventListener("keydown", escKapat, true);
+  }
+
+  function disaridaTikla(e) {
+    if (panel && !panel.contains(e.target) && e.target !== trigger) kapat();
+  }
+  function escKapat(e) {
+    if (e.key === "Escape") kapat();
+  }
+
+  function uygula(renk) {
+    if (savedRange) {
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(savedRange);
+    }
+    onPick(renk);
+    kapat();
+  }
+
+  trigger.addEventListener("click", () => {
+    if (panel) { kapat(); return; }
+
+    panel = document.createElement("div");
+    panel.className = "rte-color-popup";
+    panel.setAttribute("role", "dialog");
+    panel.setAttribute("aria-label", label);
+    panel.addEventListener("mousedown", (e) => e.preventDefault());
+
+    const swatchGrid = document.createElement("div");
+    swatchGrid.className = "rte-color-swatches";
+    palette.forEach((renk) => {
+      const sw = document.createElement("button");
+      sw.type = "button";
+      sw.className = "rte-color-swatch";
+      sw.style.background = renk === "transparent"
+        ? "repeating-conic-gradient(#8886 0% 25%, transparent 0% 50%) 50% / 10px 10px"
+        : renk;
+      sw.title = renk;
+      sw.addEventListener("click", () => uygula(renk));
+      swatchGrid.appendChild(sw);
+    });
+
+    const hexRow = document.createElement("div");
+    hexRow.className = "rte-color-hex";
+    const hexInput = document.createElement("input");
+    hexInput.type = "text";
+    hexInput.placeholder = "#RRGGBB";
+    hexInput.maxLength = 7;
+    const hexBtn = document.createElement("button");
+    hexBtn.type = "button";
+    hexBtn.textContent = "Uygula";
+    hexBtn.addEventListener("click", () => {
+      const v = hexInput.value.trim();
+      if (/^#[0-9a-fA-F]{3,6}$/.test(v)) uygula(v);
+    });
+    hexInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") { e.preventDefault(); hexBtn.click(); }
+    });
+    hexRow.append(hexInput, hexBtn);
+
+    panel.append(swatchGrid, hexRow);
+    trigger.parentElement.appendChild(panel);
+
+    setTimeout(() => {
+      document.addEventListener("mousedown", disaridaTikla, true);
+      document.addEventListener("keydown", escKapat, true);
+    }, 0);
+  });
 }
 
 export function createRichTextEditor(editor, toolbar) {
@@ -118,24 +263,70 @@ export function createRichTextEditor(editor, toolbar) {
   btn('[data-cmd="align-center"]')?.addEventListener("click", () => hizalaUygula(editor, "center"));
   btn('[data-cmd="align-right"]')?.addEventListener("click", () => hizalaUygula(editor, "right"));
 
-  const renkInput = toolbar.querySelector('[data-cmd="color"]');
-  renkInput?.addEventListener("input", () => {
-    stilUygula(editor, window.getSelection(), { color: renkInput.value });
-  });
+  const renkBtn = btn('[data-cmd="color"]');
+  if (renkBtn) {
+    createColorPopup({
+      trigger: renkBtn,
+      palette: RENK_PALETI,
+      label: "Metin rengi seç",
+      onPick: (renk) => stilUygula(editor, window.getSelection(), { color: renk })
+    });
+  }
 
-  const vurguInput = toolbar.querySelector('[data-cmd="highlight"]');
-  vurguInput?.addEventListener("input", () => {
-    stilUygula(editor, window.getSelection(), { "background-color": vurguInput.value });
-  });
+  const vurguBtn = btn('[data-cmd="highlight"]');
+  if (vurguBtn) {
+    createColorPopup({
+      trigger: vurguBtn,
+      palette: VURGU_PALETI,
+      label: "Vurgu rengi seç",
+      onPick: (renk) => stilUygula(editor, window.getSelection(), { "background-color": renk })
+    });
+  }
 
+  // Font boyutu <select>'i: açılır listeye tıklamak odağı editörden alır ve
+  // contenteditable seçimi collapse olur - "change" geldiğinde uygulanacak
+  // seçim kalmaz. Renk popup'ındaki gibi seçimi mousedown anında kaydedip
+  // uygulamadan hemen önce geri yüklüyoruz. (editor.focus() çağırmak bu sorunu
+  // çözmez, aksine seçimi imleç konumuna daraltır.)
   const boyutSelect = toolbar.querySelector('[data-cmd="font-size"]');
-  boyutSelect?.addEventListener("change", () => {
-    editor.focus();
-    if (boyutSelect.value) stilUygula(editor, window.getSelection(), { "font-size": boyutSelect.value });
-  });
+  if (boyutSelect) {
+    let kayitliRange = null;
+    boyutSelect.addEventListener("mousedown", () => {
+      const s = window.getSelection();
+      kayitliRange = s && s.rangeCount > 0 ? s.getRangeAt(0).cloneRange() : null;
+    });
+    boyutSelect.addEventListener("change", () => {
+      if (!boyutSelect.value) return;
+      if (kayitliRange) {
+        const s = window.getSelection();
+        s.removeAllRanges();
+        s.addRange(kayitliRange);
+      }
+      stilUygula(editor, window.getSelection(), { "font-size": boyutSelect.value });
+    });
+  }
 
   return {
-    getHtml: () => editor.innerHTML,
+    // Chrome contenteditable'da Enter her yeni satır için <div> üretir; bunlar
+    // sanitizasyonda düşeceği için (ALLOWED_TAGS'te div yok) satır yapısı ve
+    // üzerlerindeki text-align kaybolurdu. Okuma anında hepsini <p>'ye çevirip
+    // kalıcı olabilecek bir biçim veriyoruz.
+    getHtml: () => {
+      // En derinden başlayarak dönüştürüyoruz: iç içe div'lerde (Chrome bazen
+      // üretir) önce içteki gerçek satır <p> olur, dıştaki sarmalayıcı ise
+      // artık blok içerdiği için <p>'ye çevrilmeyip düzleştirilir - "<p> içinde
+      // <p>" gibi geçersiz HTML üretmemek için.
+      const divler = [...editor.querySelectorAll("div")].reverse();
+      divler.forEach((div) => {
+        if (div.querySelector("p, div")) {
+          // Blok içeren sarmalayıcı: kendisini kaldır, çocuklarını yerine koy.
+          div.replaceWith(...div.childNodes);
+        } else {
+          divToP(div);
+        }
+      });
+      return editor.innerHTML;
+    },
     setHtml: (html) => { editor.innerHTML = html || ""; },
     isEmpty: () => editor.textContent.trim() === ""
   };

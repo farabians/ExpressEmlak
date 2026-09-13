@@ -1,0 +1,38 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="/assets/css/admin.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
+</head><body>
+<div class="rte-toolbar" id="aciklamaToolbar" role="toolbar" aria-label="Metin biçimlendirme">
+                  <button type="button" data-cmd="bold" title="Kalın" aria-label="Kalın"><i class="fas fa-bold"></i></button>
+                  <button type="button" data-cmd="italic" title="İtalik" aria-label="İtalik"><i class="fas fa-italic"></i></button>
+                  <span class="rte-sep"></span>
+                  <div class="rte-color">
+                    <button type="button" data-cmd="color" title="Metin rengi" aria-label="Metin rengi"><i class="fas fa-font"></i></button>
+                  </div>
+                  <div class="rte-color">
+                    <button type="button" data-cmd="highlight" title="Vurgu (arka plan) rengi" aria-label="Vurgu rengi"><i class="fas fa-highlighter"></i></button>
+                  </div>
+                  <select data-cmd="font-size" title="Font boyutu" aria-label="Font boyutu">
+                    <option value="">Boyut</option>
+                    <option value="13px">Küçük</option>
+                    <option value="16px">Normal</option>
+                    <option value="20px">Büyük</option>
+                    <option value="26px">Çok Büyük</option>
+                  </select>
+                  <span class="rte-sep"></span>
+                  <button type="button" data-cmd="align-left" title="Sola hizala" aria-label="Sola hizala"><i class="fas fa-align-left"></i></button>
+                  <button type="button" data-cmd="align-center" title="Ortala" aria-label="Ortala"><i class="fas fa-align-center"></i></button>
+                  <button type="button" data-cmd="align-right" title="Sağa hizala" aria-label="Sağa hizala"><i class="fas fa-align-right"></i></button>
+                </div>
+                <div class="rte-editor" id="aciklamaEditor" contenteditable="true"
+                     data-placeholder="İlanınızın detaylarını yazınız..." role="textbox" aria-multiline="true"></div>
+<pre id="cikti"></pre>
+<script type="module">
+  import { createRichTextEditor, temizleAciklamaHtml } from '/assets/js/rich-text.js';
+  const ed = document.getElementById('aciklamaEditor');
+  const tb = document.getElementById('aciklamaToolbar');
+  window.__rte = createRichTextEditor(ed, tb);
+  window.__temizle = temizleAciklamaHtml;
+  window.__hazir = true;
+</script>
+</body></html>

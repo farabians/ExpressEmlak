@@ -22,6 +22,28 @@ service cloud.firestore {
         ];
     }
 
+    // Ziyaretçi bir ilanı açtığında goruntulenmeSayisi alanını 1 artırabilir -
+    // kimliksiz, ama YALNIZCA bu iki alanı (sayaç + zaman damgası) değiştirebilir
+    // ve değer tam olarak eskisi+1 olmalı (rastgele büyük bir sayıya atlayamaz).
+    // Başka herhangi bir alana dokunan istek reddedilir - bu yüzden aynı
+    // yetkisiz kullanıcı fiyatı/açıklamayı değiştiremez, yalnızca sayacı ilerletebilir.
+    //
+    // Sunucu tarafı hız sınırlaması: istemcideki sessionStorage kontrolü (10sn
+    // bekleme) tarayıcı konsolundan veya doğrudan API çağrısıyla atlatılabilir -
+    // bu yüzden gerçek koruma burada. goruntulenmeSonZaman alanı her artışta
+    // request.time'a (sunucu saati, istemci taklit edemez) güncellenmek ZORUNDA;
+    // bir önceki güncellemeden bu yana en az 10 saniye geçmediyse istek reddedilir.
+    function sadeceGoruntulenmeArtisi() {
+      let eskiSayi = resource.data.get('goruntulenmeSayisi', 0);
+      let sonZaman = resource.data.get('goruntulenmeSonZaman', timestamp.value(0));
+      let beklemeGecti = request.time > sonZaman + duration.value(10, 's');
+      return request.resource.data.diff(resource.data).affectedKeys()
+               .hasOnly(['goruntulenmeSayisi', 'goruntulenmeSonZaman'])
+        && request.resource.data.goruntulenmeSayisi == eskiSayi + 1
+        && request.resource.data.goruntulenmeSonZaman == request.time
+        && beklemeGecti;
+    }
+
     // İlanlar: herkes okur (site ziyaretçileri), yalnızca yetkili yazar.
     match /ilanlar/{ilanId} {
       allow read: if true;
@@ -29,8 +51,11 @@ service cloud.firestore {
       // Yeni ilan oluşturma
       allow create: if isAllowedUploader();
 
-      // Güncelleme/silme: yalnızca yetkili kullanıcı
-      allow update, delete: if isAllowedUploader();
+      // Güncelleme: yetkili kullanıcı her şeyi değiştirebilir; kimliksiz
+      // ziyaretçi yalnızca görüntülenme sayacını 1 artırabilir.
+      allow update: if isAllowedUploader() || sadeceGoruntulenmeArtisi();
+
+      allow delete: if isAllowedUploader();
     }
 
     // Site ayarları (Express Konut ödeme planları vb.):

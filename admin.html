@@ -46,8 +46,12 @@
 
     <!-- Sekmeler -->
     <div class="adm-tabs" role="tablist" aria-label="Panel bölümleri">
-      <button type="button" class="adm-tab is-active" id="tabBtnIlanlar"
-              role="tab" aria-selected="true" aria-controls="tabIlanlar">
+      <button type="button" class="adm-tab is-active" id="tabBtnIlanEkle"
+              role="tab" aria-selected="true" aria-controls="tabIlanEkle">
+        <i class="fas fa-plus"></i> İlan Ekle
+      </button>
+      <button type="button" class="adm-tab" id="tabBtnIlanlar"
+              role="tab" aria-selected="false" aria-controls="tabIlanlar">
         <i class="fas fa-house"></i> İlanlar
       </button>
       <button type="button" class="adm-tab" id="tabBtnKonut"
@@ -56,7 +60,7 @@
       </button>
     </div>
 
-    <div id="tabIlanlar" role="tabpanel" aria-labelledby="tabBtnIlanlar">
+    <div id="tabIlanEkle" role="tabpanel" aria-labelledby="tabBtnIlanEkle">
 
     <!-- Adım göstergesi -->
     <div class="stepper" aria-label="İlan verme adımları">
@@ -131,14 +135,12 @@
                   <button type="button" data-cmd="bold" title="Kalın" aria-label="Kalın"><i class="fas fa-bold"></i></button>
                   <button type="button" data-cmd="italic" title="İtalik" aria-label="İtalik"><i class="fas fa-italic"></i></button>
                   <span class="rte-sep"></span>
-                  <label class="rte-color" title="Metin rengi">
-                    <i class="fas fa-font"></i>
-                    <input type="color" data-cmd="color" value="#23262b">
-                  </label>
-                  <label class="rte-color" title="Vurgu (arka plan) rengi">
-                    <i class="fas fa-highlighter"></i>
-                    <input type="color" data-cmd="highlight" value="#fff2b2">
-                  </label>
+                  <div class="rte-color">
+                    <button type="button" data-cmd="color" title="Metin rengi" aria-label="Metin rengi"><i class="fas fa-font"></i></button>
+                  </div>
+                  <div class="rte-color">
+                    <button type="button" data-cmd="highlight" title="Vurgu (arka plan) rengi" aria-label="Vurgu rengi"><i class="fas fa-highlighter"></i></button>
+                  </div>
                   <select data-cmd="font-size" title="Font boyutu" aria-label="Font boyutu">
                     <option value="">Boyut</option>
                     <option value="13px">Küçük</option>
@@ -161,6 +163,16 @@
               <div class="form-control-wrap row">
                 <input type="number" id="fiyat" min="0" step="1000" style="max-width:200px" placeholder="0">
                 <span class="suffix">TL</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="main-label" for="goruntulenmeGoster">Görüntülenme Sayısı</label>
+              <div class="form-control-wrap">
+                <label class="check-label">
+                  <input type="checkbox" id="goruntulenmeGoster" checked>
+                  <span>İlan sayfasında görüntülenme sayısını göster</span>
+                </label>
               </div>
             </div>
 
@@ -464,17 +476,41 @@
 
         <div class="form-footer">
           <button type="submit" class="btn" id="submitBtn">İlanı Yayınla</button>
+          <button type="button" class="btn btn-outline" id="duzenlemeIptalBtn" hidden>Düzenlemeyi İptal Et</button>
         </div>
 
       </div>
     </form>
 
-    <!-- ===== Yayındaki ilanlar ===== -->
-    <div class="list-head">
-      <h2>Yayındaki İlanlar</h2>
-      <span class="count-badge" id="ilanCount"></span>
     </div>
-    <div id="ilanListesi"></div>
+    <!-- /tabIlanEkle -->
+
+    <!-- ===== Yayındaki ilanlar ===== -->
+    <div id="tabIlanlar" role="tabpanel" aria-labelledby="tabBtnIlanlar" hidden>
+
+      <div class="list-head">
+        <h2>Yayındaki İlanlar</h2>
+        <span class="count-badge" id="ilanCount"></span>
+      </div>
+
+      <div class="ilan-filtreler">
+        <div class="ilan-filtre-arama">
+          <i class="fas fa-magnifying-glass"></i>
+          <input type="search" id="ilanAra" placeholder="İlan başlığında ara..." autocomplete="off">
+        </div>
+        <select id="ilanFiltreKategori"><option value="">Tüm kategoriler</option></select>
+        <select id="ilanFiltreTip">
+          <option value="">Satılık ve Kiralık</option>
+          <option value="satilik">Satılık</option>
+          <option value="kiralik">Kiralık</option>
+        </select>
+        <select id="ilanFiltreIlce"><option value="">Tüm ilçeler</option></select>
+        <button type="button" class="btn btn-outline btn-sm" id="ilanFiltreTemizle">
+          <i class="fas fa-rotate-left"></i> Temizle
+        </button>
+      </div>
+
+      <div id="ilanListesi"></div>
 
     </div>
     <!-- /tabIlanlar -->

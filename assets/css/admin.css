@@ -408,23 +408,72 @@ input.wide, textarea.wide { max-width: 620px; }
   margin: 0 4px;
 }
 
-.rte-toolbar .rte-color {
-  display: inline-flex; align-items: center; gap: 4px;
-  padding: 4px 6px;
-  color: var(--adm-muted);
-  font-size: 12px;
-  cursor: pointer;
+.rte-toolbar .rte-color { position: relative; display: inline-flex; }
+.rte-toolbar .rte-color button {
+  width: 32px; height: 32px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: transparent;
+  border: 1px solid transparent;
   border-radius: var(--adm-radius-sm);
-}
-.rte-toolbar .rte-color:hover { background: var(--adm-hover); }
-.rte-toolbar .rte-color input[type="color"] {
-  width: 22px; height: 22px;
-  padding: 0;
-  border: 1px solid var(--adm-border);
-  border-radius: 4px;
-  background: none;
+  color: var(--adm-text);
   cursor: pointer;
+  font-size: 13px;
 }
+.rte-toolbar .rte-color button:hover { background: var(--adm-hover); border-color: var(--adm-border); }
+
+/* Özel renk seçici popup - tarayıcının yerleşik <input type="color">
+   penceresi contenteditable seçimini kaybettirdiği için değiştirildi. */
+.rte-color-popup {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 20;
+  background: var(--adm-panel);
+  border: 1px solid var(--adm-border);
+  border-radius: var(--adm-radius-sm);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+  padding: 10px;
+  width: 168px;
+}
+.rte-color-swatches {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin-bottom: 8px;
+}
+.rte-color-swatch {
+  width: 30px; height: 30px;
+  border-radius: 6px;
+  border: 1px solid var(--adm-border);
+  cursor: pointer;
+  padding: 0;
+}
+.rte-color-swatch:hover { outline: 2px solid var(--adm-primary); outline-offset: 1px; }
+.rte-color-hex {
+  display: flex;
+  gap: 6px;
+}
+.rte-color-hex input {
+  flex: 1;
+  min-width: 0;
+  padding: 5px 8px;
+  font-size: 12px;
+  background: var(--adm-input);
+  border: 1px solid var(--adm-border);
+  border-radius: var(--adm-radius-sm);
+  color: var(--adm-text);
+}
+.rte-color-hex button {
+  padding: 5px 10px;
+  font-size: 12px;
+  background: var(--adm-primary);
+  border: none;
+  border-radius: var(--adm-radius-sm);
+  color: #1f1f23;
+  cursor: pointer;
+  font-weight: 600;
+}
+.rte-color-hex button:hover { background: var(--adm-primary-hover); }
 
 .rte-toolbar select {
   max-width: 110px;
@@ -450,6 +499,16 @@ input.wide, textarea.wide { max-width: 620px; }
 }
 .rte-editor p { margin-bottom: 0.6em; }
 .rte-editor p:last-child { margin-bottom: 0; }
+
+/* Büyütülmüş fontlu vurgulu metinde arka planın yarım kalmaması için -
+   ilan-detay.css'teki .detay-aciklama kuralıyla aynı gerekçe: birimsiz
+   line-height kapsayıcının font boyutuna göre hesaplanır, büyük span
+   satır kutusundan taşar. Panelde ve sitede aynı görünmesi için ikisinde de var. */
+.rte-editor span[style*="font-size"] {
+  display: inline-block;
+  line-height: 1.35;
+  vertical-align: baseline;
+}
 input:focus, select:focus, textarea:focus { border-color: var(--adm-primary); }
 input::placeholder, textarea::placeholder { color: var(--adm-faint); }
 select { appearance: none; background-image: none; cursor: pointer; }
@@ -793,6 +852,47 @@ input.has-error, select.has-error, textarea.has-error, .rte-editor.has-error { b
   border: 1px solid var(--adm-border);
   padding: 3px 10px;
   border-radius: 999px;
+}
+
+/* ---------- İlanlar sekmesi: arama + filtreler ---------- */
+.ilan-filtreler {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.ilan-filtre-arama {
+  flex: 1 1 240px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  background: var(--adm-input);
+  border: 1px solid var(--adm-border);
+  border-radius: var(--adm-radius-sm);
+  color: var(--adm-faint);
+}
+.ilan-filtre-arama input {
+  flex: 1;
+  border: none;
+  background: none;
+  padding: 10px 0;
+  color: var(--adm-text);
+  font: inherit;
+  font-size: 13.5px;
+  outline: none;
+}
+.ilan-filtre-arama input::placeholder { color: var(--adm-faint); }
+
+.ilan-filtreler select {
+  flex: 0 1 180px;
+  max-width: none;
+}
+
+@media (max-width: 780px) {
+  .ilan-filtreler { flex-direction: column; }
+  .ilan-filtreler select { flex: 1 1 auto; }
 }
 
 .ilan {

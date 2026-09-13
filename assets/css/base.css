@@ -11,12 +11,12 @@
   --dark: #1a1a1a;
   --dark-soft: #2a2a2a;
 
-  /* Açık tema yüzeyleri */
-  --bg: #f4f5f7;
+  /* Açık tema yüzeyleri (nötr, kağıt gibi) */
+  --bg: #f6f5f2;
   --surface: #ffffff;
-  --surface-alt: #fafafa;
-  --border: #e4e6ea;
-  --border-strong: #d0d3d9;
+  --surface-alt: #f0efe9;
+  --border: #e2e0d8;
+  --border-strong: #c9c6ba;
 
   /* Metin */
   --text: #23262b;
@@ -34,7 +34,7 @@
   --shadow-sm: 0 1px 3px rgba(16, 20, 27, 0.06);
   --shadow: 0 4px 16px rgba(16, 20, 27, 0.08);
   --shadow-lg: 0 12px 32px rgba(16, 20, 27, 0.12);
-  --header-h: 82px;
+  --header-h: 84px;
   --transition: 0.25s ease;
 }
 
@@ -68,89 +68,116 @@ a:hover { text-decoration: underline; }
   overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
 }
 
-/* ---------- Header (sitenin geri kalanıyla aynı) ---------- */
-/* Faz 12: koyu temadan açık/beyaz temaya taşındı - admin.html bu dosyayı
-   kullanmıyor (kendi ayrı admin.css'i var, koyu kalıyor - kullanıcı kararı). */
+/* ---------- Header ---------- */
+/* Faz 14: tek katmanlı, koyu ve kararlı kimlik - logo solda, nav ortada,
+   sağda altın "Hemen Ara" CTA'sı header'a net bir odak noktası veriyor.
+   admin.html bu dosyayı kullanmıyor (kendi ayrı admin.css'i var, koyu
+   kalıyor - kullanıcı kararı). */
 .ee-header {
-  background: rgba(255, 255, 255, 0.96);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--border);
+  background: var(--dark);
   position: fixed;
   top: 0; left: 0; right: 0;
   z-index: 1000;
-  padding: 1rem 0;
+  padding: 0;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.06);
 }
 
 .ee-header-inner {
-  max-width: 1200px;
+  max-width: 1280px;
+  height: var(--header-h);
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
+  gap: 24px;
 }
 
-.ee-logo-img { height: 50px; width: auto; }
+.ee-logo-img { height: 44px; width: auto; }
 
-.ee-nav { display: flex; gap: 2rem; align-items: center; }
+.ee-nav { display: flex; gap: 2.2rem; align-items: center; }
 
-/* Menü linkleri ve animasyon özellikleri */
 .ee-nav a {
-  color: var(--text);
+  color: rgba(255, 255, 255, 0.75);
   font-weight: 500;
-  font-size: 1rem;
+  font-size: 0.92rem;
+  letter-spacing: 0.02em;
   position: relative;
   padding: 0.5rem 0;
   transition: color var(--transition);
 }
 
-/* Alt çizgi efekti (başlangıçta gizli) */
 .ee-nav a::after {
   content: '';
   position: absolute;
   width: 0;
   height: 2px;
-  bottom: 0;
+  bottom: -2px;
   left: 0;
   background-color: var(--primary);
-  transition: width 0.3s ease;
+  transition: width 0.25s ease;
 }
 
-.ee-nav a:hover, .ee-nav a.active { 
-  color: var(--primary-dark); 
-  text-decoration: none; 
+.ee-nav a:hover, .ee-nav a.active {
+  color: #fff;
+  text-decoration: none;
 }
 
-/* Hover olduğunda veya aktif sayfada çizgiyi tam genişliğe çıkar */
 .ee-nav a:hover::after, .ee-nav a.active::after {
   width: 100%;
 }
 
+.ee-nav-actions { display: flex; align-items: center; gap: 1.1rem; }
+
 .ee-nav-fav {
-  font-size: 1.15rem;
+  font-size: 1rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  width: 40px; height: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 50%;
+  color: rgba(255, 255, 255, 0.75);
+  padding: 0 !important;
 }
+.ee-nav-fav::after { display: none; }
+.ee-nav-fav:hover, .ee-nav-fav.active { border-color: var(--primary); color: var(--primary); background: rgba(229,169,70,0.1); }
+
+.ee-nav-cta {
+  font-size: 1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: var(--dark);
+  padding: 0 !important;
+  transition: var(--transition);
+}
+.ee-nav-cta::after { display: none; }
+.ee-nav-cta:hover { background: #fff; text-decoration: none; }
 
 .ee-menu-btn {
   display: none;
   background: none; border: none;
-  color: var(--text); font-size: 1.4rem; cursor: pointer; padding: 4px 8px;
+  color: #fff; font-size: 1.4rem; cursor: pointer; padding: 4px 8px;
 }
 
 /* Mobil açılır menü */
 .ee-nav.open {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   position: absolute;
   top: 100%; left: 0; right: 0;
-  background: rgba(255, 255, 255, 0.98);
-  border-bottom: 1px solid var(--border);
-  padding: 1rem 20px 1.25rem;
-  gap: 1rem;
+  background: var(--dark);
+  box-shadow: var(--shadow-lg);
+  padding: 1rem 24px 1.5rem;
+  gap: 0.25rem;
 }
+.ee-nav.open a { padding: 0.7rem 0; }
+.ee-nav.open .ee-nav-actions { flex-direction: column; align-items: flex-start; gap: 0.9rem; margin-top: 0.5rem; }
 
 @media (max-width: 860px) {
   .ee-header-inner { position: relative; }
@@ -162,13 +189,23 @@ a:hover { text-decoration: underline; }
 .ee-page { padding-top: var(--header-h); }
 
 /* ---------- Footer ---------- */
-/* Faz 12: header ile birlikte açık temaya taşındı - tam tutarlılık. */
+/* Faz 13: koyu, tipografi ağırlıklı, asimetrik düzen - marka bloğu solda geniş,
+   sağda iki dar sütun. Kart/gradient yok, tek ince altın çizgi üstte. */
 .ee-footer {
-  background: var(--surface-alt);
-  color: var(--text-muted);
-  border-top: 1px solid var(--border);
-  margin-top: 50px;
-  padding: 40px 0 0;
+  position: relative;
+  background: var(--dark);
+  color: rgba(255, 255, 255, 0.6);
+  margin-top: 80px;
+  padding: 64px 0 0;
+}
+
+.ee-footer::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 64px;
+  height: 3px;
+  background: var(--primary);
 }
 
 .ee-footer-inner {
@@ -176,32 +213,43 @@ a:hover { text-decoration: underline; }
   margin: 0 auto;
   padding: 0 20px;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 30px;
+  grid-template-columns: 1.4fr 1fr 1fr;
+  gap: 50px;
 }
+
+.ee-footer-inner > div:first-child { max-width: 320px; }
 
 .ee-footer h4 {
-  color: var(--dark);
-  font-size: 15px;
-  margin-bottom: 14px;
+  color: #fff;
+  font-size: 13px;
+  margin-bottom: 18px;
   font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
-.ee-footer a { color: var(--text-muted); }
-.ee-footer a:hover { color: var(--primary-dark); text-decoration: none; }
+.ee-footer a { color: rgba(255, 255, 255, 0.6); }
+.ee-footer a:hover { color: var(--primary); text-decoration: none; }
 
-.ee-footer-links { list-style: none; display: grid; gap: 8px; font-size: 13px; }
-.ee-footer-logo { height: 46px; margin-bottom: 12px; }
-.ee-footer p { font-size: 13px; color: var(--text-faint); }
+.ee-footer-links { list-style: none; display: grid; gap: 12px; font-size: 13px; }
+.ee-footer-logo { height: 40px; margin-bottom: 16px; }
+.ee-footer p { font-size: 13px; line-height: 1.8; color: rgba(255, 255, 255, 0.45); }
 
 .ee-footer-bottom {
   max-width: 1200px;
-  margin: 30px auto 0;
-  padding: 18px 20px;
-  border-top: 1px solid var(--border);
+  margin: 50px auto 0;
+  padding: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
   font-size: 12px;
-  color: var(--text-faint);
+  color: rgba(255, 255, 255, 0.35);
   text-align: center;
+}
+
+@media (max-width: 768px) {
+  .ee-footer { padding-top: 48px; margin-top: 56px; }
+  .ee-footer-inner { grid-template-columns: 1fr; gap: 32px; }
+  .ee-footer-inner > div:first-child { max-width: none; }
+  .ee-footer-bottom { margin-top: 36px; }
 }
 
 /* ---------- Paylaşılan sayfa yapı taşları ---------- */

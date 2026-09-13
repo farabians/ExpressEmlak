@@ -1,6 +1,6 @@
 // İlan detayı sayfasının davranışı.
 // Sorumluluklar küçük fonksiyonlara bölündü: veri çek -> parçaları doldur.
-import { collection, doc, getDoc, getDocs, limit, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { collection, doc, getDoc, getDocs, increment, limit, query, serverTimestamp, updateDoc, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { db, CONTACT } from "./firebase-config.js";
 import { FEATURE_GROUPS, SPEC_ROWS, displayName } from "./constants.js";
 import { FOTO_YOK, anaFoto } from "./ilan-kart.js";
@@ -52,14 +52,15 @@ function setupGaleri(photoUrls, ilanBasligi, videoUrl) {
     btn.addEventListener("click", () => show(i));
     thumbs.appendChild(btn);
   });
-  // İlk 5 fotoğrafı göster, kalanları gizle
-  if (urls.length > 5) {
+  // İlk 10 fotoğrafı göster, kalanları gizle
+  const THUMB_VISIBLE = 10;
+  if (urls.length > THUMB_VISIBLE) {
     thumbs.classList.add("is-collapsed");
     moreBtn.hidden = false;
 
     moreBtn.innerHTML =
       `<i class="fas fa-chevron-down"></i>
-       ${urls.length - 5} fotoğraf daha göster`;
+       ${urls.length - THUMB_VISIBLE} fotoğraf daha göster`;
 
     moreBtn.onclick = () => {
       const collapsed = thumbs.classList.toggle("is-collapsed");
@@ -68,7 +69,7 @@ function setupGaleri(photoUrls, ilanBasligi, videoUrl) {
 
       moreBtn.innerHTML = collapsed
         ? `<i class="fas fa-chevron-down"></i>
-           ${urls.length - 5} fotoğraf daha göster`
+           ${urls.length - THUMB_VISIBLE} fotoğraf daha göster`
         : `<i class="fas fa-chevron-up"></i>
            Fotoğrafları gizle`;
     };
@@ -341,7 +342,11 @@ function setupTabs() {
 function setupActions(d) {
   const url = location.href;
 
-  $("#btnYazdir").addEventListener("click", () => window.print());
+  $("#btnYazdir").addEventListener("click", () => {
+    const el = $("#printTarih");
+    if (el) el.textContent = `Oluşturulma: ${formatDate(new Date())}`;
+    window.print();
+  });
 
   $("#btnPaylas").addEventListener("click", async () => {
     const payload = { title: d.isim, text: `${d.isim} — ${priceLabel(d.fiyat)}`, url };
@@ -451,6 +456,32 @@ function showError(message) {
   if (message) $("#errorText").textContent = message;
 }
 
+/* -------------------------------------------------- Görüntülenme sayacı */
+
+const GORUNTULENME_BEKLEME_MS = 10_000; // hızlı F5/istek spam'ine karşı
+
+// Saf zaman mantığı ayrı tutuldu - sessionStorage okuma/yazma yan etkisi
+// bundan bağımsız, testte gerçek storage'a ihtiyaç duymadan doğrulanabilir.
+export function goruntulenmeIzinliMi(sonZaman, simdi, bekleme = GORUNTULENME_BEKLEME_MS) {
+  if (sonZaman === null || sonZaman === undefined) return true;
+  return simdi - sonZaman >= bekleme;
+}
+
+function goruntulenmeIzniVar(id) {
+  const anahtar = `ee_goruntulenme_${id}`;
+  let sonZaman = null;
+  try {
+    const ham = sessionStorage.getItem(anahtar);
+    sonZaman = ham ? Number(ham) : null;
+  } catch { /* özel sekmede okunamaz - izin ver, tekilleştirme zorunlu değil */ }
+
+  const simdi = Date.now();
+  if (!goruntulenmeIzinliMi(sonZaman, simdi)) return false;
+
+  try { sessionStorage.setItem(anahtar, String(simdi)); } catch { /* yoksay */ }
+  return true;
+}
+
 async function init() {
   setupTabs();
 
@@ -475,6 +506,22 @@ async function init() {
 
   const d = snap.data();
 
+  // Görüntülenme sayacı: her gerçek ziyaret sayılır (aynı kişi farklı
+  // zamanlarda tekrar girerse de artar - kullanıcı kararı, kalıcı
+  // tekilleştirme yapılmıyor). sessionStorage kontrolü (10sn) yalnızca
+  // gereksiz istek göndermemek için bir ön-filtre - konsoldan atlatılabilir.
+  // Asıl koruma sunucuda: firestore.rules, goruntulenmeSonZaman'ın sunucu
+  // saatiyle (request.time) en az 10 saniye eskide olmasını şart koşuyor,
+  // bu yüzden istemci ne yaparsa yapsın 10 saniyeden sık artış kabul edilmez.
+  if (goruntulenmeIzniVar(ilanId)) {
+    updateDoc(doc(db, "ilanlar", ilanId), {
+      goruntulenmeSayisi: increment(1),
+      goruntulenmeSonZaman: serverTimestamp()
+    }).catch((err) => {
+      console.error("Görüntülenme sayacı güncellenemedi:", err);
+    });
+  }
+
   document.title = `${d.isim || "İlan"} - Express Emlak`;
   const desc = htmlToPlainText(d.aciklama).slice(0, 155);
   if (desc) $('meta[name="description"]').content = desc;
@@ -496,6 +543,15 @@ async function init() {
 
   const badges = [d.ilanTipi, d.altKategori].map(displayName).filter(Boolean);
   $("#specBadges").innerHTML = badges.map((b) => `<span class="spec-badge">${escapeHtml(b)}</span>`).join("");
+
+  // Görüntülenme sayısı: ilan bazlı, varsayılan açık. Panelden "goruntulenmeGizli"
+  // işaretlenirse (bilinçli tercih: alan yoksa/false ise göster) ziyaretçiye gösterilmez.
+  // Sadece ikon + sayı - metin yok (başlık satırındaki dar alana sığması için).
+  if (!d.goruntulenmeGizli) {
+    const sayi = Number(d.goruntulenmeSayisi) || 0;
+    $("#specGoruntulenmeSayi").textContent = String(sayi);
+    $("#specGoruntulenme").hidden = false;
+  }
 
   // Eski kayıtlar düz metin (\n ile); yeni kayıtlar zengin metin editöründen
   // gelen HTML. Tag içermeyen içerik düz metin sayılıp escapeMultiline ile
