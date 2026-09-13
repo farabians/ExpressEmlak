@@ -78,7 +78,74 @@ export class PhotoPicker {
   get removedExistingPaths() {
     return this.existing.filter((e) => !e.keep && e.path).map((e) => e.path);
   }
+  getOrderedItems() {
+  return [
+    ...this.keptExisting.map((item) => ({
+      type: "existing",
+      item
+    })),
+    ...this.files.map((file) => ({
+      type: "new",
+      item: file
+    }))
+  ];
+}
 
+reorder(fromIndex, toIndex) {
+  const items = this.getOrderedItems();
+
+  if (
+    fromIndex < 0 ||
+    toIndex < 0 ||
+    fromIndex >= items.length ||
+    toIndex >= items.length ||
+    fromIndex === toIndex
+  ) {
+    return;
+  }
+
+  const [moved] = items.splice(fromIndex, 1);
+  items.splice(toIndex, 0, moved);
+
+  // Sıralamayı tekrar mevcut / yeni olarak ayır.
+  this.files = items
+    .filter((x) => x.type === "new")
+    .map((x) => x.item);
+
+  const kept = items
+    .filter((x) => x.type === "existing")
+    .map((x) => x.item);
+
+  // Silinmiş mevcut fotoğraflar existing içinde kalmalı.
+  const removed = this.existing.filter((item) => !item.keep);
+
+  this.existing = [...kept, ...removed];
+
+  this.render();
+}
+getOrderedPhotoUrls(newUrls = []) {
+  let newIndex = 0;
+
+  return this.getOrderedItems().map((entry) => {
+    if (entry.type === "existing") {
+      return entry.item.url;
+    }
+
+    return newUrls[newIndex++];
+  });
+}
+
+getOrderedPhotoPaths(newPaths = []) {
+  let newIndex = 0;
+
+  return this.getOrderedItems().map((entry) => {
+    if (entry.type === "existing") {
+      return entry.item.path;
+    }
+
+    return newPaths[newIndex++];
+  });
+}
   /**
    * Düzenleme akışında mevcut ilanın fotoğraflarını yükler. Yeni seçilen
    * dosyalardan (this.files) bağımsız - create akışı bunu hiç çağırmaz,
@@ -141,76 +208,169 @@ export class PhotoPicker {
   }
 
   render() {
-    const { previewGrid, countLabel } = this.el;
+  const { previewGrid, countLabel } = this.el;
 
-    // Eski önizleme URL'lerini serbest bırak (yalnızca yerel blob: URL'ler -
-    // mevcut uzak fotoğrafların http(s) URL'lerini revoke etmeye çalışmak zararsız
-    // olsa da anlamsız, o yüzden yalnızca blob: olanlar için çağrılıyor).
-    $$("img", previewGrid).forEach((img) => { if (img.src.startsWith("blob:")) URL.revokeObjectURL(img.src); });
-    previewGrid.innerHTML = "";
-
-    let kapakGosterildi = false;
-
-    this.keptExisting.forEach((item) => {
-      const gercekIndex = this.existing.indexOf(item);
-      const el = document.createElement("div");
-      el.className = "preview-item";
-
-      const img = document.createElement("img");
-      img.src = item.url;
-      img.alt = "";
-
-      const btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "remove";
-      btn.setAttribute("aria-label", "Fotoğrafı kaldır");
-      btn.innerHTML = '<i class="fas fa-times"></i>';
-      btn.addEventListener("click", () => this.removeExisting(gercekIndex));
-
-      el.append(img, btn);
-      if (!kapakGosterildi) {
-        const tag = document.createElement("span");
-        tag.className = "cover-tag";
-        tag.textContent = "Vitrin";
-        el.appendChild(tag);
-        kapakGosterildi = true;
-      }
-      previewGrid.appendChild(el);
-    });
-
-    this.files.forEach((file, i) => {
-      const item = document.createElement("div");
-      item.className = "preview-item";
-
-      const img = document.createElement("img");
-      img.src = URL.createObjectURL(file);
-      img.alt = file.name;
-
-      const btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "remove";
-      btn.setAttribute("aria-label", `${file.name} fotoğrafını kaldır`);
-      btn.innerHTML = '<i class="fas fa-times"></i>';
-      btn.addEventListener("click", () => this.remove(i));
-
-      item.append(img, btn);
-      if (!kapakGosterildi) {
-        const tag = document.createElement("span");
-        tag.className = "cover-tag";
-        tag.textContent = "Vitrin";
-        kapakGosterildi = true;
-        item.appendChild(tag);
-      }
-      previewGrid.appendChild(item);
-    });
-
-    countLabel.textContent = this.count
-      ? `${this.count} / ${MAX_PHOTOS} fotoğraf (${this.keptExisting.length} mevcut, ${this.files.length} yeni)`
-      : "";
-    if (!this.keptExisting.length && this.files.length) {
-      countLabel.textContent = `${this.files.length} / ${MAX_PHOTOS} fotoğraf seçildi`;
+  // Eski blob URL'lerini serbest bırak
+  $$("img", previewGrid).forEach((img) => {
+    if (img.src.startsWith("blob:")) {
+      URL.revokeObjectURL(img.src);
     }
+  });
+
+  previewGrid.innerHTML = "";
+
+  const items = this.getOrderedItems();
+
+  items.forEach((entry, index) => {
+    const el = document.createElement("div");
+
+    el.className = "preview-item";
+    el.draggable = true;
+    el.dataset.index = String(index);
+
+    // ---------------------------------------------------------
+    // Fotoğraf
+    // ---------------------------------------------------------
+
+    const img = document.createElement("img");
+    img.alt = "";
+
+    if (entry.type === "existing") {
+      img.src = entry.item.url;
+    } else {
+      img.src = URL.createObjectURL(entry.item);
+      img.alt = entry.item.name;
+    }
+
+    // ---------------------------------------------------------
+    // Drag handle
+    // ---------------------------------------------------------
+
+    const handle = document.createElement("span");
+    handle.className = "drag-handle";
+    handle.innerHTML = '<i class="fas fa-grip-vertical"></i>';
+    handle.setAttribute("aria-hidden", "true");
+
+    // ---------------------------------------------------------
+    // Sil butonu
+    // ---------------------------------------------------------
+
+    const btn = document.createElement("button");
+
+    btn.type = "button";
+    btn.className = "remove";
+    btn.setAttribute(
+      "aria-label",
+      entry.type === "existing"
+        ? "Fotoğrafı kaldır"
+        : `${entry.item.name} fotoğrafını kaldır`
+    );
+
+    btn.innerHTML = '<i class="fas fa-times"></i>';
+
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+
+      if (entry.type === "existing") {
+        const realIndex = this.existing.indexOf(entry.item);
+
+        if (realIndex !== -1) {
+          this.removeExisting(realIndex);
+        }
+      } else {
+        const realIndex = this.files.indexOf(entry.item);
+
+        if (realIndex !== -1) {
+          this.remove(realIndex);
+        }
+      }
+    });
+
+    // ---------------------------------------------------------
+    // Vitrin etiketi
+    // ---------------------------------------------------------
+
+    if (index === 0) {
+      const tag = document.createElement("span");
+
+      tag.className = "cover-tag";
+      tag.textContent = "Vitrin";
+
+      el.appendChild(tag);
+    }
+
+    // ---------------------------------------------------------
+    // Drag & Drop
+    // ---------------------------------------------------------
+
+    el.addEventListener("dragstart", (e) => {
+      e.stopPropagation();
+
+      el.classList.add("is-dragging");
+
+      e.dataTransfer.effectAllowed = "move";
+      e.dataTransfer.setData(
+        "text/plain",
+        String(index)
+      );
+    });
+
+    el.addEventListener("dragend", () => {
+      el.classList.remove("is-dragging");
+
+      $$(".preview-item", previewGrid).forEach((item) => {
+        item.classList.remove("is-drag-over");
+      });
+    });
+
+    el.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      e.dataTransfer.dropEffect = "move";
+
+      el.classList.add("is-drag-over");
+    });
+
+    el.addEventListener("dragleave", (e) => {
+      if (!el.contains(e.relatedTarget)) {
+        el.classList.remove("is-drag-over");
+      }
+    });
+
+    el.addEventListener("drop", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      el.classList.remove("is-drag-over");
+
+      const fromIndex = Number(
+        e.dataTransfer.getData("text/plain")
+      );
+
+      const toIndex = Number(el.dataset.index);
+
+      this.reorder(fromIndex, toIndex);
+    });
+
+    el.append(img, handle, btn);
+
+    previewGrid.appendChild(el);
+  });
+
+  // ---------------------------------------------------------
+  // Sayaç
+  // ---------------------------------------------------------
+
+  countLabel.textContent = this.count
+    ? `${this.count} / ${MAX_PHOTOS} fotoğraf (${this.keptExisting.length} mevcut, ${this.files.length} yeni)`
+    : "";
+
+  if (!this.keptExisting.length && this.files.length) {
+    countLabel.textContent =
+      `${this.files.length} / ${MAX_PHOTOS} fotoğraf seçildi`;
   }
+}
 }
 
 export class VideoPicker {

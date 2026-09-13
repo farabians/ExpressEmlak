@@ -320,8 +320,13 @@ $("#ilanForm").addEventListener("submit", async (e) => {
     const { urls: yeniUrls, paths: yeniPaths } = await uploadPhotos(photos.files, currentUser.uid);
     uploaded.push(...yeniPaths);
 
-    const photoUrls = editingId ? photos.keptExistingUrls.concat(yeniUrls) : yeniUrls;
-    const photoPaths = editingId ? photos.keptExistingPaths.concat(yeniPaths) : yeniPaths;
+    const photoUrls = editingId
+  ? photos.getOrderedPhotoUrls(yeniUrls)
+  : yeniUrls;
+
+const photoPaths = editingId
+  ? photos.getOrderedPhotoPaths(yeniPaths)
+  : yeniPaths;
     if (editingId) removedPaths.push(...photos.removedExistingPaths);
 
     let videoUrl = editingId ? video.keptExistingUrl : null;

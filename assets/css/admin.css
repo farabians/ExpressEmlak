@@ -811,7 +811,54 @@ input.has-error, select.has-error, textarea.has-error, .rte-editor.has-error { b
   text-align: center;
   padding: 2px;
 }
+/* Fotoğrafları sıralama */
+.preview-item {
+  cursor: grab;
+  transition:
+    transform 0.15s ease,
+    opacity 0.15s ease,
+    border-color 0.15s ease;
+  border: 1px solid transparent;
+}
 
+.preview-item:active {
+  cursor: grabbing;
+}
+
+.preview-item.is-dragging {
+  opacity: 0.4;
+  transform: scale(0.96);
+}
+
+.preview-item.is-drag-over {
+  border-color: var(--adm-primary);
+  box-shadow: 0 0 0 2px var(--adm-primary-soft);
+}
+
+.preview-item .drag-handle {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(20, 20, 22, 0.8);
+  color: var(--adm-muted);
+  display: grid;
+  place-items: center;
+  font-size: 11px;
+  cursor: grab;
+  z-index: 2;
+}
+
+.preview-item .drag-handle:hover {
+  color: #fff;
+  background: rgba(20, 20, 22, 0.95);
+}
+
+.preview-item .cover-tag {
+  pointer-events: none;
+}
 /* Yükleme çubuğu */
 .progress-wrap { margin-top: 16px; }
 .progress-wrap[hidden] { display: none; }

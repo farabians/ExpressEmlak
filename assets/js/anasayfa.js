@@ -32,9 +32,10 @@ function initSlider() {
   }
 
   function startAutoSlide() {
+    // Üst üste binmeyi engellemek için önce mevcut interval'i temizliyoruz
+    clearInterval(autoSlideInterval); 
     autoSlideInterval = setInterval(() => showSlide(currentSlide + 1), 7000);
   }
-
   function resetAutoSlide() {
     clearInterval(autoSlideInterval);
     startAutoSlide();
