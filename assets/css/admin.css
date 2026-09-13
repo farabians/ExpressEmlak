@@ -811,28 +811,59 @@ input.has-error, select.has-error, textarea.has-error, .rte-editor.has-error { b
   text-align: center;
   padding: 2px;
 }
-/* Fotoğrafları sıralama */
+/* ---------- Fotoğrafları sıralama (sürükle-bırak) ---------- */
 .preview-item {
   cursor: grab;
-  transition:
-    transform 0.15s ease,
-    opacity 0.15s ease,
-    border-color 0.15s ease;
   border: 1px solid transparent;
+  transition:
+    transform 0.18s cubic-bezier(0.2, 0, 0.2, 1),
+    opacity 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
 }
 
-.preview-item:active {
+.preview-item:hover { transform: translateY(-2px); }
+.preview-item:active { cursor: grabbing; }
+
+/* Sürüklenen kart: yerinde soluk bir boşluk bırakır. */
+.preview-item.is-dragging {
+  opacity: 0.35;
+  transform: scale(0.94);
   cursor: grabbing;
 }
 
-.preview-item.is-dragging {
-  opacity: 0.4;
-  transform: scale(0.96);
-}
+/* Sıralama sürerken diğer kartlar hafifçe geri çekilip hedefi belirginleştirir;
+   ayrıca hover kalkar ki imleç altındaki kart yanlışlıkla öne çıkmasın. */
+.preview-grid.is-sorting .preview-item { opacity: 0.75; }
+.preview-grid.is-sorting .preview-item:hover { transform: none; }
+.preview-grid.is-sorting .preview-item.is-drag-over { opacity: 1; }
 
+/* Bırakma hedefi: imlecin kartın hangi yarısında olduğuna göre bir kenara
+   altın bir çizgi çizilir - fotoğrafın nereye gireceği net görünür. */
 .preview-item.is-drag-over {
   border-color: var(--adm-primary);
   box-shadow: 0 0 0 2px var(--adm-primary-soft);
+  transform: scale(1.03);
+}
+
+.preview-item.is-drag-over::after {
+  content: '';
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  width: 3px;
+  border-radius: 2px;
+  background: var(--adm-primary);
+  box-shadow: 0 0 8px var(--adm-primary);
+  z-index: 3;
+  animation: drop-line 0.18s ease;
+}
+.preview-item.drop-before::after { left: -2px; }
+.preview-item.drop-after::after { right: -2px; }
+
+@keyframes drop-line {
+  from { opacity: 0; transform: scaleY(0.4); }
+  to   { opacity: 1; transform: scaleY(1); }
 }
 
 .preview-item .drag-handle {
@@ -849,6 +880,16 @@ input.has-error, select.has-error, textarea.has-error, .rte-editor.has-error { b
   font-size: 11px;
   cursor: grab;
   z-index: 2;
+  opacity: 0;
+  transition: opacity 0.18s ease, color 0.18s ease, background 0.18s ease;
+}
+
+/* Tutamaç yalnızca ilgilenildiğinde görünür - ızgara sakin kalır. Dokunmatik
+   cihazlarda hover olmadığı için orada her zaman açık bırakılıyor. */
+.preview-item:hover .drag-handle,
+.preview-item:focus-within .drag-handle { opacity: 1; }
+@media (hover: none) {
+  .preview-item .drag-handle { opacity: 1; }
 }
 
 .preview-item .drag-handle:hover {
@@ -856,8 +897,15 @@ input.has-error, select.has-error, textarea.has-error, .rte-editor.has-error { b
   background: rgba(20, 20, 22, 0.95);
 }
 
+/* Vitrin rozeti yeni fotoğrafa geçtiğinde kısa bir vurgu yapar. */
 .preview-item .cover-tag {
   pointer-events: none;
+  animation: cover-pop 0.28s ease;
+}
+
+@keyframes cover-pop {
+  from { transform: translateY(100%); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
 }
 /* Yükleme çubuğu */
 .progress-wrap { margin-top: 16px; }
@@ -865,6 +913,101 @@ input.has-error, select.has-error, textarea.has-error, .rte-editor.has-error { b
 .progress-bar { height: 6px; background: var(--adm-input); border-radius: 999px; overflow: hidden; }
 .progress-bar span { display: block; height: 100%; width: 0; background: var(--adm-primary); transition: width 0.25s; }
 .progress-text { font-size: 12px; color: var(--adm-muted); margin-top: 6px; }
+
+/* ---------- Toast bildirimleri ---------- */
+/* Sayfanın üstünde sabit durur; form sıfırlanıp adım 1'e dönse de görünür. */
+.toast-stack {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  width: min(420px, calc(100vw - 32px));
+  pointer-events: none;
+}
+
+.toast {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: var(--adm-radius);
+  border: 1px solid var(--adm-border);
+  background: var(--adm-panel);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+  color: var(--adm-text);
+  font-size: 13.5px;
+  pointer-events: auto;
+  animation: toast-in 0.28s cubic-bezier(0.2, 0, 0.2, 1);
+}
+
+/* Kapanış animasyonu bitene kadar yaşasın diye ayrı sınıf (JS ekliyor). */
+.toast.is-leaving { animation: toast-out 0.22s ease forwards; }
+
+.toast-icon {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 13px;
+  color: #fff;
+}
+.toast-body { flex: 1; min-width: 0; }
+.toast-title { font-weight: 600; color: #fff; }
+.toast-text { color: var(--adm-muted); font-size: 12.5px; margin-top: 2px; }
+
+.toast-close {
+  flex-shrink: 0;
+  width: 24px; height: 24px;
+  border: none;
+  background: none;
+  color: var(--adm-faint);
+  font-size: 13px;
+  cursor: pointer;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+}
+.toast-close:hover { color: #fff; background: var(--adm-hover); }
+
+.toast-ok { border-color: rgba(35, 165, 89, 0.45); }
+.toast-ok .toast-icon { background: var(--adm-success); }
+.toast-err { border-color: rgba(229, 80, 74, 0.5); }
+.toast-err .toast-icon { background: var(--adm-danger); }
+
+/* Kalan süreyi gösteren ince şerit. */
+.toast-progress {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 2px;
+  border-radius: 0 0 var(--adm-radius) var(--adm-radius);
+  background: currentColor;
+  opacity: 0.5;
+  transform-origin: left;
+  animation: toast-progress linear forwards;
+}
+.toast { position: relative; overflow: hidden; }
+.toast-ok .toast-progress { color: var(--adm-success); }
+.toast-err .toast-progress { color: var(--adm-danger); }
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(-14px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes toast-out {
+  to { opacity: 0; transform: translateY(-10px) scale(0.97); }
+}
+@keyframes toast-progress {
+  from { transform: scaleX(1); }
+  to   { transform: scaleX(0); }
+}
 
 /* ---------- Form alt kısmı ---------- */
 .form-msg { font-size: 13.5px; font-weight: 500; min-height: 20px; margin-bottom: 10px; text-align: right; }

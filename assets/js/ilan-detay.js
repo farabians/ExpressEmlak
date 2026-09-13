@@ -392,9 +392,11 @@ function renderSatici(d) {
   $("#saticiName").textContent = d.kimden === "Sahibinden" ? CONTACT.name : (d.kimden || CONTACT.name);
   $("#saticiSince").textContent = `Hesap açma tarihi: ${CONTACT.since}`;
 
+  // Etiket yerine kişi adı gösterilir ("Cep 2" değil "Mehmet Üzüm"); ada sahip
+  // olmayan bir kayıt eklenirse label'a düşer.
   $("#saticiPhones").innerHTML = CONTACT.phones.map((p) => `
     <a class="satici-phone" href="tel:${escapeHtml(p.tel)}">
-      <span>${escapeHtml(p.label)}</span>
+      <span>${escapeHtml(p.person || p.label)}</span>
       <strong>${escapeHtml(p.number)}</strong>
     </a>
   `).join("");

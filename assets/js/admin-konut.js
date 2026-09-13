@@ -9,7 +9,7 @@ import { doc, getDoc, serverTimestamp, setDoc }
 import { app, db } from "./firebase-config.js";
 import { VARSAYILAN_KONUT } from "./konut-data.js";
 import { IconPicker } from "./icon-picker.js";
-import { $, $$, escapeHtml, formatDate } from "./utils.js";
+import { $, $$, escapeHtml, formatDate, showToast } from "./utils.js";
 
 const auth = getAuth(app);
 let veri = null;   // Firestore'dan gelen (veya varsayılan) çalışma kopyası
@@ -216,6 +216,7 @@ async function kaydet(kullaniciEmail) {
       guncelleyen: kullaniciEmail
     }));
     setMesaj("Değişiklikler kaydedildi.", "ok");
+    showToast("Express Konut kaydedildi", { text: "Değişiklikler yayına alındı." });
     setTimeout(() => setMesaj("", ""), 4000);
   } catch (err) {
     console.error(err);

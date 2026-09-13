@@ -23,7 +23,8 @@ export const CONTACT = {
   since: "Ağustos 2023",
   phones: [
     { label: "Cep", person: "Muhammet Dündar", number: "0 (535) 060 82 83", tel: "+905350608283" },
-    { label: "Cep 2", person: "Mehmet Üzüm", number: "0 (544) 471 22 73", tel: "+905444712273" }
+    { label: "Cep 2", person: "Mehmet Üzüm", number: "0 (544) 471 22 73", tel: "+905444712273" },
+    { label: "Cep 3", person: "Furkan Demir", number: "0 (552) 534 89 70", tel: "+905525348970" }
   ],
   whatsapp: "905350608283",
   email: "expressinsaatgayrimenkul@gmail.com",

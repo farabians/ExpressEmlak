@@ -5,11 +5,38 @@
 // ($, escapeHtml, formatPrice), constants.js ise veri + saf arama fonksiyonları.
 // İlan alanlarını yorumlayan mantık ikisine de ait değil.
 import { SELECT_OPTIONS, displayName, slugify } from "./constants.js";
-import { escapeHtml, formatPrice, hasValue, priceLabel } from "./utils.js";
+import { escapeHtml, formatPrice, hasValue, ilanNo, priceLabel } from "./utils.js";
 
 // Fotoğrafı olmayan ilanlar için tek kaynak. (Eskiden images/placeholder.jpg
 // yazılıyordu ama o dosya hiç var olmadı - her fotoğrafsız kartta kırık resim çıkıyordu.)
 export const FOTO_YOK = "images/placeholder.svg";
+
+/**
+ * Bir ilan, arama terimiyle eşleşiyor mu? Hem ilan adında hem ilan numarasında
+ * arar. Site (ilanlar.js) ve yönetim paneli (admin.js) aynı kuralı kullansın
+ * diye burada: ayraç/sıfır toleransı iki yerde ayrı yazılırsa zamanla ayrışır.
+ *
+ * İlan numarası Firestore'da saklanmıyor, doküman id'sinden türetiliyor
+ * (utils.js: ilanNo). Listeler zaten bellekte olduğu için numarayı burada
+ * hesaplamak yeterli - eski kayıtlar dahil her ilan numaradan aranabilir.
+ *
+ * Numara girişinde boşluk/tire/# gibi ayraçlar yok sayılır ("#860 484 067" ile
+ * "860484067" aynı sonucu verir) ve baştaki sıfırlar zorunlu değildir. Kısmi
+ * numara eşleşmez: yarım yazılmış bir numara yanlış ilana götürmemeli.
+ */
+export function ilanAramaEslesiyorMu(d, ham) {
+  const terim = String(ham || "").trim();
+  if (!terim) return true;
+
+  const isim = (d.isim || "").toLocaleLowerCase("tr");
+  if (isim.includes(terim.toLocaleLowerCase("tr"))) return true;
+
+  const rakam = terim.replace(/\D/g, "");
+  if (!rakam || !d.id) return false;
+
+  const no = ilanNo(d.id);
+  return no === rakam || no.replace(/^0+/, "") === rakam.replace(/^0+/, "");
+}
 
 export function anaFoto(d) {
   return (d.photoUrls && d.photoUrls[0]) || FOTO_YOK;
@@ -149,6 +176,7 @@ export function renderKart(ilan, { gorunum = "grid", tel = "" } = {}) {
         <i class="fas fa-location-dot"></i> ${escapeHtml(konumEtiketi(ilan))}
       </p>
       <div class="property-features">${ozellikler}</div>
+      <div class="property-no">İlan No: ${escapeHtml(ilanNo(ilan.id))}</div>
     </div>
   `;
 

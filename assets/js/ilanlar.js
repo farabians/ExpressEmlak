@@ -7,7 +7,7 @@ import { collection, onSnapshot, orderBy, query }
   from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { db, CONTACT } from "./firebase-config.js";
 import { CATEGORY_TREE, SELECT_OPTIONS, displayName, slugify } from "./constants.js";
-import { kiralikMi, metrekareDegeri, renderKart } from "./ilan-kart.js";
+import { ilanAramaEslesiyorMu, kiralikMi, metrekareDegeri, renderKart } from "./ilan-kart.js";
 import { $, $$, buildOptions, escapeHtml } from "./utils.js";
 
 const SAYFA_BOYUTU = 12;
@@ -20,6 +20,7 @@ let gorunum = "grid";
 /* -------------------------------------------------------- Filtre durumu */
 
 const filtre = {
+  arama: "",      // ilan adı veya ilan numarası
   kategori: "",
   altKategori: "",
   tip: "",        // "satilik" | "kiralik"
@@ -75,6 +76,8 @@ const tarihMs = (d) => {
 
 function filtrele(liste, f) {
   return liste.filter((d) => {
+    // Ad veya ilan numarası - kural panelle ortak (ilan-kart.js).
+    if (!ilanAramaEslesiyorMu(d, f.arama)) return false;
     if (f.kategori && slugify(d.kategori) !== slugify(f.kategori)) return false;
     if (f.altKategori && (d.altKategori || "") !== f.altKategori) return false;
 
@@ -153,10 +156,17 @@ function uygula() {
   $("#propertiesList").className = `properties-list ${gorunum === "list" ? "list-view" : "grid-view"}`;
 
   if (!sonuc.toplam) {
-    $("#propertiesList").innerHTML = tumIlanlar.length
-      ? `<p class="no-results">Bu filtrelere uygun ilan bulunamadı.
-           <button type="button" class="btn-secondary" id="bosFiltreTemizle">Filtreleri Temizle</button></p>`
-      : '<p class="no-results">Henüz ilan bulunmuyor.</p>';
+    // Arama yapılmışsa terimi geri göster - kullanıcı yazdığını doğrulayabilsin
+    // (özellikle ilan numarasında bir hane yanlış yazılmışsa).
+    const aramaVar = (filtre.arama || "").trim();
+    $("#propertiesList").innerHTML = !tumIlanlar.length
+      ? '<p class="no-results">Henüz ilan bulunmuyor.</p>'
+      : aramaVar
+        ? `<p class="no-results">“${escapeHtml(aramaVar)}” için sonuç bulunamadı.
+             <br>İlan adını veya ilan numarasını kontrol edin.
+             <button type="button" class="btn-secondary" id="bosFiltreTemizle">Filtreleri Temizle</button></p>`
+        : `<p class="no-results">Bu filtrelere uygun ilan bulunamadı.
+             <button type="button" class="btn-secondary" id="bosFiltreTemizle">Filtreleri Temizle</button></p>`;
     const btn = $("#bosFiltreTemizle");
     if (btn) btn.addEventListener("click", temizle);
     sayfalamaGoster(1);
@@ -283,15 +293,40 @@ function filtreleriKur() {
   });
 
   $("#filtreTemizle").addEventListener("click", temizle);
+
+  // Arama: yazarken uygulanır. Liste bellekte olduğu için gecikmeye gerek yok.
+  const aramaInput = $("#aramaInput");
+  const aramaTemizleBtn = $("#aramaTemizle");
+
+  const aramayiUygula = () => {
+    filtre.arama = aramaInput.value;
+    aramaTemizleBtn.hidden = !aramaInput.value;
+    sayfa = 0;
+    filtreyiUrlyeYaz();
+    uygula();
+  };
+
+  aramaInput.value = filtre.arama;
+  aramaTemizleBtn.hidden = !filtre.arama;
+  aramaInput.addEventListener("input", aramayiUygula);
+
+  aramaTemizleBtn.addEventListener("click", () => {
+    aramaInput.value = "";
+    aramayiUygula();
+    aramaInput.focus();
+  });
 }
 
 function temizle() {
   Object.assign(filtre, {
+    arama: "",
     kategori: "", altKategori: "", tip: "", ilce: "", oda: "",
     minFiyat: "", maxFiyat: "", minM2: "", maxM2: "", binaYasi: "", isitma: "",
     sirala: "date-desc"
   });
   sayfa = 0;
+  $("#aramaInput").value = "";
+  $("#aramaTemizle").hidden = true;
   $("#fKategori").value = "";
   altKategoriSeceneginiGuncelle();
   $("#fTip").value = "";

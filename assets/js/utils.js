@@ -72,3 +72,77 @@ export function hasValue(value) {
   if (Array.isArray(value)) return value.length > 0;
   return true;
 }
+
+/**
+ * Ekranın üstünde kısa süreli bir bildirim gösterir.
+ *
+ * Panelde kaydetme sonrası tek geri bildirim, formun en altındaki .form-msg
+ * kutusuydu; ama kaydetmenin hemen ardından resetForm() adım 1'e dönüp sayfayı
+ * yukarı kaydırdığı için mesaj hiç görülmüyordu. Toast sabit konumlu ve
+ * form/adım durumundan bağımsız olduğu için bu sorundan etkilenmez.
+ *
+ * @param {string} title  Kalın başlık ("İlan yayınlandı")
+ * @param {object} [opts]
+ * @param {string} [opts.text]     Başlığın altındaki açıklama
+ * @param {"ok"|"err"} [opts.type] Görsel ton (varsayılan "ok")
+ * @param {number} [opts.duration] Otomatik kapanma süresi (ms)
+ */
+export function showToast(title, { text = "", type = "ok", duration = 5000 } = {}) {
+  const stack = document.getElementById("toastStack");
+  if (!stack) return; // toast kabı olmayan sayfalarda sessizce atla
+
+  const toast = document.createElement("div");
+  toast.className = `toast toast-${type}`;
+
+  const icon = document.createElement("span");
+  icon.className = "toast-icon";
+  icon.innerHTML = `<i class="fas ${type === "err" ? "fa-triangle-exclamation" : "fa-check"}"></i>`;
+
+  const body = document.createElement("div");
+  body.className = "toast-body";
+  const strong = document.createElement("div");
+  strong.className = "toast-title";
+  strong.textContent = title;
+  body.appendChild(strong);
+  if (text) {
+    const p = document.createElement("div");
+    p.className = "toast-text";
+    p.textContent = text;
+    body.appendChild(p);
+  }
+
+  const close = document.createElement("button");
+  close.type = "button";
+  close.className = "toast-close";
+  close.setAttribute("aria-label", "Bildirimi kapat");
+  close.innerHTML = '<i class="fas fa-times"></i>';
+
+  const progress = document.createElement("span");
+  progress.className = "toast-progress";
+  progress.style.animationDuration = `${duration}ms`;
+
+  toast.append(icon, body, close, progress);
+
+  let timer;
+  const kapat = () => {
+    clearTimeout(timer);
+    if (toast.classList.contains("is-leaving")) return;
+    toast.classList.add("is-leaving");
+    toast.addEventListener("animationend", () => toast.remove(), { once: true });
+  };
+
+  close.addEventListener("click", kapat);
+  // İmleç üzerindeyken kapanmasın - kullanıcı okumayı bitirsin.
+  toast.addEventListener("mouseenter", () => {
+    clearTimeout(timer);
+    progress.style.animationPlayState = "paused";
+  });
+  toast.addEventListener("mouseleave", () => {
+    progress.style.animationPlayState = "running";
+    timer = setTimeout(kapat, 1200);
+  });
+
+  stack.appendChild(toast);
+  timer = setTimeout(kapat, duration);
+  return toast;
+}

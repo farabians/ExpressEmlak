@@ -49,17 +49,32 @@ function enYakinAta(node, tagName, sinir) {
 }
 
 // Seçili metni <span style="..."> ile sarmalar (renk, vurgu, font boyutu).
+//
+// DİKKAT - iç içe span tuzağı: her çağrıda körlemesine yeni bir span sarmak
+// hataya yol açıyordu. CSS'te iç içe font-size'da EN İÇTEKİ kazanır; kullanıcı
+// metni 26px yapıp sonra 13px seçtiğinde yeni span dıştan sarıldığı için
+// görünen boyut 26px kalıyor ("küçültme çalışmıyor") ve her denemede bir
+// katman daha birikiyordu. Bu yüzden: mümkünse MEVCUT span'ı güncelliyor,
+// sarmalama gerektiğinde de kapsanan eski aynı-özellikli span'ları temizliyoruz.
 function stilUygula(editor, sel, stiller) {
   if (!sel || sel.rangeCount === 0 || sel.isCollapsed) return;
   const range = sel.getRangeAt(0);
   if (!editor.contains(range.commonAncestorContainer)) return;
 
+  const girdiler = Object.entries(stiller).filter(([k]) => IZIN_VERILEN_STIL.has(k));
+  if (!girdiler.length) return;
+
+  // 1) Seçim tam olarak mevcut bir <span>'ın içeriğiyse onu güncelle.
+  const mevcut = enYakinAta(range.commonAncestorContainer, "span", editor);
+  if (mevcut && seciliAlanTamKapsiyor(range, mevcut)) {
+    girdiler.forEach(([k, v]) => mevcut.style.setProperty(k, v));
+    ayniOzellikliIcSpanlariTemizle(mevcut, girdiler.map(([k]) => k));
+    return;
+  }
+
+  // 2) Yeni span ile sarmala.
   const span = document.createElement("span");
-  const stilMetni = Object.entries(stiller)
-    .filter(([k]) => IZIN_VERILEN_STIL.has(k))
-    .map(([k, v]) => `${k}: ${v}`)
-    .join("; ");
-  span.setAttribute("style", stilMetni);
+  span.setAttribute("style", girdiler.map(([k, v]) => `${k}: ${v}`).join("; "));
 
   try {
     range.surroundContents(span);
@@ -68,6 +83,31 @@ function stilUygula(editor, sel, stiller) {
     span.appendChild(frag);
     range.insertNode(span);
   }
+
+  // Sarmaladığımız içerikte aynı özelliği taşıyan eski span'lar varsa onlar
+  // "en içteki kazanır" kuralıyla yenisini ezerdi - o özelliği onlardan siliyoruz.
+  ayniOzellikliIcSpanlariTemizle(span, girdiler.map(([k]) => k));
+}
+
+// range, el'in tüm içeriğini (baştan sona) kapsıyor mu?
+function seciliAlanTamKapsiyor(range, el) {
+  const tam = document.createRange();
+  tam.selectNodeContents(el);
+  // Sabitleri çıplak global `Range`'ten değil range nesnesinin kendi
+  // sınıfından alıyoruz: modül kapsamında global Range her ortamda tanımlı
+  // olmayabilir (jsdom'da undefined) ve bu sessiz bir TypeError'a yol açar.
+  const R = range.constructor;
+  return range.compareBoundaryPoints(R.START_TO_START, tam) <= 0
+      && range.compareBoundaryPoints(R.END_TO_END, tam) >= 0;
+}
+
+// kok'un İÇİNDEKİ span'lardan verilen CSS özelliklerini siler; böylece dıştaki
+// yeni değer geçerli olur. Özelliksiz kalan span'lar tamamen kaldırılır.
+function ayniOzellikliIcSpanlariTemizle(kok, ozellikler) {
+  kok.querySelectorAll("span").forEach((ic) => {
+    ozellikler.forEach((k) => ic.style.removeProperty(k));
+    if (!ic.getAttribute("style")) ic.replaceWith(...ic.childNodes);
+  });
 }
 
 // Bir <div>'i aynı içerik ve stille <p>'ye dönüştürür, seçimi korur.
@@ -87,22 +127,61 @@ function divToP(div) {
 // toplar ve hizalar. Serbest metnin yalnızca seçili kısmını sarmalamak işe
 // yaramaz: text-align blok seviyesi bir özellik, satırın geri kalanı dışarıda
 // kalırsa görsel olarak hiçbir şey ortalanmış görünmez.
+// Bir düğüm gerçekten içerik taşıyor mu? (boşluk ve tek başına <br> sayılmaz)
+function icerikVar(node) {
+  if (node.nodeType === Node.TEXT_NODE) return node.textContent.trim() !== "";
+  if (node.nodeType !== Node.ELEMENT_NODE) return false;
+  if (node.tagName === "BR") return false;
+  return node.textContent.trim() !== "" || node.querySelector("img, video");
+}
+
 function tumIcerigiHizala(editor, align) {
-  // Zaten blok varsa (Chrome'un <div>'leri veya mevcut <p>'ler) hepsini hizala;
-  // yoksa serbest içeriği tek bir <p>'ye topla.
-  const bloklar = [...editor.children].filter((el) => el.tagName === "P" || el.tagName === "DIV");
-  if (bloklar.length) {
-    bloklar.forEach((el) => {
+  // DİKKAT: yalnızca METİN İÇEREN blokları "mevcut blok" sayıyoruz. Boş
+  // <p>'leri de blok saymak gerçek bir hataya yol açmıştı: editörde boş bir
+  // <p style="text-align:center"> varken metin onun DIŞINDA serbest duruyorsa,
+  // kod sadece o boş <p>'yi hizalayıp metne hiç dokunmuyor ve kullanıcı
+  // "hizalama çalışmıyor" diyordu (ekranda hiçbir değişiklik olmuyor).
+  const doluBloklar = [...editor.children]
+    .filter((el) => (el.tagName === "P" || el.tagName === "DIV") && icerikVar(el));
+
+  // Blokların dışında serbest dolaşan içerik (metin düğümleri, <br>, <span>...)
+  const serbestVar = [...editor.childNodes].some(
+    (n) => !(n.nodeType === Node.ELEMENT_NODE && (n.tagName === "P" || n.tagName === "DIV")) && icerikVar(n)
+  );
+
+  if (doluBloklar.length && !serbestVar) {
+    // Her şey zaten bloklara bölünmüş: hepsini hizala.
+    doluBloklar.forEach((el) => {
       const hedef = el.tagName === "DIV" ? divToP(el) : el;
       hedef.style.textAlign = align;
     });
+    bosBloklariTemizle(editor);
     return;
   }
-  if (!editor.firstChild) return; // tamamen boş editör - hizalanacak bir şey yok
+
+  if (!serbestVar && !doluBloklar.length) return; // gerçekten boş editör
+
+  // Serbest içerik var: editörün TÜM içeriğini tek bir <p>'ye topla. Boş
+  // <p>'ler bu sırada atılır, aksi halde metnin önünde/arkasında görünmez
+  // boşluklar olarak birikirler.
   const p = document.createElement("p");
   p.style.textAlign = align;
-  while (editor.firstChild) p.appendChild(editor.firstChild);
+  while (editor.firstChild) {
+    const n = editor.firstChild;
+    if (!icerikVar(n) && n.nodeType === Node.ELEMENT_NODE && (n.tagName === "P" || n.tagName === "DIV")) {
+      n.remove();          // boş blok - tamamen at
+      continue;
+    }
+    p.appendChild(n);
+  }
   editor.appendChild(p);
+}
+
+// İçeriği olmayan <p>/<div> kabuklarını siler (birikmiş boş bloklar).
+function bosBloklariTemizle(editor) {
+  [...editor.children].forEach((el) => {
+    if ((el.tagName === "P" || el.tagName === "DIV") && !icerikVar(el)) el.remove();
+  });
 }
 
 // Hizalama blok seviyesinde uygulanır: seçimi içeren en yakın <p>'ye

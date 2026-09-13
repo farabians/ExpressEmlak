@@ -48,6 +48,7 @@ jobs:
             --exclude 'sahibinden' \
             --exclude 'firestore.rules' \
             --exclude 'storage.rules' \
+            --exclude 'cloudflare-worker.js' \
             --exclude 'assets/js/admin-config.js' \
             ./ _site/
           echo "--- yayınlanacak dosyalar ---"

@@ -5,7 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>İlan Yönetimi - Express Emlak</title>
   <meta name="robots" content="noindex, nofollow">
-  <link rel="icon" type="image/png" href="images/favicon.png">
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="48x48" href="images/favicon-48.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="images/favicon-96.png">
+  <link rel="apple-touch-icon" href="images/favicon-192.png">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,6 +19,12 @@
   <link rel="stylesheet" href="assets/css/admin.css">
 </head>
 <body>
+
+  <!-- Kaydetme/güncelleme bildirimleri buraya eklenir (utils.js: showToast).
+       Panelden ve adım geçişlerinden bağımsız olsun diye body'nin doğrudan
+       altında duruyor: form mesajı sayfanın altındaki kutuda kalıp,
+       kaydetmeden sonra setStep(1) yukarı kaydırınca hiç görülmüyordu. -->
+  <div class="toast-stack" id="toastStack" role="status" aria-live="polite"></div>
 
   <!-- ===== Üst bar ===== -->
   <header class="adm-header">
@@ -496,7 +505,7 @@
       <div class="ilan-filtreler">
         <div class="ilan-filtre-arama">
           <i class="fas fa-magnifying-glass"></i>
-          <input type="search" id="ilanAra" placeholder="İlan başlığında ara..." autocomplete="off">
+          <input type="search" id="ilanAra" placeholder="İlan adı veya ilan no ile ara..." autocomplete="off">
         </div>
         <select id="ilanFiltreKategori"><option value="">Tüm kategoriler</option></select>
         <select id="ilanFiltreTip">

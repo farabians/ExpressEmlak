@@ -34,12 +34,20 @@ export function storagePathFromUrl(url) {
 
 export class PhotoPicker {
   constructor({ dropArea, input, previewGrid, countLabel, clearBtn }) {
-    this.files = [];
-    // Düzenleme akışında yüklenen mevcut uzak fotoğraflar: { url, path, keep }.
-    // Yeni seçilen dosyalardan (bu.files) ayrı tutuluyor çünkü biri zaten
-    // Storage'da duran uzak dosya, diğeri henüz yüklenmemiş yerel File nesnesi.
-    this.existing = [];
+    // Vitrin sırası tek bir listede tutulur; her eleman ya Storage'da duran bir
+    // uzak fotoğraf ya da henüz yüklenmemiş yerel bir File:
+    //   { kind: "existing", url, path, keep }
+    //   { kind: "new", file }
+    //
+    // Önceden sıra iki ayrı diziden (existing + files) türetiliyordu; bu yüzden
+    // yeni bir fotoğraf mevcutların arasına taşınamıyordu - sürükleme sonrası
+    // liste "önce tüm mevcutlar, sonra tüm yeniler" haline geri sıçrıyor, yani
+    // yeni yüklenen bir fotoğraf vitrin yapılamıyordu.
+    this.items = [];
     this.el = { dropArea, input, previewGrid, countLabel, clearBtn };
+    // Blob URL'leri File başına bir kez üretilir: her render'da yeniden
+    // oluşturmak sürükleme sırasında görselleri gereksizce yeniden yükletiyordu.
+    this._blobUrls = new Map();
 
     dropArea.addEventListener("click", () => input.click());
     dropArea.addEventListener("keydown", (e) => {
@@ -64,110 +72,83 @@ export class PhotoPicker {
     });
   }
 
+  // Ekranda görünen sıra: silinmiş mevcut fotoğraflar listede kalır (yolları
+  // submit anında Storage'dan silmek için gerekli) ama gösterilmez.
+  get visibleItems() { return this.items.filter((it) => it.kind === "new" || it.keep); }
+
   // Düzenleme modunda validate() bu sayıyı kullanır: kullanıcı hiç yeni
   // fotoğraf eklemeden mevcutları koruyarak kaydedebilmeli, yalnızca yeni
   // seçilenler üzerinden sayarsak "en az 1 fotoğraf" hatası yanlışlıkla tetiklenir.
-  get count() { return this.files.length + this.keptExisting.length; }
+  get count() { return this.visibleItems.length; }
 
-  get keptExisting() { return this.existing.filter((e) => e.keep); }
-  get keptExistingUrls() { return this.keptExisting.map((e) => e.url); }
-  // path'ler URL'lerle aynı sırada olmalı (loadExisting ikisini index ile
-  // eşliyor), bu yüzden null'lar burada süzülmez - filtrelemek hizalamayı bozar.
-  get keptExistingPaths() { return this.keptExisting.map((e) => e.path); }
+  // uploadPhotos() bu diziyi sırayla yükler; getOrderedPhoto* dönen URL/yolları
+  // yine bu sırayla eşleştirir, bu yüzden ikisi her zaman hizalı kalır.
+  get files() {
+    return this.visibleItems.filter((it) => it.kind === "new").map((it) => it.file);
+  }
+
   // deleteObject'e null gitmesin: yolu hiç çözülemeyen dosya silinemez.
   get removedExistingPaths() {
-    return this.existing.filter((e) => !e.keep && e.path).map((e) => e.path);
-  }
-  getOrderedItems() {
-  return [
-    ...this.keptExisting.map((item) => ({
-      type: "existing",
-      item
-    })),
-    ...this.files.map((file) => ({
-      type: "new",
-      item: file
-    }))
-  ];
-}
-
-reorder(fromIndex, toIndex) {
-  const items = this.getOrderedItems();
-
-  if (
-    fromIndex < 0 ||
-    toIndex < 0 ||
-    fromIndex >= items.length ||
-    toIndex >= items.length ||
-    fromIndex === toIndex
-  ) {
-    return;
+    return this.items
+      .filter((it) => it.kind === "existing" && !it.keep && it.path)
+      .map((it) => it.path);
   }
 
-  const [moved] = items.splice(fromIndex, 1);
-  items.splice(toIndex, 0, moved);
-
-  // Sıralamayı tekrar mevcut / yeni olarak ayır.
-  this.files = items
-    .filter((x) => x.type === "new")
-    .map((x) => x.item);
-
-  const kept = items
-    .filter((x) => x.type === "existing")
-    .map((x) => x.item);
-
-  // Silinmiş mevcut fotoğraflar existing içinde kalmalı.
-  const removed = this.existing.filter((item) => !item.keep);
-
-  this.existing = [...kept, ...removed];
-
-  this.render();
-}
-getOrderedPhotoUrls(newUrls = []) {
-  let newIndex = 0;
-
-  return this.getOrderedItems().map((entry) => {
-    if (entry.type === "existing") {
-      return entry.item.url;
-    }
-
-    return newUrls[newIndex++];
-  });
-}
-
-getOrderedPhotoPaths(newPaths = []) {
-  let newIndex = 0;
-
-  return this.getOrderedItems().map((entry) => {
-    if (entry.type === "existing") {
-      return entry.item.path;
-    }
-
-    return newPaths[newIndex++];
-  });
-}
   /**
-   * Düzenleme akışında mevcut ilanın fotoğraflarını yükler. Yeni seçilen
-   * dosyalardan (this.files) bağımsız - create akışı bunu hiç çağırmaz,
-   * bu yüzden davranışı hiç değişmez (existing her zaman boş dizi kalır).
+   * Ekrandaki sırayı, yeni yüklenen dosyaların URL'leriyle birleştirir.
+   * newUrls, this.files ile aynı sırada olmalıdır (uploadPhotos öyle üretir).
+   */
+  getOrderedPhotoUrls(newUrls = []) {
+    let i = 0;
+    return this.visibleItems.map((it) => (it.kind === "existing" ? it.url : newUrls[i++]));
+  }
+
+  getOrderedPhotoPaths(newPaths = []) {
+    let i = 0;
+    return this.visibleItems.map((it) => (it.kind === "existing" ? it.path : newPaths[i++]));
+  }
+
+  /**
+   * Görünür listede bir fotoğrafı başka bir konuma taşır. Tek liste üzerinde
+   * çalıştığı için mevcut ve yeni fotoğraflar birbirinin arasına geçebilir.
+   */
+  reorder(fromIndex, toIndex) {
+    const visible = this.visibleItems;
+    if (
+      fromIndex < 0 || toIndex < 0 ||
+      fromIndex >= visible.length || toIndex >= visible.length ||
+      fromIndex === toIndex
+    ) return;
+
+    const moved = visible[fromIndex];
+    const target = visible[toIndex];
+
+    // Gerçek indeksler üzerinden taşı: this.items silinmiş kayıtları da
+    // içerdiği için görünür indeksler doğrudan kullanılamaz.
+    const from = this.items.indexOf(moved);
+    this.items.splice(from, 1);
+    this.items.splice(this.items.indexOf(target) + (fromIndex < toIndex ? 1 : 0), 0, moved);
+
+    this.render();
+  }
+
+  /**
+   * Düzenleme akışında mevcut ilanın fotoğraflarını yükler. Create akışı bunu
+   * hiç çağırmaz, o yüzden orada liste yalnızca yeni dosyalardan oluşur.
    *
    * photoPaths alanı sonradan eklendiği için eski kayıtlarda yol gelmez;
    * bu durumda URL'den türetilir, aksi halde kaldırılan fotoğraf Storage'da
-   * yetim kalır. Türetilen yol kayda da yazılır (keptExistingPaths).
+   * yetim kalır.
    * @param {string[]} urls
    * @param {string[]} paths
    */
   loadExisting(urls = [], paths = []) {
-    this.existing = urls.map((url, i) => ({
+    this.items = urls.map((url, i) => ({
+      kind: "existing",
       url,
       path: paths[i] || storagePathFromUrl(url),
       keep: true
     }));
-    this.render();
-  }
-
-  removeExisting(index) {
-    this.existing[index].keep = false;
     this.render();
   }
 
@@ -188,189 +169,156 @@ getOrderedPhotoPaths(newPaths = []) {
         return;
       }
       // Aynı dosyayı iki kez eklemeyi engelle
-      const dup = this.files.some((f) => f.name === file.name && f.size === file.size);
-      if (!dup) this.files.push(file);
+      const dup = this.items.some(
+        (it) => it.kind === "new" && it.file.name === file.name && it.file.size === file.size
+      );
+      if (!dup) this.items.push({ kind: "new", file });
     });
 
     this.render();
     if (errors.length) alert(errors.join("\n"));
   }
 
-  remove(index) {
-    this.files.splice(index, 1);
+  /** Görünür listedeki bir fotoğrafı kaldırır (yeni ise listeden düşer,
+   *  mevcut ise Storage'dan silinmek üzere işaretlenir). */
+  removeAt(visibleIndex) {
+    const item = this.visibleItems[visibleIndex];
+    if (!item) return;
+
+    if (item.kind === "existing") {
+      item.keep = false;
+    } else {
+      this._releaseBlob(item.file);
+      this.items.splice(this.items.indexOf(item), 1);
+    }
     this.render();
   }
 
   clear() {
-    this.files = [];
-    this.existing = [];
+    this.items.forEach((it) => { if (it.kind === "new") this._releaseBlob(it.file); });
+    this.items = [];
     this.render();
   }
 
-  render() {
-  const { previewGrid, countLabel } = this.el;
-
-  // Eski blob URL'lerini serbest bırak
-  $$("img", previewGrid).forEach((img) => {
-    if (img.src.startsWith("blob:")) {
-      URL.revokeObjectURL(img.src);
-    }
-  });
-
-  previewGrid.innerHTML = "";
-
-  const items = this.getOrderedItems();
-
-  items.forEach((entry, index) => {
-    const el = document.createElement("div");
-
-    el.className = "preview-item";
-    el.draggable = true;
-    el.dataset.index = String(index);
-
-    // ---------------------------------------------------------
-    // Fotoğraf
-    // ---------------------------------------------------------
-
-    const img = document.createElement("img");
-    img.alt = "";
-
-    if (entry.type === "existing") {
-      img.src = entry.item.url;
-    } else {
-      img.src = URL.createObjectURL(entry.item);
-      img.alt = entry.item.name;
-    }
-
-    // ---------------------------------------------------------
-    // Drag handle
-    // ---------------------------------------------------------
-
-    const handle = document.createElement("span");
-    handle.className = "drag-handle";
-    handle.innerHTML = '<i class="fas fa-grip-vertical"></i>';
-    handle.setAttribute("aria-hidden", "true");
-
-    // ---------------------------------------------------------
-    // Sil butonu
-    // ---------------------------------------------------------
-
-    const btn = document.createElement("button");
-
-    btn.type = "button";
-    btn.className = "remove";
-    btn.setAttribute(
-      "aria-label",
-      entry.type === "existing"
-        ? "Fotoğrafı kaldır"
-        : `${entry.item.name} fotoğrafını kaldır`
-    );
-
-    btn.innerHTML = '<i class="fas fa-times"></i>';
-
-    btn.addEventListener("click", (e) => {
-      e.stopPropagation();
-
-      if (entry.type === "existing") {
-        const realIndex = this.existing.indexOf(entry.item);
-
-        if (realIndex !== -1) {
-          this.removeExisting(realIndex);
-        }
-      } else {
-        const realIndex = this.files.indexOf(entry.item);
-
-        if (realIndex !== -1) {
-          this.remove(realIndex);
-        }
-      }
-    });
-
-    // ---------------------------------------------------------
-    // Vitrin etiketi
-    // ---------------------------------------------------------
-
-    if (index === 0) {
-      const tag = document.createElement("span");
-
-      tag.className = "cover-tag";
-      tag.textContent = "Vitrin";
-
-      el.appendChild(tag);
-    }
-
-    // ---------------------------------------------------------
-    // Drag & Drop
-    // ---------------------------------------------------------
-
-    el.addEventListener("dragstart", (e) => {
-      e.stopPropagation();
-
-      el.classList.add("is-dragging");
-
-      e.dataTransfer.effectAllowed = "move";
-      e.dataTransfer.setData(
-        "text/plain",
-        String(index)
-      );
-    });
-
-    el.addEventListener("dragend", () => {
-      el.classList.remove("is-dragging");
-
-      $$(".preview-item", previewGrid).forEach((item) => {
-        item.classList.remove("is-drag-over");
-      });
-    });
-
-    el.addEventListener("dragover", (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-
-      e.dataTransfer.dropEffect = "move";
-
-      el.classList.add("is-drag-over");
-    });
-
-    el.addEventListener("dragleave", (e) => {
-      if (!el.contains(e.relatedTarget)) {
-        el.classList.remove("is-drag-over");
-      }
-    });
-
-    el.addEventListener("drop", (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-
-      el.classList.remove("is-drag-over");
-
-      const fromIndex = Number(
-        e.dataTransfer.getData("text/plain")
-      );
-
-      const toIndex = Number(el.dataset.index);
-
-      this.reorder(fromIndex, toIndex);
-    });
-
-    el.append(img, handle, btn);
-
-    previewGrid.appendChild(el);
-  });
-
-  // ---------------------------------------------------------
-  // Sayaç
-  // ---------------------------------------------------------
-
-  countLabel.textContent = this.count
-    ? `${this.count} / ${MAX_PHOTOS} fotoğraf (${this.keptExisting.length} mevcut, ${this.files.length} yeni)`
-    : "";
-
-  if (!this.keptExisting.length && this.files.length) {
-    countLabel.textContent =
-      `${this.files.length} / ${MAX_PHOTOS} fotoğraf seçildi`;
+  // File -> blob URL eşlemesi; aynı dosya için tekrar üretilmez.
+  _blobUrl(file) {
+    if (!this._blobUrls.has(file)) this._blobUrls.set(file, URL.createObjectURL(file));
+    return this._blobUrls.get(file);
   }
-}
+
+  _releaseBlob(file) {
+    const url = this._blobUrls.get(file);
+    if (url) {
+      URL.revokeObjectURL(url);
+      this._blobUrls.delete(file);
+    }
+  }
+
+  render() {
+    const { previewGrid, countLabel } = this.el;
+    previewGrid.innerHTML = "";
+
+    const visible = this.visibleItems;
+
+    visible.forEach((entry, index) => {
+      const el = document.createElement("div");
+      el.className = "preview-item";
+      el.draggable = true;
+      el.dataset.index = String(index);
+
+      const img = document.createElement("img");
+      if (entry.kind === "existing") {
+        img.src = entry.url;
+        img.alt = "";
+      } else {
+        img.src = this._blobUrl(entry.file);
+        img.alt = entry.file.name;
+      }
+      // Sürüklenen görselin yarı saydam "hayalet"i tarayıcıya bırakılır;
+      // img'nin kendisi sürüklenebilir olursa asıl sürükleme iptal oluyor.
+      img.draggable = false;
+
+      const handle = document.createElement("span");
+      handle.className = "drag-handle";
+      handle.innerHTML = '<i class="fas fa-grip-vertical"></i>';
+      handle.setAttribute("aria-hidden", "true");
+
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "remove";
+      btn.setAttribute(
+        "aria-label",
+        entry.kind === "existing" ? "Fotoğrafı kaldır" : `${entry.file.name} fotoğrafını kaldır`
+      );
+      btn.innerHTML = '<i class="fas fa-times"></i>';
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        this.removeAt(index);
+      });
+
+      if (index === 0) {
+        const tag = document.createElement("span");
+        tag.className = "cover-tag";
+        tag.textContent = "Vitrin";
+        el.appendChild(tag);
+      }
+
+      el.addEventListener("dragstart", (e) => {
+        e.stopPropagation();
+        e.dataTransfer.effectAllowed = "move";
+        e.dataTransfer.setData("text/plain", String(index));
+        // Sınıf bir sonraki kareye ertelenir: dragstart anında uygulanırsa
+        // tarayıcı sürükleme görüntüsünü küçülmüş/soluk halinden alır.
+        requestAnimationFrame(() => el.classList.add("is-dragging"));
+        previewGrid.classList.add("is-sorting");
+      });
+
+      el.addEventListener("dragend", () => {
+        el.classList.remove("is-dragging");
+        previewGrid.classList.remove("is-sorting");
+        $$(".preview-item", previewGrid).forEach((item) =>
+          item.classList.remove("is-drag-over", "drop-before", "drop-after")
+        );
+      });
+
+      el.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        e.dataTransfer.dropEffect = "move";
+        if (el.classList.contains("is-dragging")) return;
+
+        // İmleç kartın hangi yarısında? Bırakma çizgisi o tarafa çizilir.
+        const { left, width } = el.getBoundingClientRect();
+        const after = e.clientX > left + width / 2;
+        el.classList.add("is-drag-over");
+        el.classList.toggle("drop-after", after);
+        el.classList.toggle("drop-before", !after);
+      });
+
+      el.addEventListener("dragleave", (e) => {
+        if (!el.contains(e.relatedTarget)) {
+          el.classList.remove("is-drag-over", "drop-before", "drop-after");
+        }
+      });
+
+      el.addEventListener("drop", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        el.classList.remove("is-drag-over", "drop-before", "drop-after");
+        this.reorder(Number(e.dataTransfer.getData("text/plain")), index);
+      });
+
+      el.append(img, handle, btn);
+      previewGrid.appendChild(el);
+    });
+
+    const mevcut = visible.filter((it) => it.kind === "existing").length;
+    const yeni = visible.length - mevcut;
+
+    if (!visible.length) countLabel.textContent = "";
+    else if (!mevcut) countLabel.textContent = `${yeni} / ${MAX_PHOTOS} fotoğraf seçildi`;
+    else countLabel.textContent = `${visible.length} / ${MAX_PHOTOS} fotoğraf (${mevcut} mevcut, ${yeni} yeni)`;
+  }
 }
 
 export class VideoPicker {

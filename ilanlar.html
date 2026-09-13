@@ -5,7 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>İlanlar - Express Emlak</title>
     <meta name="description" content="Express Emlak’ın güncel satılık ve kiralık ilanlarını inceleyin; kategori, ilçe ve fiyata göre filtreleyin.">
-    <link rel="icon" type="image/png" href="images/favicon.png">
+    <link rel="icon" href="/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="48x48" href="images/favicon-48.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="images/favicon-96.png">
+    <link rel="apple-touch-icon" href="images/favicon-192.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -110,6 +113,16 @@
 
             <!-- Sağ: ilan listesi -->
             <div class="ilanlar-liste-alan">
+                <div class="listings-search">
+                    <label class="sr-only" for="aramaInput">İlan adı veya ilan numarası ile ara</label>
+                    <i class="fas fa-magnifying-glass" aria-hidden="true"></i>
+                    <input type="search" id="aramaInput" autocomplete="off"
+                           placeholder="İlan adı veya ilan no ile ara (ör. 860484067)">
+                    <button type="button" id="aramaTemizle" aria-label="Aramayı temizle" hidden>
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+
                 <div class="listings-controls">
                     <div class="results-count">
                         <strong id="sonucSayisi">&hellip;</strong> ilan bulundu
@@ -169,6 +182,7 @@
                 <ul class="ee-footer-links">
                     <li><a href="tel:+905350608283"><i class="fas fa-phone"></i> 0 (535) 060 82 83</a></li>
                     <li><a href="tel:+905444712273"><i class="fas fa-phone"></i> 0 (544) 471 22 73</a></li>
+                    <li><a href="tel:+905525348970"><i class="fas fa-phone"></i> 0 (552) 534 89 70</a></li>
                     <li><a href="mailto:expressinsaatgayrimenkul@gmail.com"><i class="fas fa-envelope"></i> E-posta gönder</a></li>
                 </ul>
             </div>

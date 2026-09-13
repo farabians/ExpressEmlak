@@ -312,6 +312,17 @@ a:hover { text-decoration: underline; }
 }
 .property-features span { display: flex; align-items: center; gap: 0.3rem; }
 
+/* İlan numarası: müşteri telefonda bu numarayı söyleyip ilanı bulabilsin diye
+   kartta da gösteriliyor (ilanlar sayfasındaki arama kutusu numarayı kabul eder). */
+.property-no {
+  margin-top: 0.7rem;
+  padding-top: 0.7rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.78rem;
+  color: var(--text-faint);
+  letter-spacing: 0.02em;
+}
+
 .property-card-list { display: flex; flex-direction: column; }
 .property-card-list .property-image { height: 200px; }
 .property-actions {

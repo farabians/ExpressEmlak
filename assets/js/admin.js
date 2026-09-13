@@ -15,9 +15,9 @@ import { PhotoPicker, ProgressBar, VideoPicker, storagePathFromUrl } from "./med
 import { MapPicker } from "./map-picker.js";
 import { buildFeatureAccordion, clearErrors, collectFormData, fillSelects, obsoleteFieldsFor, populateForm, showFieldsFor, stripEmpty, validate }
   from "./ilan-form.js";
-import { kiralikMi } from "./ilan-kart.js";
+import { ilanAramaEslesiyorMu, kiralikMi } from "./ilan-kart.js";
 import { createRichTextEditor, temizleAciklamaHtml } from "./rich-text.js";
-import { $, $$, buildOptions, escapeHtml, formatDate, htmlToPlainText, ilanNo, priceLabel } from "./utils.js";
+import { $, $$, buildOptions, escapeHtml, formatDate, htmlToPlainText, ilanNo, priceLabel, showToast } from "./utils.js";
 
 const auth = getAuth(app);
 const storage = getStorage(app);
@@ -320,13 +320,11 @@ $("#ilanForm").addEventListener("submit", async (e) => {
     const { urls: yeniUrls, paths: yeniPaths } = await uploadPhotos(photos.files, currentUser.uid);
     uploaded.push(...yeniPaths);
 
-    const photoUrls = editingId
-  ? photos.getOrderedPhotoUrls(yeniUrls)
-  : yeniUrls;
-
-const photoPaths = editingId
-  ? photos.getOrderedPhotoPaths(yeniPaths)
-  : yeniPaths;
+    // Kullanıcının sürükleyerek belirlediği vitrin sırası; ilk eleman vitrin.
+    // Create akışında liste yalnızca yeni dosyalardan oluşur, düzenlemede
+    // mevcut ve yeni fotoğraflar iç içe sıralanabilir.
+    const photoUrls = photos.getOrderedPhotoUrls(yeniUrls);
+    const photoPaths = photos.getOrderedPhotoPaths(yeniPaths);
     if (editingId) removedPaths.push(...photos.removedExistingPaths);
 
     let videoUrl = editingId ? video.keptExistingUrl : null;
@@ -375,6 +373,7 @@ const photoPaths = editingId
       });
       await Promise.allSettled(removedPaths.map((p) => deleteObject(ref(storage, p))));
       setMessage("İlan başarıyla güncellendi.", "ok");
+      showToast("İlan güncellendi", { text: data.isim || "Değişiklikler kaydedildi." });
     } else {
       await addDoc(collection(db, "ilanlar"), {
         ...kayit,
@@ -383,6 +382,7 @@ const photoPaths = editingId
         tarih: serverTimestamp()
       });
       setMessage("İlan başarıyla yayınlandı.", "ok");
+      showToast("İlan yayınlandı", { text: data.isim || "İlan listede görünüyor." });
     }
 
     resetForm();
@@ -390,6 +390,13 @@ const photoPaths = editingId
   } catch (err) {
     console.error(err);
     setMessage(`Hata: ${err.message}`, "err");
+    // Hata mesajı formun altında kalıyor; kullanıcı kaydetmenin başarısız
+    // olduğunu kaçırmasın diye üstte de gösteriliyor.
+    showToast(editingId ? "İlan güncellenemedi" : "İlan yayınlanamadı", {
+      text: err.message,
+      type: "err",
+      duration: 8000
+    });
 
     // Firestore kaydı/güncellemesi başarısız olduysa yeni yüklenen dosyalar
     // yetim kalmasın. removedPaths'e hiç dokunulmuyor - doküman güncellenmediyse
@@ -544,9 +551,10 @@ const ilanFiltre = { arama: "", kategori: "", tip: "", ilce: "" };
  * DOM'a dokunmaz, bu yüzden bağımsız test edilebilir.
  */
 export function ilanlariFiltrele(liste, f) {
-  const aramaKelime = (f.arama || "").trim().toLocaleLowerCase("tr");
   return liste.filter((d) => {
-    if (aramaKelime && !(d.isim || "").toLocaleLowerCase("tr").includes(aramaKelime)) return false;
+    // Arama hem ilan adında hem ilan numarasında eşleşir (site tarafıyla
+    // aynı kural - bkz. ilan-kart.js: ilanAramaEslesiyorMu).
+    if (!ilanAramaEslesiyorMu(d, f.arama)) return false;
     if (f.kategori && slugify(d.kategori) !== slugify(f.kategori)) return false;
     if (f.tip) {
       const kiralik = kiralikMi(d);
