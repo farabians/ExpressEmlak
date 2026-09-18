@@ -283,7 +283,17 @@
 .satici-brand { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
 .satici-brand img { width: 40px; height: 40px; object-fit: contain; }
 .satici-name { font-size: 15px; font-weight: 600; color: var(--dark); }
-.satici-since { font-size: 11.5px; color: var(--text-faint); margin-bottom: 14px; }
+/* Yetki belgesi + hesap tarihi: tek satıra sığmıyordu, alt alta veriliyor.
+   Belge numarası yasal zorunluluk olduğu için tarihten bir tık belirgin. */
+.satici-since {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 14px;
+  font-size: 11.5px;
+  color: var(--text-faint);
+}
+.satici-belge { color: var(--text-muted); font-weight: 500; }
 
 /* İsim + numara alt alta: 260px'lik sütunda "Muhammet Dündar" ile
    "0 (535) 060 82 83" aynı satıra sığmıyor, yan yana dizilince taşıyordu. */
