@@ -181,3 +181,13 @@
   .ilt-info-card, .ilt-form, .ilt-details, .ilt-hours-card { padding: 20px; }
   .ilt-map-frame iframe { height: 260px; }
 }
+
+/* Form altı KVKK bilgilendirmesi - gönder butonundan sonra, sessiz ton. */
+.ilt-kvkk {
+  margin-top: 12px;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--text-faint);
+}
+.ilt-kvkk a { color: var(--primary-dark); }
+.ilt-kvkk a:hover { text-decoration: underline; }

@@ -1,0 +1,67 @@
+/* ==========================================================================
+   Uzun metin sayfaları (gizlilik / KVKK gibi)
+   Tek sütun, okumaya ayarlı satır uzunluğu. base.css üzerine kurulu.
+   ========================================================================== */
+
+.metin-sayfa {
+  max-width: 760px;           /* ~80 karakter: uzun metinde okunabilirlik sınırı */
+  margin: 0 auto;
+  padding: 3rem 20px 4rem;
+}
+
+.metin-sayfa h1 {
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--dark);
+  line-height: 1.25;
+  margin-bottom: 0.5rem;
+}
+
+.metin-tarih {
+  font-size: 0.85rem;
+  color: var(--text-faint);
+  padding-bottom: 1.5rem;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.metin-sayfa h2 {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--dark);
+  margin: 2.2rem 0 0.8rem;
+}
+
+.metin-sayfa p {
+  color: var(--text-muted);
+  line-height: 1.8;
+  margin-bottom: 1rem;
+}
+
+.metin-sayfa ul {
+  margin: 0 0 1.2rem 1.1rem;
+  padding: 0;
+  color: var(--text-muted);
+  line-height: 1.8;
+}
+.metin-sayfa li { margin-bottom: 0.4rem; }
+
+.metin-sayfa strong { color: var(--text); font-weight: 600; }
+
+.metin-sayfa a { color: var(--primary-dark); }
+.metin-sayfa a:hover { text-decoration: underline; }
+
+/* Kapanıştaki sorumluluk notu - gövde metninden ayrışsın. */
+.metin-not {
+  margin-top: 2.5rem;
+  padding-top: 1.2rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.85rem;
+  color: var(--text-faint);
+}
+
+@media (max-width: 640px) {
+  .metin-sayfa { padding: 2rem 20px 3rem; }
+  .metin-sayfa h1 { font-size: 1.6rem; }
+  .metin-sayfa h2 { font-size: 1.05rem; }
+}

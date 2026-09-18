@@ -391,7 +391,9 @@ function flash(btn, text) {
 
 function renderSatici(d) {
   $("#saticiName").textContent = d.kimden === "Sahibinden" ? CONTACT.name : (d.kimden || CONTACT.name);
-  $("#saticiSince").textContent = `Hesap açma tarihi: ${CONTACT.since}`;
+  // Yetki belge no ilanda görünmek zorunda (Taşınmaz Ticareti Yönetmeliği).
+  $("#saticiSince").textContent =
+    `Yetki Belge No: ${CONTACT.yetkiBelgeNo} · Hesap açma tarihi: ${CONTACT.since}`;
 
   // Etiket yerine kişi adı gösterilir ("Cep 2" değil "Mehmet Üzüm"); ada sahip
   // olmayan bir kayıt eklenirse label'a düşer.
